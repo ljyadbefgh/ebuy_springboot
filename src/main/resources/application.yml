@@ -1,0 +1,12 @@
+#服务端配置
+server:
+  port: 8088   #端口号
+  servlet:
+    context-path: /ebuy_springboot  #在项目路径上加项目名，注意，spring boot2和spring boot1不同
+
+spring:
+  devtools:
+    restart:
+      enabled: true  #开启自动启动
+  thymeleaf:
+    cache: false #缓存（开发时设置为false）
