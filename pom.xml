@@ -48,10 +48,11 @@
 		</dependency>
 
 		<!--修改代码不需要重启springboot服务的依赖包-->
-		<!--<dependency>
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
-		</dependency>-->
+			<optional>true</optional>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -61,7 +62,7 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
 					<!--增加这个配置，devtools才会起作用让应用启动-->
-					<!--<fork>true</fork>-->
+					<fork>true</fork>
 				</configuration>
 			</plugin>
 		</plugins>

@@ -1,4 +1,4 @@
-package com.lcvc.ebuy_springboot.web;
+package com.lcvc.ebuy_springboot.web.action;
 
 
 import org.springframework.stereotype.Controller;
