@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8"/>
+    <title>订餐系统后台登录页面</title>
+    <!--导入自己的插件-->
+    <script src="../js/my_base_js.js"></script>
+    <!--导入jquery插件-->
+    <script src="../plugins/jquery.js"></script>
+    <!--导入layui插件-->
+    <link rel="stylesheet" href="../plugins/layui/css/layui.css">
+    <script type="text/javascript">
+        if (window != top){
+            //如果login页面在iframe中嵌套，则跳转到最外层页面
+            top.location.href = location.href;
+        }
+        $(document).ready(function() {
+            $("#login_button").click(function(e) {
+                $myForm=$("#myForm");
+                var url= webUrl+$myForm.attr("action");
+                $.post(url,
+                    $myForm.serialize(),
+                    function(data) {
+                        //jquery自带的json转换方法
+                        if(typeof data != 'object') { //如果不是JS对象（则为JSON格式的数据，如servlet输出的JSON），则转换成JS对象
+                            data = $.parseJSON(data);
+                        }
+                        if(data.code == 1) { //如果登录成功
+                            window.location.href = "index.html";
+                        }
+                        if(data.code == -1) { //如果登录失败
+                            alert(data.msg);
+                        }
+                    }
+                );
+            });
+        });
+    </script>
+</head>
+<body>
+<div class="layui-container">
+    <div class="layui-row" style="text-align: center;">
+        <h2>登录界面</h2>
+    </div>
+</div>
+<form id="myForm"  class="layui-form" action="backstage/login">
+    <div class="layui-form-item">
+        <label class="layui-form-label">账户名</label>
+        <div class="layui-input-block">
+            <input type="text" id="username" name="username"  required  lay-verify="required" placeholder="请输入账户名" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">密码</label>
+        <div class="layui-input-block">
+            <input type="password" id="password" name="password"  required  lay-verify="required" placeholder="请输入密码" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item" style="text-align: center;">
+        <input id="login_button" type="button" name="login" value="登录"  class="layui-btn" lay-submit lay-filter="formDemo">
+    </div>
+
+</form>
+
+</body>
+</html>

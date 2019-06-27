@@ -4,9 +4,24 @@ server:
   servlet:
     context-path: /ebuy_springboot  #在项目路径上加项目名，注意，spring boot2和spring boot1不同
 
+
+mybatis:
+  mapper-locations: classpath*:mapper/*.xml #扫描mybatis的mapper.xml文件
+  type-aliases-package: com.lcvc.ebuy_springboot.model #起别名，指向实体类的位置，可省略写mybatis的xml中的resultType的全路径，取代<typeAlias alias="Admin" type="com.ljy.maven_github_ssm.model.Admin"/>
+
 spring:
   devtools:
     restart:
       enabled: true  #开启自动启动
   thymeleaf:
     cache: false #缓存（开发时设置为false）
+  #jdbc配置，springboot默认会把spring.datasource开头的信息收纳，进行DataSource对象的配置，进而进行sqlSessionFactory的配置等相关数据库连接的配置，从而省略了application.xml中的相关
+  datasource:
+      url: jdbc:mysql://localhost:3306/lcvc_ebuy?characterEncoding=utf-8&serverTimezone=CTT
+      username: user
+      password: 123456
+      driverClassName: com.mysql.cj.jdbc.Driver
+#控制台打印sql语句
+logging:
+  level:
+    com.ming.ssm.mapper: debug

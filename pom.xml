@@ -17,7 +17,7 @@
 	<properties>
 		<java.version>1.8</java.version>
 		<!--mysal驱动包-->
-		<mysql.version>5.1.2</mysql.version>
+		<mysql.version>8.0.16</mysql.version>
 		<mybatis.version>3.4.2</mybatis.version>
 	</properties>
 
@@ -45,6 +45,13 @@
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 			<version>${mysql.version}</version>
+		</dependency>
+
+		<!-- Spring Boot Mybatis 依赖 -->
+		<dependency>
+			<groupId>org.mybatis.spring.boot</groupId>
+			<artifactId>mybatis-spring-boot-starter</artifactId>
+			<version>1.2.0</version>
 		</dependency>
 
 		<!--修改代码不需要重启springboot服务的依赖包-->
