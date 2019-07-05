@@ -21,7 +21,18 @@ spring:
       username: user
       password: 123456
       driverClassName: com.mysql.cj.jdbc.Driver
+  redis:
+      host: localhost #redis ip地址
+      port: 6379 #端口
+      password: #redis密码，一般不进行设置
+      database: 0  #代表使用的是redis默认提供的db0这个数据库。
+      redis-maxIdle: 500  #redis server的最大空闲数。
+      redis-maxWait: 4000  #是连接redis时的最大等待毫秒数。
+  jackson:    #设置全局json格式
+    date-format: yyyy-MM-dd HH:mm   #将日期类型设置为字符串表示
+    time-zone: GMT+8
 #控制台打印sql语句
 logging:
+  file: target/ebuy.log
   level:
-    com.ming.ssm.mapper: debug
+    com.lcvc.ebuy_springboot: debug

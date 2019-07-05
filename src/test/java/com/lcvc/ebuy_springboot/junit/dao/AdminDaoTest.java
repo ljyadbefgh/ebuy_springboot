@@ -1,7 +1,8 @@
-package com.lcvc.ebuy_springboot.dao;
+package com.lcvc.ebuy_springboot.junit.dao;
 
 
 import com.lcvc.ebuy_springboot.EbuySpringbootApplicationTests;
+import com.lcvc.ebuy_springboot.dao.AdminDao;
 import com.lcvc.ebuy_springboot.model.Admin;
 import org.junit.Test;
 

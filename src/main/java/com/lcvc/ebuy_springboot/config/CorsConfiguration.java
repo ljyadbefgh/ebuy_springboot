@@ -14,7 +14,7 @@ public class CorsConfiguration implements WebMvcConfigurer {
                 .allowedOrigins("*")
                 // 只允许本地的8088端口访问
                 //.allowedOrigins("http://localhost:8088", "http://127.0.0.1:8088")
-                // 允许发送Cookie
+                // 允许发送Cookie。在跨域登陆的时候可以用于登陆状态的保持
                 .allowCredentials(true)
                 .maxAge(3600)
                 // 允许所有方法

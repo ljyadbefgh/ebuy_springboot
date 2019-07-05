@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <!--导入layui插件-->
+    <link rel="stylesheet" href="../../plugins/layui/css/layui.css">
+    <script src="../../plugins/layui/layui.js"></script>
+    <!--导入自己的插件-->
+    <!--导入jquery插件-->
+    <script src="../../plugins/jquery.js"></script>
+    <!--导入自己插件：前端基础设置-->
+    <script src="../../js/my_base_js.js"></script>
+    <script>
+        layui.use('table', function(){
+            var table = layui.table;
+
+            table.render({
+                elem: '#test'
+                ,url:webUrl+'backstage/adminmanage'
+                ,cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+                ,cols: [[
+                    {type:'checkbox'}//假如复选框，用于批量操作
+                    ,{field:'username', width:200, title: '用户名',sore: true}
+                    ,{field:'password', width:300, title: '密码'}
+                    ,{field:'name', width:200, title: '网名', sort: true}
+                    ,{field:'createTime', width:200, title: '注册时间', sort: true}
+                    ,{title: '基本操作'}
+                ]]
+            });
+        });
+    </script>
+</head>
+<body>
+<table class="layui-hide" id="test"></table>
+</body>
+</html>

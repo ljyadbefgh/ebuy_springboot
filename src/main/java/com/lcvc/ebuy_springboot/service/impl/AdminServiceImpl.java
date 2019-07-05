@@ -4,6 +4,8 @@ import com.lcvc.ebuy_springboot.dao.AdminDao;
 import com.lcvc.ebuy_springboot.model.Admin;
 import com.lcvc.ebuy_springboot.model.exception.MyFormException;
 import com.lcvc.ebuy_springboot.service.AdminService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -17,6 +19,7 @@ import java.util.List;
 public class AdminServiceImpl implements AdminService {
     @Resource
     private AdminDao adminDao;
+
 
     @Override
     public boolean login(String username, String password) {
