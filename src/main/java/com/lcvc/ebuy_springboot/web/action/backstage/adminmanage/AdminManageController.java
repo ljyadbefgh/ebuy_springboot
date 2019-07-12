@@ -1,6 +1,7 @@
 package com.lcvc.ebuy_springboot.web.action.backstage.adminmanage;
 
 
+import com.lcvc.ebuy_springboot.model.Admin;
 import com.lcvc.ebuy_springboot.model.Constant;
 import com.lcvc.ebuy_springboot.service.AdminService;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -27,7 +29,9 @@ public class AdminManageController {
 	public Map<String, Object> toManageAdmin(){
         Map<String, Object> map=new HashMap<String, Object>();
         map.put(Constant.JSON_CODE, 0);
-        map.put(Constant.JSON_DATA,adminService.getAdmins());
+		List<Admin> admins=adminService.getAdmins();
+        map.put(Constant.JSON_DATA,admins);
+		map.put(Constant.JSON_TOTAL,admins.size());
 		return map;
 	}
 
