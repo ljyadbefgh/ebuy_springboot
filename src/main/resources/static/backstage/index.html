@@ -7,7 +7,8 @@
     <link rel="stylesheet" href="../plugins/layui/css/layui.css">
     <script src="../plugins/layui/layui.js"></script>
     <script src="../plugins/jquery.js"></script>
-    <!--导入自定义样式文件-->
+    <!--导入自己的插件-->
+    <script src="../js/my_base_js.js"></script>
 </head>
 <body class="layui-layout-body">
 <div class="layui-layout layui-layout-admin">
@@ -37,7 +38,7 @@
                     <dd><a href="">密码修改</a></dd>
                 </dl>
             </li>
-            <li class="layui-nav-item"><a href="logout">注销</a></li>
+            <li class="layui-nav-item"><a href="#" id="logout">注销</a></li>
         </ul>
     </div>
 
@@ -79,9 +80,30 @@
     </div>
 </div>
 <script>
+    layui.use('layer', function(){
+        var layer = layui.layer;
+        $("#logout").click(function (e) {
+            $.get(webUrl+"backstage/logout",
+                function (data) {
+                    if(data.code == 0) { //如果注销成功
+                        layer.open({
+                            btnAlign: 'c', //按钮居中
+                            content: '成功注销用户，欢迎下次光临',
+                            yes: function(index, layero){
+                                window.location.href = "login.html";
+                                layer.close(index); //如果设定了yes回调，需进行手工关闭
+                            }
+                        });
+                    }
+                }
+            );
+        });
+    });
+
     //JavaScript代码区域
     layui.use('element', function(){
         var element = layui.element;
+        var layer = layui.layer;
         /*element.on('nav(hbkNavbar)',function(elem){//用于系统生成菜单的方式生成链接
             /!*使用DOM操作获取超链接的自定义data属性值*!/
             var options = eval('('+elem.context.children[0].dataset.options+')');
@@ -98,6 +120,8 @@
             $("#mainFrame").attr("src",url);
             return false;
         });
+
+
     });
 </script>
 </body>

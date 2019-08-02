@@ -2,10 +2,9 @@ package com.lcvc.ebuy_springboot.service.impl;
 
 import com.lcvc.ebuy_springboot.dao.AdminDao;
 import com.lcvc.ebuy_springboot.model.Admin;
+import com.lcvc.ebuy_springboot.model.base.PageObject;
 import com.lcvc.ebuy_springboot.model.exception.MyFormException;
 import com.lcvc.ebuy_springboot.service.AdminService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -34,6 +33,13 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public List<Admin> getAdmins() {
         return adminDao.readAll();
+    }
+
+    @Override
+    public PageObject searchAdmins(Integer page, Integer limit) {
+        PageObject pageObject = new PageObject(limit,page,adminDao.querySize());
+        pageObject.setList(adminDao.query(pageObject.getOffset(),pageObject.getLimit()));
+        return pageObject;
     }
 
 

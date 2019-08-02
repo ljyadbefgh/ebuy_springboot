@@ -14,7 +14,7 @@ import java.util.Map;
 
 @Controller
 @RequestMapping(value = "/backstage")
-public class LoginController {
+public class LoginLogoutController {
 
 	@Resource
 	private AdminService adminService;
@@ -37,7 +37,7 @@ public class LoginController {
 		Map<String, Object> map=new HashMap<String, Object>();
 		if(adminService.login(username, password)){
 			session.setAttribute("admin",adminService.getAdmin(username));
-			map.put(Constant.JSON_CODE, 1);
+			map.put(Constant.JSON_CODE, 0);
 		}else{
 			map.put(Constant.JSON_CODE, -1);
 			map.put(Constant.JSON_MESSAGE, "登录失败：用户名和密码错误");
@@ -49,10 +49,14 @@ public class LoginController {
      * 注销
 	 * @return
      */
-	@RequestMapping(value = "/logout")
-	public String logout(HttpSession session){
+	@ResponseBody
+	@RequestMapping(value="/logout")
+	public Map<String, Object> logout(HttpSession session){
+		Map<String, Object> map=new HashMap<String, Object>();
 		session.removeAttribute("admin");
-		return "/backstage/login.html";
+		map.put(Constant.JSON_CODE, 0);
+		map.put(Constant.JSON_MESSAGE, "成功注销用户");
+		return map;
 	}
 
 

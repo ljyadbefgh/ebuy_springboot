@@ -30,6 +30,14 @@
         select * from admin order by id asc
     </select>
 
+    <select id="query" resultType="Admin">
+        select * from admin order by id asc limit #{offset},#{length}
+    </select>
+
+    <select id="querySize" resultType="int">
+        select count(1) from admin
+    </select>
+
     <select id="countAdminByUsername"  resultType="int">
         select count(id) from admin where username=#{username}
     </select>

@@ -61,6 +61,20 @@ public interface AdminDao {
 	 */
 	List<Admin> readAll();
 
+	/**
+	 * 分页显示数据库记录
+	 * @param offset 记录开始位置
+	 * @param length  偏移量
+	 * @return
+	 */
+	List<Admin> query(@Param(value = "offset")int offset, @Param(value = "length")int length);
+
+	/**
+	 * 查询数据库总记录数
+	 * @return
+	 */
+	int querySize();
+
     /**
      * 获取数据库中相同账户名的数量，用于判断创建账户时的账户名是否重名
 	 * @param username

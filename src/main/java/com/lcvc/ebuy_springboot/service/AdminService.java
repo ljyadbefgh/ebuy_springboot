@@ -2,6 +2,7 @@ package com.lcvc.ebuy_springboot.service;
 
 
 import com.lcvc.ebuy_springboot.model.Admin;
+import com.lcvc.ebuy_springboot.model.base.PageObject;
 import com.lcvc.ebuy_springboot.model.exception.MyFormException;
 
 import java.util.List;
@@ -20,6 +21,11 @@ public interface AdminService {
      * 获取所有账户集合
      */
     List<Admin> getAdmins();
+
+    /**
+     * 分页查询账户
+     */
+    PageObject searchAdmins(Integer page, Integer limit);
 
     /**
      * 删除指定账户
