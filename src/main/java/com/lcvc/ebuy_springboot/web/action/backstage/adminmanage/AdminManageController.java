@@ -2,20 +2,24 @@ package com.lcvc.ebuy_springboot.web.action.backstage.adminmanage;
 
 
 import com.lcvc.ebuy_springboot.model.Constant;
+import com.lcvc.ebuy_springboot.model.JsonCode;
 import com.lcvc.ebuy_springboot.model.base.PageObject;
 import com.lcvc.ebuy_springboot.service.AdminService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.Map;
 
 @RestController
 @RequestMapping(value = "/backstage/adminmanage")
 public class AdminManageController {
+
+	public static final Log log= LogFactory.getLog(AdminManageController.class);
 
 	@Resource
 	private AdminService adminService;
@@ -27,7 +31,7 @@ public class AdminManageController {
 	@GetMapping
 	public Map<String, Object> toManageAdmin(Integer page,Integer limit){
         Map<String, Object> map=new HashMap<String, Object>();
-        map.put(Constant.JSON_CODE, 0);
+        map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
 		PageObject pageObject =adminService.searchAdmins(page,limit);
 		map.put(Constant.JSON_TOTAL,pageObject.getTotalRecords());
         map.put(Constant.JSON_DATA,pageObject.getList());
@@ -39,21 +43,22 @@ public class AdminManageController {
 	 * @param id
 	 * @return
 	 */
-	/*@ResponseBody
-	@RequestMapping(value = "/doDeleteAdmin")
-	public Map<String, Object> doDeleteAdmin(Integer id,HttpSession session){
+	@DeleteMapping("/{id}")
+	public Map<String, Object> doDeleteAdmin(@PathVariable Integer id, HttpSession session){
 		Map<String, Object> map=new HashMap<String, Object>();
-		Admin admin=(Admin)session.getAttribute("admin");
+		adminService.deleteAdmin(id);
+		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
+		/*Admin admin=(Admin)session.getAttribute("admin");
 		if(admin.getId()==id.intValue()){//如果登录账户的id与被删除账户的id一致
 			//不允许删除自己的账户
-			map.put("status", -1);
+			map.put(Constant.JSON_CODE, JsonCode.ERROR.getValue());
 			map.put("myMessage", "删除失败：不允许删除自己");
 		}else{
 			adminService.deleteAdmin(id);
-			map.put("status", 1);
-		}
+			map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
+		}*/
 		return map;
-	}*/
+	}
 
 	/**
 	 * 跳转到账户添加页面
