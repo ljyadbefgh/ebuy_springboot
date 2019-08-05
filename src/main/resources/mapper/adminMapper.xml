@@ -13,6 +13,14 @@
         delete from admin where id=#{id}
     </delete>
 
+    <delete id="deletes" >
+        delete from admin where id in
+        <foreach item="item" collection="array" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+
+
     <select id="get"  resultType="Admin">
         select * from admin where id=#{id}
     </select>
@@ -22,8 +30,8 @@
     </select>
 
     <insert id="add">
-          insert into admin(id,username,password,name)
-          values(null,#{username},#{password},#{name})
+          insert into admin(id,username,password,name,sex,createTime)
+          values(null,#{username},#{password},#{name},#{sex},#{createTime})
     </insert>
 
     <select id="readAll" resultType="Admin">
@@ -42,6 +50,10 @@
         select count(id) from admin where username=#{username}
     </select>
 
+    <select id="existsAdmin" resultType="int">
+		select count(id) from admin where username=#{username} and id!=#{id}
+	</select>
+
     <update id="update" parameterType="Admin">
         update admin
         <!-- 使用set标签可以将动态的配置SET 关键字，和剔除追加到条件末尾的任何不相关的逗号。 -->
@@ -49,6 +61,7 @@
             <if test="username!=null and username.length()>0">username=#{username},</if>
             <if test="name!=null and name.length()>0">name=#{name},</if>
             <if test="password!=null and password.length()>0">password=#{password},</if>
+            <if test="sex!=null">sex=#{sex},</if>
         </set>
         where id=#{id}
     </update>

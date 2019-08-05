@@ -28,6 +28,13 @@ public interface AdminDao {
 	int delete(int id);
 
 	/**
+	 * 根据账户的标志符删除对应的账户信息
+	 * @param ids 账户信息的id集合
+	 * @return  删除的记录数
+	 */
+	int deletes(int[] ids);
+
+	/**
 	 *  根据账户的标志符读取对应的账户信息
 	 * @param id 账户信息的id
 	 * @return 账户对象，如果是null表示读取失败
@@ -81,5 +88,13 @@ public interface AdminDao {
      * @return
      */
 	int countAdminByUsername(String username);
+
+	/**
+	 * 查找在数据库中和指定用户名重名的个数
+	 * @param username
+	 * @param id
+	 * @return 返回重名的个数，0表示不重名
+	 */
+	int existsAdmin(@Param(value = "username")String username,@Param(value = "id")Integer id);
 }
 

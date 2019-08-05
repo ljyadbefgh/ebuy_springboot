@@ -12,6 +12,7 @@ public class Admin implements java.io.Serializable{
 	private String username;//用户名
 	private String password;//用户密码
 	private String name;//网名
+	private Integer sex;//性别
 	private Date createTime;//创建时间
 
 	public Admin() {
@@ -61,6 +62,14 @@ public class Admin implements java.io.Serializable{
 
 	public void setCreateTime(Date createTime) {
 		this.createTime = createTime;
+	}
+
+	public Integer getSex() {
+		return sex;
+	}
+
+	public void setSex(Integer sex) {
+		this.sex = sex;
 	}
 
 	/*重写hashCode方法，当通过集合判断对象是否相等时，必须重写该方法*/

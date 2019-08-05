@@ -1,16 +1,17 @@
 package com.lcvc.ebuy_springboot.web.action.backstage.adminmanage;
 
 
+import com.lcvc.ebuy_springboot.model.Admin;
 import com.lcvc.ebuy_springboot.model.Constant;
 import com.lcvc.ebuy_springboot.model.JsonCode;
 import com.lcvc.ebuy_springboot.model.base.PageObject;
+import com.lcvc.ebuy_springboot.model.exception.MyFormException;
 import com.lcvc.ebuy_springboot.service.AdminService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,8 +26,11 @@ public class AdminManageController {
 	private AdminService adminService;
 
 
-	/*
-	 * 跳转到账户管理页面
+	/**
+	 * 分页读取所有管理账户雷暴
+	 * @param page 当前页码
+	 * @param limit 每页最多展示的记录数
+	 * @return
 	 */
 	@GetMapping
 	public Map<String, Object> toManageAdmin(Integer page,Integer limit){
@@ -40,7 +44,7 @@ public class AdminManageController {
 
 	/**
 	 * 删除指定账户
-	 * @param id
+	 * @param id 指定账户的主键
 	 * @return
 	 */
 	@DeleteMapping("/{id}")
@@ -61,54 +65,66 @@ public class AdminManageController {
 	}
 
 	/**
-	 * 跳转到账户添加页面
+	 * 批量删除指定的多个账户
+	 * @param ids 账户id集合，前端必须以“15,25,74”这样的方式传回
+	 * @return
 	 */
-	@RequestMapping(value = "/toAddAdmin")
-	public String toAddAdmin(){
-		return "/jsp/backstage/adminmanage/adminadd.jsp";
-	}
-
-	/*@ResponseBody
-	@RequestMapping(value = "/doAddAdmin")
-	public Map<String, Object> doAddAdmin(Admin admin){
+	@DeleteMapping("/deletes/{ids}")
+	public Map<String, Object> doDeleteAdmins(@PathVariable("ids")int[] ids){
 		Map<String, Object> map=new HashMap<String, Object>();
-		try {
-			adminService.addAdmin(admin);
-			map.put("status", 1);
-			map.put("myMessage", "账户添加成功");
-		} catch (MyFormException e) {
-			map.put("status", -1);
-			map.put("myMessage", e.getMessage());
-		}
+		adminService.deleteAdmins(ids);
+		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
 		return map;
-	}*/
+	}
 
 
 	/**
-	 * 跳转到账户编辑页面
+	 * 添加账户
+	 * @param admin
+	 * @return
 	 */
-	@RequestMapping(value = "/toUpdateAdmin")
-	public String toUpdateAdmin(Integer id,HttpServletRequest request){
-		request.setAttribute("admin",adminService.getAdmin(id));
-		return "/jsp/backstage/adminmanage/adminupdate.jsp";
-	}
-
-	/*@ResponseBody
-	@RequestMapping(value = "/doUpdateAdmin")
-	public Map<String, Object> doUpdateAdmin(Admin admin){
+	@PostMapping
+	public Map<String, Object> doAddAdmin(@RequestBody Admin admin){
 		Map<String, Object> map=new HashMap<String, Object>();
-		map.put("status", -1);//默认失败
 		try {
-			if(adminService.updateAdmin(admin)){
-				map.put("status", 1);
-				map.put("myMessage", "账户编辑成功");
-			}else{
-				map.put("myMessage", "账户编辑失败");
-			}
+			adminService.addAdmin(admin);
+			map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
+			map.put(Constant.JSON_MESSAGE, "账户添加成功");
 		} catch (MyFormException e) {
-			map.put("myMessage", e.getMessage());
+			map.put(Constant.JSON_CODE, JsonCode.ERROR.getValue());
+			map.put(Constant.JSON_MESSAGE, e.getMessage());
 		}
 		return map;
-	}*/
+	}
+
+	/**
+	 * 读取指定账户
+	 * @param id 指定账户的主键
+	 * @return
+	 */
+	@GetMapping("/{id}")
+	public Map<String, Object>  getAdmin(@PathVariable Integer id){
+		Map<String, Object> map=new HashMap<String, Object>();
+		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
+		map.put(Constant.JSON_DATA,adminService.getAdmin(id));
+		return map;
+	}
+
+	@PutMapping
+	public Map<String, Object> updateAdmin(@RequestBody Admin admin){
+		Map<String, Object> map=new HashMap<String, Object>();
+		map.put(Constant.JSON_CODE, JsonCode.ERROR.getValue());
+		try {
+			if(adminService.updateAdmin(admin)){
+				map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
+				map.put(Constant.JSON_MESSAGE, "账户信息修改成功");
+			}else{
+				map.put(Constant.JSON_MESSAGE, "账户信息修改失败");
+			}
+		} catch (MyFormException e) {
+			map.put(Constant.JSON_MESSAGE, "账户信息编辑失败："+e.getMessage());
+		}
+		return map;
+	}
 
 }

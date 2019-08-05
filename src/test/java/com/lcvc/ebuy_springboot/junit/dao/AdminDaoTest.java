@@ -25,6 +25,11 @@ public class AdminDaoTest  extends EbuySpringbootApplicationTests {
     }
 
     @Test
+    public void testDeletes(){
+        System.out.println(adminDao.deletes(new int[]{85,87}));
+    }
+
+    @Test
     public void testGet(){
         Admin admin=adminDao.get(3);//数据库不存在对应
         System.out.println(admin);//应输出null
@@ -54,5 +59,10 @@ public class AdminDaoTest  extends EbuySpringbootApplicationTests {
     @Test
     public void testCountAdminByUsername(){
         System.out.println("账户同名数量："+adminDao.countAdminByUsername("admin"));
+    }
+
+    @Test
+    public void testExitsAdmin(){
+        System.out.println(adminDao.existsAdmin("liangxiu1",2));
     }
 }

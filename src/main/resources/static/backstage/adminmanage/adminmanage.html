@@ -1,109 +1,163 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <meta charset="utf-8">
-    <title>管理员管理模块</title>
-    <meta name="renderer" content="webkit">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <!--导入layui插件-->
-    <link rel="stylesheet" href="../../plugins/layui/css/layui.css">
-    <script src="../../plugins/layui/layui.js"></script>
-    <!--导入自己的插件-->
-    <!--导入jquery插件-->
-    <script src="../../plugins/jquery.js"></script>
-    <!--导入自己插件：前端基础设置-->
-    <script src="../../js/my_base_js.js"></script>
-    <!--定义表格的头部工具栏-->
-    <script type="text/html" id="toolbar">
-        <div class="layui-btn-container">
-            <button class="layui-btn layui-btn-sm" lay-event="createAdmin">创建管理员</button>
-            <button class="layui-btn layui-btn-sm" lay-event="getCheckData">获取选中行数据</button>
-            <button class="layui-btn layui-btn-sm" lay-event="getCheckLength">获取选中数目</button>
-            <button class="layui-btn layui-btn-sm" lay-event="isAll">验证是否全选</button>
-        </div>
-    </script>
-    <!--定义表格邮编的行工具栏-->
-    <script type="text/html" id="barDemo">
-        <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
-        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
-    </script>
 
-    <script>
-        layui.use('table', function () {
-            var table = layui.table;
+	<head>
+		<meta charset="utf-8">
+		<title>管理员管理模块</title>
+		<meta name="renderer" content="webkit">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<!--导入layui插件-->
+		<link rel="stylesheet" href="../../plugins/layui/css/layui.css">
+		<script src="../../plugins/layui/layui.js"></script>
+		<!--导入自己的插件-->
+		<!--导入jquery插件-->
+		<script src="../../plugins/jquery.js"></script>
+		<!--导入自己插件：前端基础设置-->
+		<script src="../../js/my_base_js.js"></script>
+		<!--定义表格的头部工具栏-->
+		<script type="text/html" id="toolbar">
+			<div class="layui-btn-container">
+				<button class="layui-btn layui-btn-sm" lay-event="createAdmin">创建管理账户</button>
+				<button class="layui-btn layui-btn-sm" lay-event="deleteAdmins">批量删除管理账户</button>
+			</div>
+		</script>
+		<!--定义表格邮编的行工具栏-->
+		<script type="text/html" id="barDemo">
+			<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+			<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+		</script>
 
-            table.render({
-                elem: '#admins'
-                , title: '管理账户数据表'
-                , url: webUrl + 'backstage/adminmanage'
-                , method: 'get'
-                , toolbar: '#toolbar' //定义表格的头部工具栏
-                , cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
-                , height: 500
-                , page: true  //开启分页
-                , cols: [[
-                    {type: 'checkbox'}//假如复选框，用于批量操作
-                    , {field: 'username', width: 200, title: '用户名', sore: true, edit: 'text'}
-                    , {field: 'password', width: 300, title: '密码'}
-                    , {field: 'name', width: 200, title: '网名', sort: true}
-                    , {field: 'createTime', width: 200, title: '注册时间', sort: true}
-                    , {fixed: 'right', title: '操作', toolbar: '#barDemo'}
-                ]]
-            });
+		<script>
+			var rowId;//获取行的信息，此处设置的目的是为了在打开账户编辑窗口时，将账户id传递给子窗口（注：如果不是前后端分离，可以直接通过url将参数传递过去,不需要单独处理）
+			layui.use('table', function() {
+				var table = layui.table;
 
-            //头工具栏事件
-            table.on('toolbar(admins)', function (obj) {
-                var checkStatus = table.checkStatus(obj.config.id);
-                switch (obj.event) {
-                    case 'getCheckData':
-                        var data = checkStatus.data;
-                        layer.alert(JSON.stringify(data));
-                        break;
-                    case 'getCheckLength':
-                        var data = checkStatus.data;
-                        layer.msg('选中了：' + data.length + ' 个');
-                        break;
-                    case 'isAll':
-                        layer.msg(checkStatus.isAll ? '全选' : '未全选');
-                        break;
-                }
-                ;
-            });
+				table.render({
+					id:'adminmanage_table',
+					elem: '#admins',
+					title: '管理账户数据表',
+					url: webUrl + 'backstage/adminmanage',
+					method: 'get',
+					toolbar: '#toolbar', //定义表格的头部工具栏
+					cellMinWidth: 80, //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+					height: 550,
+					page: true, //开启分页
+					cols: [[
+						{type: 'checkbox'} //假如复选框，用于批量操作
+						, {field: 'username',width: 200,title: '用户名',sore: true,edit: 'text'}
+						, {field: 'password',width: 300,title: '密码'}
+						, {field: 'name',width: 200,title: '网名',sort: true}
+						, {
+							field: 'sex',
+							width: 200,
+							title: '性别',
+							sort: true,
+							templet:function(d){
+								if(d.sex==1){
+									return '男';
+						   	 	}else{
+						   	 		return '女';
+						   		}						   	
+						   }}
+						, {field: 'createTime',width: 200,title: '注册时间',sort: true}
+						, {fixed: 'right',title: '操作',toolbar: '#barDemo'}
+					]]
+				});
 
-            //监听行工具事件
-            table.on('tool(admins)', function (obj) {
-                var data = obj.data;
-                //console.log(obj)
-                if (obj.event === 'del') {
-                    layer.confirm('真的删除该记录吗', function (index) {
-                        $.deleteResful(webUrl+"//backstage/adminmanage/"+data.id
-                            ,function(msg){
-                            	if(msg.code==0){                            		
-                            		 obj.del();
-                            	}else{
-                            		layui.msg("删除失败");
-                            	}
-                            })
-                       
-                        layer.close(index);
-                    });
-                } else if (obj.event === 'edit') {
-                    layer.prompt({
-                        formType: 2
-                        , value: data.email
-                    }, function (value, index) {
-                        obj.update({
-                            email: value
-                        });
-                        layer.close(index);
-                    });
-                }
-            });
-        });
-    </script>
-</head>
-<body>
-<table class="layui-hide" id="admins"  lay-filter="admins"></table>
-</body>
+				//头工具栏事件
+				table.on('toolbar(admins)', function(obj) {
+					var checkStatus = table.checkStatus(obj.config.id);
+					switch(obj.event) {
+						case 'createAdmin':
+							layer.open({
+								title:false,
+								//title: '创建管理账户',
+								type: 2,
+								area: ['450px', '370px'],
+								content: 'adminadd.html', //这里content是一个URL，如果你不想让iframe出现滚动条，你还可以content: ['http://sentsin.com', 'no']
+								cancel: function(index, layero) { //当前层索引参数（index）、当前层的DOM对象（layero)
+									table.reload('adminmanage_table');//重新刷新表格数据
+									layer.close(index);
+								}
+							});
+							break;
+						case 'deleteAdmins':
+							var datas = checkStatus.data;//获取选中的数据
+							if(datas.length==0){
+								layer.msg('请先选择记录');
+							}else{								
+								var ids = "";//定义要批量删除的主键id
+								var usernames="";//定义账户名集合
+								for(var i=0;i<datas.length;i++){//遍历数组，将id用","相隔									
+								    if(i==datas.length-1){//如果是最后一条记录，则不添加","
+								    	ids += checkStatus.data[i].id;
+										usernames+=checkStatus.data[i].username;
+								    }else{
+								    	ids += checkStatus.data[i].id+",";
+										usernames+=checkStatus.data[i].username+",";
+								    }
+								}
+								layer.confirm('确定要批量删除这些账户(' + usernames + ')吗？', function(index) {
+									$.deleteResful(webUrl + "//backstage/adminmanage/deletes/" + ids, 
+										function(msg) {
+											if(msg.code == 0) {
+												layer.msg("删除成功");
+												table.reload('adminmanage_table');//重新刷新表格数据
+												 //location.reload(true);刷新整个页面											
+											} else {
+												layer.msg("删除失败");
+											}
+										}
+									)
+									layer.close(index);//关闭窗口
+								});								
+							}
+							break;
+						case 'getCheckLength':
+							var data = checkStatus.data;
+							layer.msg('选中了：' + data.length + ' 个');
+							break;
+					};
+				});
+				
+				//监听行工具事件
+				table.on('tool(admins)', function(obj) {
+					var data = obj.data; //获取该行的记录
+					//console.log(obj)
+					if(obj.event === 'del') {
+						layer.confirm('确定删除账户' + data.username + '吗', function(index) {
+							//$.deleteResful，自定义的删除插件，针对resful风格设计
+							$.deleteResful(webUrl + "//backstage/adminmanage/" + data.id, function(msg) {
+								if(msg.code == 0) {
+									obj.del();
+								} else {
+									layer.msg("删除失败");
+								}
+							})
+							layer.close(index);
+						});
+					} else if(obj.event === 'edit') {
+						rowId=data.id;//将id值传递给全局变量
+						layer.open({
+								title:false,
+								//title: '编辑管理账户',
+								type: 2,
+								area: ['450px', '370px'],
+								content: 'adminupdate.html', //这里content是一个URL，如果你不想让iframe出现滚动条，你还可以content: ['http://sentsin.com', 'no']
+								cancel: function(index, layero) { //当前层索引参数（index）、当前层的DOM对象（layero)
+									table.reload('adminmanage_table');//重新刷新表格数据
+									layer.close(index);
+								}
+						});
+					}
+				});
+			});
+		</script>
+	</head>
+
+	<body>
+		<table class="layui-hide" id="admins" lay-filter="admins"></table>
+	</body>
+
 </html>

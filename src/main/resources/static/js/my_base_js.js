@@ -4,8 +4,9 @@ var webUrl = "http://127.0.0.1:8088/ebuy_springboot/";
 $(function() {
     //设置ajax默认的设置，即每次访问时都会为header设置token
     $.ajaxSetup({
-        timeout: 500000, //超时时间设置，单位毫秒
+        timeout: 500000, //超时时间设置，单位毫秒。要后端调试的时候，这里可以设置长些
         cache:false, //是否进行数据缓存
+        contentType:"application/json",
         xhrFields: {
             withCredentials: true
         },
@@ -24,14 +25,16 @@ $(function() {
  * 根据jquery源码重写的get、put、post、delete请求，针对resful风格
  * 作者：Ljy
  */
-jQuery.each( [ "getResful", "putResful","postResful","deleteResful"], function( i, method ) {
+jQuery.each( [ "getResful", "postResful","putResful","patchResful","deleteResful"], function( i, method ) {
     jQuery[ method ] = function( url, data, callback, type ) {
     	if(method=="getResful"){
     		method="get";
-    	}else if(method=="putResful"){
-    		method="put";
     	}else if(method=="postResful"){
     		method="post";
+    	}else if(method=="putResful"){
+    		method="put";
+    	}else if(method=="patchResful"){
+    		method="patch";
     	}else if(method=="deleteResful"){
     		method="delete";
     	}

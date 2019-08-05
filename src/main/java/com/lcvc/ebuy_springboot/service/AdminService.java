@@ -34,6 +34,12 @@ public interface AdminService {
     void deleteAdmin(Integer id);
 
     /**
+     * 批量删除指定账户
+     * @param ids 多个账户的主键集合
+     */
+    void deleteAdmins(int[] ids);
+
+    /**
      * 添加管理员
      * 说明：账户名和密码不能为空
      * @param admin
