@@ -3,7 +3,7 @@
 
 	<head>
 		<meta charset="utf-8">
-		<title>管理员管理模块</title>
+		<title>客户管理模块</title>
 		<meta name="renderer" content="webkit">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -18,26 +18,27 @@
 		<!--定义表格的头部工具栏-->
 		<script type="text/html" id="toolbar">
 			<div class="layui-btn-container">
-				<button class="layui-btn layui-btn-sm" lay-event="createAdmin">创建管理账户</button>
-				<button class="layui-btn layui-btn-sm" lay-event="deleteAdmins">批量删除管理账户</button>
+				<button class="layui-btn layui-btn-sm" lay-event="createCustomer">创建客户</button>
+				<button class="layui-btn layui-btn-sm" lay-event="deleteCustomers">批量删除客户</button>
 			</div>
 		</script>
 		<!--定义表格邮编的行工具栏-->
 		<script type="text/html" id="barDemo">
 			<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
-			<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+			<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="resetPassword">重置密码</a>
 		</script>
 
 		<script>
 			var rowId;//获取行的信息，此处设置的目的是为了在打开账户编辑窗口时，将账户id传递给子窗口（注：如果不是前后端分离，可以直接通过url将参数传递过去,不需要单独处理）
+			var dataSearchFrom;
 			layui.use('table', function() {
-				var table = layui.table;
+				var table = layui.table;				
 
 				table.render({
-					id:'adminmanage_table',
-					elem: '#admins',
-					title: '管理账户数据表',
-					url: webUrl + 'backstage/adminmanage',
+					id:'customermanage_table',
+					elem: '#customers',
+					title: '客户数据表',
+					url: webUrl + 'backstage/customermanage',
 					method: 'get',
 					toolbar: '#toolbar', //定义表格的头部工具栏
 					cellMinWidth: 80, //全局定义常规单元格的最小宽度，layui 2.2.1 新增
@@ -45,12 +46,21 @@
 					page: true, //开启分页
 					cols: [[
 						{type: 'checkbox'} //假如复选框，用于批量操作
-						, {field: 'username',width: 200,title: '用户名',sore: true,edit: 'text'}
-						, {field: 'password',width: 300,title: '密码'}
-						, {field: 'name',width: 200,title: '网名',sort: true}
+						, {field: 'username',title: '用户名'}
+						, {
+							field: 'initialPasswordStatus',
+							title: '密码状态',
+							sort: true,
+							templet:function(d){
+								if(d.initialPasswordStatus==true){
+									return '初始密码';
+						   	 	}else{
+						   	 		return '密码已变更';
+						   		}						   	
+						   }}
+						, {field: 'name',title: '姓名'}
 						, {
 							field: 'sex',
-							width: 200,
 							title: '性别',
 							sort: true,
 							templet:function(d){
@@ -60,29 +70,33 @@
 						   	 		return '女';
 						   		}						   	
 						   }}
-						, {field: 'createTime',width: 200,title: '注册时间',sort: true}
-						, {fixed: 'right',title: '操作',toolbar: '#barDemo'}
+						, {field: 'tel',title: '电话'}
+						, {field: 'address',title: '地址'}
+						, {field: 'zip',title: '邮编'}
+						, {field: 'email',title: '邮箱'}
+						, {field: 'createTime',title: '注册时间',sort: true}
+						, {fixed: 'right',title: '操作',width: 150,toolbar: '#barDemo'}
 					]]
 				});
 
 				//头工具栏事件
-				table.on('toolbar(admins)', function(obj) {
+				table.on('toolbar(customers)', function(obj) {
 					var checkStatus = table.checkStatus(obj.config.id);
 					switch(obj.event) {
-						case 'createAdmin':
+						case 'createCustomer':
 							layer.open({
 								title:false,
-								//title: '创建管理账户',
+								//title: '创建客户',
 								type: 2,
-								area: ['450px', '370px'],
-								content: 'adminadd.html', //这里content是一个URL，如果你不想让iframe出现滚动条，你还可以content: ['http://sentsin.com', 'no']
+								area: ['500px', '550px'],
+								content: 'customeradd.html', //这里content是一个URL，如果你不想让iframe出现滚动条，你还可以content: ['http://sentsin.com', 'no']
 								cancel: function(index, layero) { //当前层索引参数（index）、当前层的DOM对象（layero)
-									table.reload('adminmanage_table');//重新刷新表格数据
+									table.reload('customermanage_table');//重新刷新表格数据
 									layer.close(index);
 								}
 							});
 							break;
-						case 'deleteAdmins':
+						case 'deleteCustomers':
 							var datas = checkStatus.data;//获取选中的数据
 							if(datas.length==0){
 								layer.msg('请先选择记录');
@@ -99,11 +113,11 @@
 								    }
 								}
 								layer.confirm('确定要批量删除这些账户(' + usernames + ')吗？', function(index) {
-									$.deleteResful(webUrl + "//backstage/adminmanage/deletes/" + ids, 
+									$.deleteResful(webUrl + "//backstage/customermanage/" + ids, 
 										function(msg) {
 											if(msg.code == 0) {
 												layer.msg("删除成功");
-												table.reload('adminmanage_table');//重新刷新表格数据
+												table.reload('customermanage_table');//重新刷新表格数据
 												 //location.reload(true);刷新整个页面											
 											} else {
 												layer.msg("删除失败");
@@ -122,18 +136,17 @@
 				});
 				
 				//监听行工具事件
-				table.on('tool(admins)', function(obj) {
+				table.on('tool(customers)', function(obj) {
 					var data = obj.data; //获取该行的记录
 					//console.log(obj)
-					if(obj.event === 'del') {
-						layer.confirm('确定删除账户' + data.username + '吗', function(index) {
+					if(obj.event === 'resetPassword') {
+						layer.confirm('确定重置账户（' + data.username + '）的密码吗？', function(index) {
 							//$.deleteResful，自定义的删除插件，针对resful风格设计
-							$.deleteResful(webUrl + "//backstage/adminmanage/" + data.id, function(msg) {
+							$.putResful(webUrl + "/backstage/customermanage/resetPassword/" + data.id, function(msg) {
 								if(msg.code == 0) {
-									obj.del();
-								} else {
-									layer.msg("删除失败");
-								}
+									layer.msg("密码重置成功");
+									table.reload('customermanage_table');//重新刷新表格数据
+								} 
 							})
 							layer.close(index);
 						});
@@ -144,21 +157,63 @@
 								//title: '编辑管理账户',
 								type: 2,
 								area: ['450px', '370px'],
-								content: 'adminupdate.html', //这里content是一个URL，如果你不想让iframe出现滚动条，你还可以content: ['http://sentsin.com', 'no']
+								content: 'customerupdate.html', //这里content是一个URL，如果你不想让iframe出现滚动条，你还可以content: ['http://sentsin.com', 'no']
 								cancel: function(index, layero) { //当前层索引参数（index）、当前层的DOM对象（layero)
-									table.reload('adminmanage_table');//重新刷新表格数据
+									table.reload('customermanage_table');//重新刷新表格数据
 									rowId=null;//清空保存的行信息（用于传递给子窗口）
 									layer.close(index);
 								}
 						});
 					}
-				});
-			});
+				})
+				
+				
+				
+				 // 执行搜索，表格重载
+    			$('#search_button').on('click', function() {
+	    			// 搜索条件
+	    			var username = $('input[name="username"]').val();
+	    			var name = $('input[name="name"]').val();
+	    			var sex = $('select[name="sex"]').val();
+	    			table.reload('customermanage_table', {
+	    				page: {
+	    					curr: 1
+	    				},
+	    				where: {
+	    					'username': username,
+	    					'name': name,
+	    					'sex': sex
+	    				}	    				
+    				});
+    			});	
+    		});	
+    		
+
 		</script>
 	</head>
 
 	<body>
-		<table class="layui-hide" id="admins" lay-filter="admins"></table>
+		<form class="layui-form">
+			账户名：
+			<div class="layui-inline">
+				<input type="text" name="username" autocomplete="off" placeholder="请输入账户名" class="layui-input">
+			</div>		
+			姓名：
+			<div class="layui-inline">
+				<input type="text" name="name" autocomplete="off" placeholder="请输入姓名" class="layui-input">
+			</div>	
+			性别：
+			<div class="layui-input-inline">
+					<select name="sex" lay-verify="sex">
+						<option value="">请选择</option>
+						<option value="1">男</option>
+						<option value="2">女</option>
+					</select>
+			</div>
+			
+			<button class="layui-btn" data-type="reload" id="search_button" type="button">搜索</button>
+		</form>
+		<table class="layui-hide" id="customers" lay-filter="customers"></table>
 	</body>
 
 </html>

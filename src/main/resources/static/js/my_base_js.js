@@ -6,7 +6,7 @@ $(function() {
     $.ajaxSetup({
         timeout: 500000, //超时时间设置，单位毫秒。要后端调试的时候，这里可以设置长些
         cache:false, //是否进行数据缓存
-        contentType:"application/json",
+        //contentType:"application/json",这里不能随意加，否则会导致表单（$myForm.serialize()方式）传值时，服务端可能接收不到
         xhrFields: {
             withCredentials: true
         },

@@ -27,7 +27,7 @@ public class AdminManageController {
 
 
 	/**
-	 * 分页读取所有管理账户雷暴
+	 * 分页读取所有管理账户信息
 	 * @param page 当前页码
 	 * @param limit 每页最多展示的记录数
 	 * @return
@@ -48,7 +48,7 @@ public class AdminManageController {
 	 * @return
 	 */
 	@DeleteMapping("/{id}")
-	public Map<String, Object> doDeleteAdmin(@PathVariable Integer id, HttpSession session){
+	public Map<String, Object> deleteAdmin(@PathVariable Integer id, HttpSession session){
 		Map<String, Object> map=new HashMap<String, Object>();
 		adminService.deleteAdmin(id);
 		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
@@ -70,7 +70,7 @@ public class AdminManageController {
 	 * @return
 	 */
 	@DeleteMapping("/deletes/{ids}")
-	public Map<String, Object> doDeleteAdmins(@PathVariable("ids")int[] ids){
+	public Map<String, Object> deleteAdmins(@PathVariable("ids")int[] ids){
 		Map<String, Object> map=new HashMap<String, Object>();
 		adminService.deleteAdmins(ids);
 		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
@@ -110,6 +110,11 @@ public class AdminManageController {
 		return map;
 	}
 
+	/**
+	 * 编辑账户信息
+	 * @param admin
+	 * @return
+	 */
 	@PutMapping
 	public Map<String, Object> updateAdmin(@RequestBody Admin admin){
 		Map<String, Object> map=new HashMap<String, Object>();

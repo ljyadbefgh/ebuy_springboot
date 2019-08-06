@@ -87,14 +87,14 @@ public interface AdminDao {
 	 * @param username
      * @return
      */
-	int countAdminByUsername(String username);
+	int countUsername(String username);
 
 	/**
-	 * 查找在数据库中和指定用户名重名的个数
-	 * @param username
-	 * @param id
-	 * @return 返回重名的个数，0表示不重名
+	 * 查找在数据库中除了指定账户外，和该用户名一样的个数
+	 * @param username 要统计的账户名
+	 * @param id 账户主键，除了该账户外
+	 * @return 返回相同用户名的个数，0表示不重名
 	 */
-	int existsAdmin(@Param(value = "username")String username,@Param(value = "id")Integer id);
+	int countOtherUsername(@Param(value = "username")String username,@Param(value = "id")Integer id);
 }
 

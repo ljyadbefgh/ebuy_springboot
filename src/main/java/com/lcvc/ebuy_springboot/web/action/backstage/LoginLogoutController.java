@@ -34,7 +34,7 @@ public class LoginLogoutController {
 	@ResponseBody
 	@RequestMapping(value = "/login")
 	public Map<String, Object> login(String username, String password, HttpSession session){
-		Map<String, Object> map=new HashMap<String, Object>();
+	Map<String, Object> map=new HashMap<String, Object>();
 		if(adminService.login(username, password)){
 			session.setAttribute("admin",adminService.getAdmin(username));
 			map.put(Constant.JSON_CODE, 0);

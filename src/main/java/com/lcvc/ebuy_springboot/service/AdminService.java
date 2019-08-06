@@ -63,7 +63,7 @@ public interface AdminService {
 
     /**
      * 编辑管理员
-     * 说明：账户名和密码不能为s空
+     * 说明：
      * @param admin
      */
     boolean updateAdmin(Admin admin) throws MyFormException;

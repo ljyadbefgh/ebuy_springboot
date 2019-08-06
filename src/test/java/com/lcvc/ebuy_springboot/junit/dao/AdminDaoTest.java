@@ -58,11 +58,11 @@ public class AdminDaoTest  extends EbuySpringbootApplicationTests {
 
     @Test
     public void testCountAdminByUsername(){
-        System.out.println("账户同名数量："+adminDao.countAdminByUsername("admin"));
+        System.out.println("账户同名数量："+adminDao.countUsername("admin"));
     }
 
     @Test
     public void testExitsAdmin(){
-        System.out.println(adminDao.existsAdmin("liangxiu1",2));
+        System.out.println(adminDao.countOtherUsername("liangxiu1",2));
     }
 }

@@ -64,7 +64,7 @@ public class AdminServiceImpl implements AdminService {
             if(admin.getName().equals("")){
                 throw new MyFormException("添加失败：姓名不能为空");
             }
-            if(adminDao.countAdminByUsername(admin.getUsername())==0){
+            if(adminDao.countUsername(admin.getUsername())==0){
                 admin.setPassword(SHA.getResult("123456"));
                 admin.setCreateTime(Calendar.getInstance().getTime());//获取当前时间为创建时间
                 adminDao.add(admin);
@@ -99,7 +99,7 @@ public class AdminServiceImpl implements AdminService {
         boolean status = false;// 默认编辑失败
         if(admin.getUsername().length()==0){
             throw new MyFormException("账户名不能为空");
-        }else if(adminDao.existsAdmin(admin.getUsername(),admin.getId())>0) {//如果账户名重名
+        }else if(adminDao.countOtherUsername(admin.getUsername(),admin.getId())>0) {//如果账户名重名
             throw new MyFormException("和其他管理账户的账户名重名");
         }else{
             int i = adminDao.update(admin);// 更改了多少条记录

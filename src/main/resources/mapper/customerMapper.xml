@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lcvc.ebuy_springboot.dao.CustomerDao">
+	<!-- parameterType表示要传入的参数的类型 ，resultType表示要返回的数据的类型-->
+
+	<select id="get" resultType="Customer">
+		select * from customer where id=#{id}
+	</select>
+	
+	<insert id="save">
+	    insert into 
+	    customer(id,username,password,name,sex,picUrl,tel,address,zip,email,intro,createTime)
+	    values(null,#{username},#{password},#{name},#{sex},#{picUrl},#{tel},#{address},#{zip},#{email},#{intro},#{createTime})
+	</insert>
+
+
+	
+	<update id="update">
+	    update customer		
+		<set>
+			<if test="username!=null and username.length()>0">username=#{username},</if>
+			<if test="password!=null and password.length()>0">password=#{password},</if>
+			<if test="name!=null and name.length()>0">name=#{name},</if>
+			<if test="sex!=null">sex=#{sex},</if>
+			<if test="picUrl!=null">picUrl=#{picUrl},</if>
+			<if test="tel!=null">tel=#{tel},</if>
+			<if test="address!=null">address=#{address},</if>
+			<if test="zip!=null">zip=#{zip},</if>
+			<if test="email!=null">email=#{email},</if>
+			<if test="intro!=null">intro=#{intro},</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<delete id="deletes" >
+		delete from customer where id in
+		<foreach item="item" collection="array" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</delete>
+
+	<select id="readAll" resultType="Customer">
+		select * from customer order by id desc
+	</select>
+
+	<select id="total" resultType="int">
+       select count(1) from customer
+    </select>
+
+	<select id="querySize" resultType="int">
+		select count(1) from customer
+		<if test="objectQuery!=null">
+			<where>
+				<if test="objectQuery.username!=null and objectQuery.username.length()>0">
+					<!-- bind，重新定义一个变量，可用于模糊查询等，并且可以直接覆盖原变量 -->
+					<bind name="username" value="'%' + _parameter.objectQuery.username + '%'" />
+					and username like #{username}
+				</if>
+				<if test="objectQuery.name!=null and objectQuery.name.length()>0">
+					<bind name="name" value="'%' + _parameter.objectQuery.name + '%'" />
+					and name like #{name}
+				</if>
+				<if test="objectQuery.sex!=null and  objectQuery.sex!=0">
+					and sex=#{objectQuery.sex}
+				</if>
+			</where>
+		</if>
+    </select>
+
+	<select id="query" resultType="Customer">
+        select * from customer
+		<if test="objectQuery!=null">
+			<where>
+				<if test="objectQuery.username!=null and objectQuery.username.length()>0">
+					<!-- bind，重新定义一个变量，可用于模糊查询等，并且可以直接覆盖原变量 -->
+					<bind name="username" value="'%' + _parameter.objectQuery.username + '%'" />
+					and username like #{username}
+				</if>
+				<if test="objectQuery.name!=null and objectQuery.name.length()>0">
+					<bind name="name" value="'%' + _parameter.objectQuery.name + '%'" />
+					and name like #{name}
+				</if>
+				<if test="objectQuery.sex!=null and  objectQuery.sex!=0">
+					and sex=#{objectQuery.sex}
+				</if>
+			</where>
+		</if>
+		order by id asc limit #{offset},#{length}
+    </select>
+
+
+	<select id="countUsername" resultType="int">
+		select count(id) from customer where username=#{username}
+	</select>
+
+	<select id="countOtherUsername" resultType="int">
+		select count(id) from customer where username=#{username} and id!=#{id}
+	</select>
+</mapper>

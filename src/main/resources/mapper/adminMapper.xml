@@ -46,11 +46,11 @@
         select count(1) from admin
     </select>
 
-    <select id="countAdminByUsername"  resultType="int">
+    <select id="countUsername"  resultType="int">
         select count(id) from admin where username=#{username}
     </select>
 
-    <select id="existsAdmin" resultType="int">
+    <select id="countOtherUsername" resultType="int">
 		select count(id) from admin where username=#{username} and id!=#{id}
 	</select>
 

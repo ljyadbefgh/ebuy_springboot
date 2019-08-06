@@ -21,7 +21,7 @@
 		<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
 			<legend>编辑管理账户</legend>
 		</fieldset>
-		<form id="editAdminForm" lay-filter="editAdminForm"  class="layui-form" action="" style="padding:10px 20px">
+		<form lay-filter="editAdminForm"  class="layui-form layui-form-pane" action="" style="padding:10px 20px">
 			<input type="hidden" name="id"/>
 			<div class="layui-form-item">
 				<label class="layui-form-label">账户名</label>
@@ -59,9 +59,9 @@
 			layui.use('form', function() { //表单插件初始化
 				var form = layui.form;
 				
-				
+				//读取当前记录
 				$.getJSON(
-					webUrl + "backstage/adminmanage/"+parent.rowId,
+					webUrl + "backstage/adminmanage/"+parent.rowId,//parent.rowId,获取父窗口的变量
 				    function(msg){
 				    	if(msg.code==0){
 				    		var admin=msg.data;
@@ -80,6 +80,9 @@
 				//自定义表单验证规则
 				form.verify({
 					username: function(value) {
+						if(value.length==0){
+							return "账户名不能为空";
+						}
 						if(!new RegExp("^[a-zA-Z0-9_\u4e00-\u9fa5\\s·]+$").test(value)) {
 							return '用户名不能有特殊字符';
 						}
