@@ -39,8 +39,8 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public PageObject searchAdmins(Integer page, Integer limit) {
-        PageObject pageObject = new PageObject(limit,page,adminDao.querySize());
-        pageObject.setList(adminDao.query(pageObject.getOffset(),pageObject.getLimit()));
+        PageObject pageObject = new PageObject(limit,page,adminDao.querySize(null));
+        pageObject.setList(adminDao.query(pageObject.getOffset(),pageObject.getLimit(),null));
         return pageObject;
     }
 
@@ -51,7 +51,7 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public void deleteAdmins(int[] ids) {
+    public void deleteAdmins(Integer[] ids) {
         adminDao.deletes(ids);
     }
 
@@ -67,7 +67,7 @@ public class AdminServiceImpl implements AdminService {
             if(adminDao.countUsername(admin.getUsername())==0){
                 admin.setPassword(SHA.getResult("123456"));
                 admin.setCreateTime(Calendar.getInstance().getTime());//获取当前时间为创建时间
-                adminDao.add(admin);
+                adminDao.save(admin);
             }else{
                 throw new MyFormException("添加失败：账户名重名");
             }
