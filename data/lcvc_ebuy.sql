@@ -11,7 +11,7 @@
  Target Server Version : 80016
  File Encoding         : 65001
 
- Date: 05/08/2019 19:58:00
+ Date: 07/08/2019 00:28:06
 */
 
 SET NAMES utf8mb4;
@@ -29,21 +29,19 @@ CREATE TABLE `admin`  (
   `sex` int(11) NULL DEFAULT NULL COMMENT '性别（1表示男，2表示女）',
   `createTime` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 86 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 88 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of admin
 -- ----------------------------
-INSERT INTO `admin` VALUES (-99, 'liangdian', 'e10adc3949ba59abbe56e057f20f883e', '管理员', 2, '2013-08-23 15:33:01');
+INSERT INTO `admin` VALUES (-99, 'liandian', 'e10adc3949ba59abbe56e057f20f883e', '管理员1', 1, '2013-08-23 15:33:01');
 INSERT INTO `admin` VALUES (1, 'user', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '阿斯顿发1', 1, '2013-08-23 15:33:01');
-INSERT INTO `admin` VALUES (2, 'liangxiu1', '123456', '测试账户-梁X1', 1, '2013-08-23 15:33:01');
 INSERT INTO `admin` VALUES (15, '666aasdf', 'e10adc3949ba59abbe56e057f20f883e', '密码是777', 1, '2013-10-15 17:28:57');
 INSERT INTO `admin` VALUES (18, '77676', 'e10adc3949ba59abbe56e057f20f883e', '密码是', 1, '2013-10-15 17:30:01');
 INSERT INTO `admin` VALUES (19, '75565', 'c605e6e35ed4c1c955a081a2980a7fa5', '密码是！@#', 1, '2013-10-15 17:30:27');
 INSERT INTO `admin` VALUES (23, '554523', 'e10adc3949ba59abbe56e057f20f883e', 'kkk', 1, '2013-10-15 17:38:10');
 INSERT INTO `admin` VALUES (25, 'dfdsfsdf', 'e10adc3949ba59abbe56e057f20f883e', '665656', 1, '2013-10-15 17:38:34');
 INSERT INTO `admin` VALUES (28, 't65765', 'e10adc3949ba59abbe56e057f20f883e', '7676', 1, '2013-10-15 17:39:29');
-INSERT INTO `admin` VALUES (29, '6767123', 'e10adc3949ba59abbe56e057f20f883e', '767657', 1, '2013-10-15 17:39:34');
 INSERT INTO `admin` VALUES (31, '67457464', 'e10adc3949ba59abbe56e057f20f883e', '6464565', 1, '2013-10-15 17:39:50');
 INSERT INTO `admin` VALUES (37, '2223232', 'e10adc3949ba59abbe56e057f20f883e', '2223232', 1, '2013-10-15 17:41:00');
 INSERT INTO `admin` VALUES (39, 'fefdsadf', 'e10adc3949ba59abbe56e057f20f883e', 'fdfdf', 1, '2013-10-16 09:13:46');
@@ -81,6 +79,8 @@ INSERT INTO `admin` VALUES (80, 'adfadfadf', '123456', '第三方', 1, NULL);
 INSERT INTO `admin` VALUES (81, 'adfadfadf1', '123456', '第三方', 2, NULL);
 INSERT INTO `admin` VALUES (82, 'ljyadbefgh1', '123456', '洪洪', 2, NULL);
 INSERT INTO `admin` VALUES (85, 'user11111', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '撒旦法', 2, '2019-08-05 00:01:10');
+INSERT INTO `admin` VALUES (86, 'useraaaa', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '123', 1, '2019-08-05 23:24:04');
+INSERT INTO `admin` VALUES (87, 'use', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '12313', 2, '2019-08-05 23:24:40');
 
 -- ----------------------------
 -- Table structure for customer
@@ -91,6 +91,7 @@ CREATE TABLE `customer`  (
   `username` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '账户名',
   `password` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '账户密码',
   `name` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '客户名称',
+  `sex` int(255) NULL DEFAULT 0 COMMENT '性别，1男2女',
   `tel` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '移动电话',
   `address` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '客户地址',
   `zip` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '客户地址的邮编',
@@ -99,14 +100,25 @@ CREATE TABLE `customer`  (
   `intro` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '客户信息备注，简介',
   `createTime` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 12 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 24 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of customer
 -- ----------------------------
-INSERT INTO `customer` VALUES (1, 'xiaoer', '888888', '张三', '13124123132', '柳州市恒大小区', '13432', '1312313@qq.com', NULL, '张三丰传人', '2013-11-21 17:31:46');
-INSERT INTO `customer` VALUES (9, 'wenye', '123456', '温晓峰', '12344513121', '柳州市宝骏', '55233', '23123123@qq.com', NULL, '温爷传人', '2013-11-21 17:31:46');
-INSERT INTO `customer` VALUES (12, 'zhizunbao', '666666', '至尊宝', '13633083252', '桂林市大河小区', '151431', 'asdfa@163.com', '', '你们懂的', '2013-11-21 17:39:38');
+INSERT INTO `customer` VALUES (1, 'xiaoer', '888888', '张三', 1, '13124123132', '柳州市恒大小区', '13432', '1312313@qq.com', NULL, '张三丰传人', '2013-11-21 17:31:46');
+INSERT INTO `customer` VALUES (9, 'wenye', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '温晓峰', 2, '12344513121', '柳州市宝骏', '55233', '23123123@qq.com', NULL, '温爷传人', '2013-11-21 17:31:46');
+INSERT INTO `customer` VALUES (12, 'zhizunbao', '666666', '至尊宝', 1, '13633083252', '桂林市大河小区', '151431', 'asdfa@163.com', '', '你们懂的', '2013-11-21 17:39:38');
+INSERT INTO `customer` VALUES (13, 'user1', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '客户1', 1, '17703771999', '', '', '', NULL, '', '2019-08-06 15:03:13');
+INSERT INTO `customer` VALUES (14, 'user2', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '客户2', 1, '15388889881', '北京市顺义区', '000000', '13233@qq.com', NULL, '非常友善', '2019-08-06 15:06:53');
+INSERT INTO `customer` VALUES (15, 'user3', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '客户3', 1, '15388889881', '广东省广州市', '000000', '1352312@qq.com', NULL, '长隆', '2019-08-06 15:07:48');
+INSERT INTO `customer` VALUES (16, 'user4', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '客户4', 2, '18083815777', '', '', '', NULL, '', '2019-08-06 15:08:48');
+INSERT INTO `customer` VALUES (17, 'abc1', 'fh58q2ea6thauof5ikg98fe2ciafh50r', 'ABC客户1', 1, '15377892222', '', '', '', NULL, '', '2019-08-06 15:09:12');
+INSERT INTO `customer` VALUES (18, 'abc2', 'fh58q2ea6thauof5ikg98fe2ciafh50r', 'ABC客户2', 2, '18168526111', '', '', '', NULL, '', '2019-08-06 16:21:41');
+INSERT INTO `customer` VALUES (19, 'abc3', 'fh58q2ea6thauof5ikg98fe2ciafh50r', 'ABC客户3', 1, '18100800709', '', '', '', NULL, '', '2019-08-06 16:22:12');
+INSERT INTO `customer` VALUES (20, 'abc4', 'fh58q2ea6thauof5ikg98fe2ciafh50r', 'ABC客户4', 1, '15377892222', '', '', '', NULL, '', '2019-08-06 15:09:12');
+INSERT INTO `customer` VALUES (21, 'abc5', 'fh58q2ea6thauof5ikg98fe2ciafh50r', 'ABC客户5', 1, '15377892222', '', '', '', NULL, '', '2019-08-06 15:09:12');
+INSERT INTO `customer` VALUES (22, 'abc6', 'fh58q2ea6thauof5ikg98fe2ciafh50r', 'ABC客户6', 1, '15377892222', '', '', '', NULL, '', '2019-08-06 15:09:12');
+INSERT INTO `customer` VALUES (23, 'abc11', 'fh58q2ea6thauof5ikg98fe2ciafh50r', 'abc客户11', 1, '13357024777', '', '', '', NULL, '', '2019-08-06 16:25:07');
 
 -- ----------------------------
 -- Table structure for order_detail
@@ -236,7 +248,7 @@ CREATE TABLE `producttype`  (
   `intro` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '栏目简介',
   `orderNum` int(11) NULL DEFAULT 0 COMMENT '排序（默认0，规则由前台决定，一般排序为最大）',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 25 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 26 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of producttype
