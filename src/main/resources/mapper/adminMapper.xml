@@ -29,7 +29,7 @@
         select * from admin where username=#{username}
     </select>
 
-    <insert id="add">
+    <insert id="save">
           insert into admin(id,username,password,name,sex,createTime)
           values(null,#{username},#{password},#{name},#{sex},#{createTime})
     </insert>

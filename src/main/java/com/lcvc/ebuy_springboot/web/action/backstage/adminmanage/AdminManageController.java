@@ -70,7 +70,7 @@ public class AdminManageController {
 	 * @return
 	 */
 	@DeleteMapping("/deletes/{ids}")
-	public Map<String, Object> deleteAdmins(@PathVariable("ids")int[] ids){
+	public Map<String, Object> deleteAdmins(@PathVariable("ids")Integer[] ids){
 		Map<String, Object> map=new HashMap<String, Object>();
 		adminService.deleteAdmins(ids);
 		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());

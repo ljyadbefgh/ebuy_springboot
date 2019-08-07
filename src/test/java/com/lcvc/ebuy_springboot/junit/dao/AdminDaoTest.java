@@ -26,7 +26,7 @@ public class AdminDaoTest  extends EbuySpringbootApplicationTests {
 
     @Test
     public void testDeletes(){
-        System.out.println(adminDao.deletes(new int[]{85,87}));
+        System.out.println(adminDao.deletes(new Integer[]{85,87}));
     }
 
     @Test
@@ -43,7 +43,7 @@ public class AdminDaoTest  extends EbuySpringbootApplicationTests {
         admin.setUsername("user9");
         admin.setPassword("13");
         admin.setName("小红");
-        adminDao.add(admin);
+        adminDao.save(admin);
     }
 
     @Test
@@ -53,7 +53,7 @@ public class AdminDaoTest  extends EbuySpringbootApplicationTests {
 
     @Test
     public void testQuerySize(){
-        System.out.println("账户总数："+adminDao.querySize());
+        System.out.println("账户总数："+adminDao.querySize(null));
     }
 
     @Test

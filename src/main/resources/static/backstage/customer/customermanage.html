@@ -25,6 +25,7 @@
 		<!--定义表格邮编的行工具栏-->
 		<script type="text/html" id="barDemo">
 			<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+			<a class="layui-btn layui-btn-xs" lay-event="uploadPhoto">上传头像</a>
 			<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="resetPassword">重置密码</a>
 		</script>
 
@@ -75,7 +76,7 @@
 						, {field: 'zip',title: '邮编'}
 						, {field: 'email',title: '邮箱'}
 						, {field: 'createTime',title: '注册时间',sort: true}
-						, {fixed: 'right',title: '操作',width: 150,toolbar: '#barDemo'}
+						, {fixed: 'right',title: '操作',width: 200,toolbar: '#barDemo'}
 					]]
 				});
 
@@ -164,6 +165,9 @@
 									layer.close(index);
 								}
 						});
+					}else if(obj.event === 'uploadPhoto') {
+						rowId=data.id;//将id值传递给全局变量
+						layer.msg("该功能还在开发中");
 					}
 				})
 				
