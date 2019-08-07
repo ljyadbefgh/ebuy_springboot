@@ -28,6 +28,8 @@ spring:
       database: 0  #代表使用的是redis默认提供的db0这个数据库。
       redis-maxIdle: 500  #redis server的最大空闲数。
       redis-maxWait: 4000  #是连接redis时的最大等待毫秒数。
+  session:
+    store-type: redis #指定Session 的存储方式为redis
   jackson:    #设置全局json格式
     date-format: yyyy-MM-dd HH:mm   #将日期类型设置为字符串表示
     time-zone: GMT+8

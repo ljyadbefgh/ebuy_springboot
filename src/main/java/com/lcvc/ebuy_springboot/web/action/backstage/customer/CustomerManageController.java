@@ -81,7 +81,7 @@ public class CustomerManageController {
 	 * @param customer
 	 * @return
 	 */
-	@PutMapping
+	@PatchMapping
 	public Map<String, Object> updateCustomer(@RequestBody Customer customer){
 		Map<String, Object> map=new HashMap<String, Object>();
 		map.put(Constant.JSON_CODE, JsonCode.ERROR.getValue());
@@ -109,7 +109,7 @@ public class CustomerManageController {
 	}
 
 
-	@PutMapping("/resetPassword/{id}")
+	@PatchMapping("/resetPassword/{id}")
 	public Map<String, Object> resetPassword(@PathVariable Integer id){
 		Map<String, Object> map=new HashMap<String, Object>();
 		customerService.resetPassword(id);

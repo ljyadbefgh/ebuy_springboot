@@ -1,6 +1,7 @@
 package com.lcvc.ebuy_springboot.web.action.backstage;
 
 
+import com.lcvc.ebuy_springboot.model.Admin;
 import com.lcvc.ebuy_springboot.model.Constant;
 import com.lcvc.ebuy_springboot.service.AdminService;
 import org.springframework.stereotype.Controller;
@@ -8,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,10 +36,27 @@ public class LoginLogoutController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/login")
-	public Map<String, Object> login(String username, String password, HttpSession session){
-	Map<String, Object> map=new HashMap<String, Object>();
+	public Map<String, Object> login(String username, String password, HttpServletRequest request){
+		Map<String, Object> map=new HashMap<String, Object>();
+
+		//cookie信息,用于讲解用，正式项目不需要
+		Cookie[] cookies = request.getCookies();
+		if(null!=cookies && cookies.length>0) {
+			for(Cookie c:cookies) {
+				System.out.printf("cookieName-%s, cookieValue-%s, cookieAge-%d%n", c.getName(), c.getValue(), c.getMaxAge());
+			}
+		}
 		if(adminService.login(username, password)){
-			session.setAttribute("admin",adminService.getAdmin(username));
+			Admin admin=adminService.getAdmin(username);//
+			if(request.getSession(false) != null) {
+				System.out.println("每次登录成功改变SessionID！");
+				request.changeSessionId(); //安全考量，每次登陆成功改变 Session ID，原理：原来的session注销，拷贝其属性建立新的session对象
+				//新建/刷新session对象
+				HttpSession session = request.getSession();
+				System.out.printf("sessionId: %s%n", session.getId());
+				session.setAttribute("username",username);
+				session.setAttribute("password",password);
+			}
 			map.put(Constant.JSON_CODE, 0);
 		}else{
 			map.put(Constant.JSON_CODE, -1);

@@ -19,6 +19,8 @@
 		<!--mysal驱动包-->
 		<mysql.version>8.0.16</mysql.version>
 		<mybatis.version>3.4.2</mybatis.version>
+		<!--实现JSON必须包，添加该包后Maven会自动下载该类需要的其他jar:如common-collection,commons-beanutils，commons-lang，commons-logging，ezmorph等依赖包-->
+		<json-lib.version>2.4</json-lib.version>
 	</properties>
 
 	<dependencies>
@@ -66,6 +68,14 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-redis</artifactId>
+		</dependency>
+
+		<!--添加json（手动JSON转换，比如用在拦截器）所需要的包-->
+		<dependency>
+			<groupId>net.sf.json-lib</groupId>
+			<artifactId>json-lib</artifactId>
+			<version>${json-lib.version}</version>
+			<classifier>jdk15</classifier>
 		</dependency>
 	</dependencies>
 

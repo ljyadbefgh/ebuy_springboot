@@ -12,6 +12,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,8 +34,11 @@ public class AdminManageController {
 	 * @return
 	 */
 	@GetMapping
-	public Map<String, Object> toManageAdmin(Integer page,Integer limit){
+	public Map<String, Object> toManageAdmin(Integer page,Integer limit, HttpServletRequest request){
         Map<String, Object> map=new HashMap<String, Object>();
+		//新建/刷新session对象
+		HttpSession session = request.getSession();
+		System.out.printf("sessionId: %s%n", session.getId());
         map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
 		PageObject pageObject =adminService.searchAdmins(page,limit);
 		map.put(Constant.JSON_TOTAL,pageObject.getTotalRecords());
@@ -115,7 +119,7 @@ public class AdminManageController {
 	 * @param admin
 	 * @return
 	 */
-	@PutMapping
+	@PatchMapping
 	public Map<String, Object> updateAdmin(@RequestBody Admin admin){
 		Map<String, Object> map=new HashMap<String, Object>();
 		map.put(Constant.JSON_CODE, JsonCode.ERROR.getValue());
