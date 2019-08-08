@@ -10,21 +10,21 @@ import java.util.concurrent.TimeUnit;
 public class RedisUtil {
 
     @Autowired
-    RedisTemplate<String, String> redisTemplate;
+    private RedisTemplate redisTemplate;
 
     /**
      * 添加基本数据
      * @param key
      * @param value
      */
-    public void add(String key,String value) {
+    public void add(String key,Object value) {
         redisTemplate.opsForValue().set(key, value);
     }
-    public void add(String key,String value,Long time) {
+    public void add(String key,Object value,Long time) {
         redisTemplate.opsForValue().set(key, value, time, TimeUnit.MINUTES);
     }
 
-    public String get(String key) {
+    public Object get(String key) {
         return redisTemplate.opsForValue().get(key);
     }
 

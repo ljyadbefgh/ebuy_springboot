@@ -91,7 +91,7 @@
         $("#logout").click(function (e) {
             $.get(webUrl+"backstage/logout",
                 function (data) {
-                    if(data.code == 0) { //如果注销成功
+                    if(data.code == 0) { //如果注销成功                    	
                         layer.open({
                             btnAlign: 'c', //按钮居中
                             content: '成功注销用户，欢迎下次光临',
@@ -100,6 +100,8 @@
                                 layer.close(index); //如果设定了yes回调，需进行手工关闭
                             }
                         });
+                    }else{
+                    	layer.msg(data.msg);
                     }
                 }
             );

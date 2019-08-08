@@ -18,7 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping(value = "/backstage/adminmanage")
+@RequestMapping(value = "/api/backstage/adminmanage")
 public class AdminManageController {
 
 	public static final Log log= LogFactory.getLog(AdminManageController.class);
