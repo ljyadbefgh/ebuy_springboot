@@ -10,7 +10,6 @@
 		<!--导入layui插件-->
 		<link rel="stylesheet" href="../../plugins/layui/css/layui.css">
 		<script src="../../plugins/layui/layui.js"></script>
-		<!--导入自己的插件-->
 		<!--导入jquery插件-->
 		<script src="../../plugins/jquery.js"></script>
 		<!--导入自己插件：前端基础设置-->
@@ -61,7 +60,6 @@
 		</form>
 
 		<script>
-			//Demo
 			layui.use('form', function() { //表单插件初始化
 				var form = layui.form;
 
@@ -78,7 +76,7 @@
 							return '用户名不能全为数字';
 						}
 						if(value.length < 3 || value.length > 10) {
-							return '账户名长度必须在3-20个字符之间';
+							return '账户名长度必须在3-10个字符之间';
 						}
 					},
 					password: [
@@ -88,8 +86,8 @@
 						if(value.length == 0) {
 							return '请填写网名';
 						}
-						if(value.length > 10) {
-							return '网名长度不能超过10个字符';
+						if(value.length > 8) {
+							return '网名长度不能超过8个字符';
 						}
 					},
 					sex:function(value){

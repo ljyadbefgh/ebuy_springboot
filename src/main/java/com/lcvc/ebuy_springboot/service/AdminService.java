@@ -11,11 +11,11 @@ public interface AdminService {
     /**
      * 登录方法
      *
-     * @param username 账户名
-     * @param password 密码
+     * @param username 账户名，不能为空
+     * @param password 密码，不能为空
      * @return null表示登录失败
      */
-    boolean login(String username, String password);
+    boolean login(String username, String password) throws MyFormException;
 
     /**
      * 获取所有账户集合

@@ -31,7 +31,7 @@ public class CorsConfig implements WebMvcConfigurer {
                 //放行哪些原始域(头部信息)
                 .allowedHeaders("accept","content-type","application/json")
                 //放行哪些原始域(请求方式)，resful风格
-                .allowedMethods("GET", "POST", "PUT", "PATCH","DELETE")
+                .allowedMethods("OPTIONS","GET", "POST", "PUT", "PATCH","DELETE")
                 // 允许发送Cookie。在跨域登陆的时候可以用于登陆状态的保持
                 .allowCredentials(true)
                 //暴露哪些头部信息（因为跨域访问默认不能获取全部头部信息）
@@ -56,6 +56,7 @@ public class CorsConfig implements WebMvcConfigurer {
         config.addAllowedMethod("POST");
         config.addAllowedMethod("DELETE");
         config.addAllowedMethod("PATCH");
+        config.setMaxAge(3600L);
         source.registerCorsConfiguration("/api/**", config);
         FilterRegistrationBean bean = new FilterRegistrationBean(new CorsFilter(source));//CorsFilter是spring提供的cors过滤器，此处注册Filter过滤器，替代web.xml的过滤器配置
         bean.setOrder(Integer.MIN_VALUE);//设置成优先级最高

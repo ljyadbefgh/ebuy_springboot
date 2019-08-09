@@ -6,6 +6,7 @@ import com.lcvc.ebuy_springboot.model.base.PageObject;
 import com.lcvc.ebuy_springboot.model.exception.MyFormException;
 import com.lcvc.ebuy_springboot.service.AdminService;
 import com.lcvc.ebuy_springboot.util.SHA;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -23,10 +24,16 @@ public class AdminServiceImpl implements AdminService {
 
 
     @Override
-    public boolean login(String username, String password) {
+    public boolean login(String username, String password) throws MyFormException{
         boolean judge=false;
-        if(adminDao.login(username, SHA.getResult(password))==1){
-            judge=true;
+        if(StringUtils.isEmpty(username)){
+            throw new MyFormException("账户名不能为空");
+        }else  if(StringUtils.isEmpty(password)){
+            throw new MyFormException("密码不能为空");
+        }else{
+            if(adminDao.login(username, SHA.getResult(password))==1){
+                judge=true;
+            }
         }
         return judge;
     }
