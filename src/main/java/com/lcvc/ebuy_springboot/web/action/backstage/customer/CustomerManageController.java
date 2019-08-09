@@ -3,7 +3,7 @@ package com.lcvc.ebuy_springboot.web.action.backstage.customer;
 
 import com.lcvc.ebuy_springboot.model.Constant;
 import com.lcvc.ebuy_springboot.model.Customer;
-import com.lcvc.ebuy_springboot.model.JsonCode;
+import com.lcvc.ebuy_springboot.model.base.JsonCode;
 import com.lcvc.ebuy_springboot.model.base.PageObject;
 import com.lcvc.ebuy_springboot.model.exception.MyFormException;
 import com.lcvc.ebuy_springboot.model.query.CustomerQuery;

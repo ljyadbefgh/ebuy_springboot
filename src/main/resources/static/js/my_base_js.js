@@ -1,6 +1,8 @@
 //本文件用于放置站点需要的基础js变量或函数
 //设置远程访问的服务器路径
-var webUrl = "http://127.0.0.1:8088/ebuy_springboot/api/";
+const webUrl = "http://127.0.0.1:8088/ebuy_springboot/api/";
+const code_success=0;//设置状态码，表示成功，应与服务端保持一致
+const code_error=-1;//设置状态码，表示失败，应与服务端保持一致
 $(function() {
     //设置ajax默认的设置，即每次访问时都会为header设置token
     $.ajaxSetup({

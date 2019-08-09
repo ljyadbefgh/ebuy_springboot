@@ -93,7 +93,7 @@
 				$.getJSON(
 					webUrl + "backstage/customermanage/"+parent.rowId,//parent.rowId,获取父窗口的变量
 				    function(msg){
-				    	if(msg.code==0){
+				    	if(msg.code==code_success){
 				    		var customer=msg.data;
 				    		form.val("myForm", {
 				    			"id":customer.id,
@@ -106,7 +106,9 @@
 								"email": customer.email,
 								"intro": customer.intro
 							});
-				    	}				    	
+				    	}else{
+							layer.msg(msg.msg);
+						}				    	
 				    }
 				)
 
@@ -165,7 +167,7 @@
 					$.patchResful(webUrl+"backstage/customermanage"
 						,JSON.stringify(data.field)
 						,function(msg){
-							if(msg.code==0){
+							if(msg.code==code_success){
 								layer.msg("客户信息编辑成功");
 							}else{
 								layer.msg(msg.msg);

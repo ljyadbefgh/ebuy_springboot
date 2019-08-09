@@ -121,7 +121,7 @@
 												table.reload('customermanage_table');//重新刷新表格数据
 												 //location.reload(true);刷新整个页面											
 											} else {
-												layer.msg("删除失败");
+												layer.msg(msg.msg);
 											}
 										}
 									)
@@ -144,10 +144,12 @@
 						layer.confirm('确定重置账户（' + data.username + '）的密码吗？', function(index) {
 							//$.deleteResful，自定义的删除插件，针对resful风格设计
 							$.patchResful(webUrl + "/backstage/customermanage/resetPassword/" + data.id, function(msg) {
-								if(msg.code == 0) {
+								if(msg.code == code_success) {
 									layer.msg("密码重置成功");
 									table.reload('customermanage_table');//重新刷新表格数据
-								} 
+								} else{
+									layer.msg(msg.msg);
+								}
 							})
 							layer.close(index);
 						});

@@ -1,7 +1,7 @@
-package com.lcvc.ebuy_springboot.web.filter;
+package com.lcvc.ebuy_springboot.web.interceptor;
 
 import com.lcvc.ebuy_springboot.model.Constant;
-import com.lcvc.ebuy_springboot.model.JsonCode;
+import com.lcvc.ebuy_springboot.model.base.JsonCode;
 import com.lcvc.ebuy_springboot.service.AdminService;
 import net.sf.json.JSONObject;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
@@ -27,18 +27,6 @@ public class LoginForAdminInterceptor extends HandlerInterceptorAdapter {
      */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        // 这是要放行通过的域名 如果不限制用一个 * 也可以，就是不安全
-        //response.addHeader("Access-Control-Allow-Origin", "http://bz.tczmh.club");
-        response.addHeader("Access-Control-Allow-Origin", "http://127.0.0.1:8020");
-        // 允许的方法 例如GET POST PUT DELETE，只要放行用过的
-        response.setHeader("Access-Control-Allow-Methods", "OPTIONS,GET,POST,DELETE,PUT,PATCH");
-        // 这个对应的是ajax里设置了header，例如存了token 或者 ontentType: "application/json"
-        response.setHeader("Access-Control-Allow-Headers", "accept,content-type,application/json");
-        // 指示的请求的响应是否可以暴露于该页面。当true值返回时它可以被暴露
-        response.setHeader("Access-Control-Allow-Credentials","true");
-
-
-
         String url = request.getRequestURL().toString();//获取被读取的接口路径,如http://127.0.0.1:8088/ebuy_springboot/backstage/logout
         boolean flag = false;//默认验证失败，即拦截请求
         String path = request.getServletPath();
@@ -60,7 +48,7 @@ public class LoginForAdminInterceptor extends HandlerInterceptorAdapter {
                 out.print(jsonObject.toString());
                 out.flush();
                 out.close();
-               flag=false;
+                flag=false;
             }else{//如果已经登录
                flag=true;
            }

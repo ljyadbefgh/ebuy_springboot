@@ -63,7 +63,7 @@
 				$.getJSON(
 					webUrl + "backstage/adminmanage/"+parent.rowId,//parent.rowId,获取父窗口的变量
 				    function(msg){
-				    	if(msg.code==0){
+				    	if(msg.code==code_success){
 				    		var admin=msg.data;
 				    		//var admin= $.parseJSON(msg.data); 
 				    		form.val("editAdminForm", {
@@ -72,7 +72,9 @@
 								"name": admin.name,
 								"sex": admin.sex
 							});
-				    	}				    	
+				    	}else{
+							layer.msg(msg.msg);
+						}				    	
 				    }
 				)
 				
@@ -113,9 +115,9 @@
 					$.patchResful(webUrl + "backstage/adminmanage", 
 					    JSON.stringify(data.field), 
 					    function(msg) {
-							if(msg.code == 0) {
+							if(msg.code == code_success) {
 								layer.msg("编辑成功");
-							} else {
+							} else{
 								layer.msg(msg.msg);
 							}
 						}

@@ -3,7 +3,7 @@ package com.lcvc.ebuy_springboot.web.action.backstage;
 
 import com.lcvc.ebuy_springboot.model.Admin;
 import com.lcvc.ebuy_springboot.model.Constant;
-import com.lcvc.ebuy_springboot.model.JsonCode;
+import com.lcvc.ebuy_springboot.model.base.JsonCode;
 import com.lcvc.ebuy_springboot.service.AdminService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;

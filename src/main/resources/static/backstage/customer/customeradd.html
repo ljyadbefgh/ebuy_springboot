@@ -144,7 +144,7 @@
 					$.postResful(webUrl+"backstage/customermanage"
 						,JSON.stringify(data.field)
 						,function(msg){
-							if(msg.code==0){
+							if(msg.code==code_success){
 								$('#myForm')[0].reset();
 								layui.form.render();//这个一定要加上去，不然的话，select/checkbox/radio不会重置的
 								layer.msg("客户信息创建成功");

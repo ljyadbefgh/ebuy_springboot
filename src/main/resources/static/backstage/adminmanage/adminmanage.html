@@ -101,12 +101,12 @@
 								layer.confirm('确定要批量删除这些账户(' + usernames + ')吗？', function(index) {
 									$.deleteResful(webUrl + "//backstage/adminmanage/deletes/" + ids, 
 										function(msg) {
-											if(msg.code == 0) {
+											if(msg.code == code_success) {
 												layer.msg("删除成功");
 												table.reload('adminmanage_table');//重新刷新表格数据
 												 //location.reload(true);刷新整个页面											
-											} else {
-												layer.msg("删除失败");
+											} else{
+												layer.msg(msg.msg);
 											}
 										}
 									)
@@ -129,11 +129,11 @@
 						layer.confirm('确定删除账户' + data.username + '吗', function(index) {
 							//$.deleteResful，自定义的删除插件，针对resful风格设计
 							$.deleteResful(webUrl + "//backstage/adminmanage/" + data.id, function(msg) {
-								if(msg.code == 0) {
+								if(msg.code == code_success) {
 									obj.del();
-								} else {
-									layer.msg("删除失败");
-								}
+								}else{
+									layer.msg(msg.msg);
+								} 
 							})
 							layer.close(index);
 						});

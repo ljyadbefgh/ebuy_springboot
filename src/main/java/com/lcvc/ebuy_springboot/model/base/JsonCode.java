@@ -1,11 +1,12 @@
-package com.lcvc.ebuy_springboot.model;
+package com.lcvc.ebuy_springboot.model.base;
 
 /**
  * 用于返回json的状态码
  */
 public enum JsonCode {
     SUCCESS(0),
-    ERROR(1);
+    ERROR(-1);
+    //LOGIN(-2);
 
     private Integer value;
 
