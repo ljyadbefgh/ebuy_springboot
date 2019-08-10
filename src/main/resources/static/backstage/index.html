@@ -17,7 +17,7 @@
         <!-- 头部区域（可配合layui已有的水平导航） -->
         <ul class="layui-nav layui-layout-left">
             <li class="layui-nav-item"><a href="">后台首页</a></li>
-            <li class="layui-nav-item"><a href="">用户管理</a></li>
+            <li class="layui-nav-item"><a href="">管理员管理</a></li>
             <li class="layui-nav-item">
                 <a href="javascript:;">其它功能</a>
                 <dl class="layui-nav-child">
@@ -31,7 +31,7 @@
             <li class="layui-nav-item">
                 <a href="javascript:;">
                     <img src="http://t.cn/RCzsdCq" class="layui-nav-img">
-                    <span>张三丰</span>
+                    <span id="username"></span>
                 </a>
                 <dl class="layui-nav-child">
                     <dd><a href="">基本资料</a></dd>
@@ -49,8 +49,8 @@
                 <li class="layui-nav-item layui-nav-itemed">
                     <a class="" href="javascript:;">管理账户管理</a>
                     <dl class="layui-nav-child">
-                        <dd><a href="adminmanage/adminadd.html">创建管理账户</a></dd>
-                        <dd><a href="adminmanage/adminmanage.html">管理账户列表</a></dd>
+                        <dd><a href="admin/adminadd.html">创建管理账户</a></dd>
+                        <dd><a href="admin/adminmanage.html">管理账户列表</a></dd>
                     </dl>
                 </li>
                 <li class="layui-nav-item layui-nav-itemed">
@@ -88,8 +88,23 @@
 <script>
     layui.use('layer', function(){
         var layer = layui.layer;
+        
+        //读取当前用户信息
+		$.getJSON(
+			WEBURL_API + "backstage/admin",
+		    function(msg){
+		    	if(msg.code==code_success){
+		    		var admin=msg.data;
+		    		$("#username").html(admin.name);
+		    	}else{
+					layer.msg(msg.msg);
+				}				    	
+		    }
+		)
+				
+				
         $("#logout").click(function (e) {
-            $.get(webUrl+"backstage/logout",
+            $.get(WEBURL_API+"backstage/logout",
                 function (data) {
                     if(data.code == 0) { //如果注销成功                    	
                         layer.open({

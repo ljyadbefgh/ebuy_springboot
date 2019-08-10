@@ -86,11 +86,11 @@
 		<script>
 			//Demo
 			layui.use('form', function() { //表单插件初始化
-				var form = layui.form;
+				var form = layui.form;//只有执行了这一步，部分表单元素才会自动修饰成功
 				
 				//读取当前记录
 				$.getJSON(
-					webUrl + "backstage/customermanage/"+parent.rowId,//parent.rowId,获取父窗口的变量
+					WEBURL_API + "backstage/customermanage/"+parent.rowId,//parent.rowId,获取父窗口的变量
 				    function(msg){
 				    	if(msg.code==code_success){
 				    		var customer=msg.data;
@@ -163,7 +163,7 @@
 
 				//监听提交
 				form.on('submit(editCustomer)', function(data) {
-					$.patchResful(webUrl+"backstage/customermanage"
+					$.patchResful(WEBURL_API+"backstage/customermanage"
 						,JSON.stringify(data.field)
 						,function(msg){
 							if(msg.code==code_success){

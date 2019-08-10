@@ -1,4 +1,4 @@
-package com.lcvc.ebuy_springboot.web.action.backstage.adminmanage;
+package com.lcvc.ebuy_springboot.web.action.backstage.admin;
 
 
 import com.lcvc.ebuy_springboot.model.Admin;

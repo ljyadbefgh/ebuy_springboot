@@ -1,2 +1,14 @@
 1、spring boot 自动更新静态文件
 https://blog.csdn.net/qq_15870133/article/details/78732680
+
+2、resful的get请求，默认不支持从客户端传递json数据到服务端
+
+3、spring mvc拦截器和filter过滤器在跨域时，仅靠addCorsMappings设置是不行的（该设置只能用于普通Controller），还必须设置corsFilter并将其设置为过滤器中优先级最高
+
+4、配置跨域设置后，session也可以在不同域名间传递，解决了前后端分离时登陆状态的保持。
+服务端： .allowCredentials(true)
+客户端： $.ajaxSetup({
+            xhrFields: {
+                withCredentials: true//要进行跨域必须设置，但在服务端也必须允许。这样可以保持登录状态
+            },
+        });

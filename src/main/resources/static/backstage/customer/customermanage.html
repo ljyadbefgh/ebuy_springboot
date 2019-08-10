@@ -38,7 +38,7 @@
 					id:'customermanage_table',
 					elem: '#customers',
 					title: '客户数据表',
-					url: webUrl + 'backstage/customermanage',
+					url: WEBURL_API + 'backstage/customermanage',
 					method: 'get',
 					toolbar: '#toolbar', //定义表格的头部工具栏
 					cellMinWidth: 80, //全局定义常规单元格的最小宽度，layui 2.2.1 新增
@@ -113,7 +113,7 @@
 								    }
 								}
 								layer.confirm('确定要批量删除这些账户(' + usernames + ')吗？', function(index) {
-									$.deleteResful(webUrl + "//backstage/customermanage/" + ids, 
+									$.deleteResful(WEBURL_API + "//backstage/customermanage/" + ids, 
 										function(msg) {
 											if(msg.code == 0) {
 												layer.msg("删除成功");
@@ -142,7 +142,7 @@
 					if(obj.event === 'resetPassword') {
 						layer.confirm('确定重置账户（' + data.username + '）的密码吗？', function(index) {
 							//$.deleteResful，自定义的删除插件，针对resful风格设计
-							$.patchResful(webUrl + "/backstage/customermanage/resetPassword/" + data.id, function(msg) {
+							$.patchResful(WEBURL_API + "backstage/customermanage/resetPassword/" + data.id, function(msg) {
 								if(msg.code == code_success) {
 									layer.msg("密码重置成功");
 									table.reload('customermanage_table');//重新刷新表格数据

@@ -18,14 +18,20 @@
 
 	<body>
 		<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
-			<legend>编辑管理账户</legend>
+			<legend>创建管理账户</legend>
 		</fieldset>
-		<form lay-filter="editAdminForm"  class="layui-form layui-form-pane" action="" style="padding:10px 20px">
-			<input type="hidden" name="id"/>
+
+		<form id="myForm" lay-filter="myForm" class="layui-form layui-form-pane" action="" style="padding:10px 20px">
 			<div class="layui-form-item">
 				<label class="layui-form-label">账户名</label>
 				<div class="layui-input-block">
 					<input type="text" name="username" required lay-verify="username" autocomplete="off" placeholder="请输入账户名" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">密码</label>
+				<div class="layui-input-block">
+					<input type="password" name="password" required lay-verify="password" placeholder="请输入密码" autocomplete="off" class="layui-input">
 				</div>
 			</div>
 			<div class="layui-form-item">
@@ -46,37 +52,16 @@
 			</div>
 			<div class="layui-form-item">
 				<div class="layui-input-block">
-					<button class="layui-btn" lay-submit="" lay-filter="updateAdmin">修改管理账户</button>
+					<!--注意：lay-submit=""不能省略，否则按钮提交事件无法监听-->
+					<button class="layui-btn" lay-submit="" lay-filter="addAdmin">创建管理账户</button>
+					<button type="reset" class="layui-btn layui-btn-primary">重置</button>
 				</div>
 			</div>
 		</form>
 
 		<script>
-			
-			
-			//Demo
 			layui.use('form', function() { //表单插件初始化
-				var form = layui.form;
-				
-				//读取当前记录
-				$.getJSON(
-					webUrl + "backstage/adminmanage/"+parent.rowId,//parent.rowId,获取父窗口的变量
-				    function(msg){
-				    	if(msg.code==code_success){
-				    		var admin=msg.data;
-				    		//var admin= $.parseJSON(msg.data); 
-				    		form.val("editAdminForm", {
-				    			"id":admin.id,
-								"username": admin.username, // "name": "value"		
-								"name": admin.name,
-								"sex": admin.sex
-							});
-				    	}else{
-							layer.msg(msg.msg);
-						}				    	
-				    }
-				)
-				
+				var form = layui.form;//只有执行了这一步，部分表单元素才会自动修饰成功
 
 				//自定义表单验证规则
 				form.verify({
@@ -94,6 +79,9 @@
 							return '账户名长度必须在3-10个字符之间';
 						}
 					},
+					password: [
+						/^[\S]{6,12}$/, '密码必须6到12位，且不能出现空格'
+					],
 					name: function(value) {
 						if(value.length == 0) {
 							return '请填写网名';
@@ -102,26 +90,29 @@
 							return '网名长度不能超过8个字符';
 						}
 					},
-					sex: function(value) {
-						if(value == "") {
+					sex:function(value){
+						if(value==""){
 							return "请选择性别";
 						}
 					}
 				});
 
 				//监听提交
-				form.on('submit(updateAdmin)', function(data) {
-					$.patchResful(webUrl + "backstage/adminmanage", 
-					    JSON.stringify(data.field), 
-					    function(msg) {
-							if(msg.code == code_success) {
-								layer.msg("编辑成功");
-							} else{
+				form.on('submit(addAdmin)', function(data) {
+					$.postResful(WEBURL_API+"backstage/adminmanage"
+						,JSON.stringify(data.field)
+						,function(msg){
+							if(msg.code==code_success){
+								$('#myForm')[0].reset();
+								layui.form.render();//这个一定要加上去，不然的话，select/checkbox/radio不会重置的
+								layer.msg("管理员创建成功");
+							}else{
 								layer.msg(msg.msg);
 							}
 						}
 					);
-					return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+					//layer.msg(JSON.stringify(data.field));
+					return false;//阻止表单跳转。如果需要表单跳转，去掉这段即可。
 				});
 			});
 		</script>

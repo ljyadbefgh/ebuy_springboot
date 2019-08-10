@@ -35,6 +35,7 @@ public class LoginLogoutController {
 				Admin admin=adminService.getAdmin(username);
 				session.setAttribute("admin",admin);
 				map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
+				map.put(Constant.JSON_DATA,admin.getUsername());//将账户名值传递到前端先存储，供后端交互
 			}else{
 				map.put(Constant.JSON_MESSAGE, "登录失败：用户名和密码错误");
 			}

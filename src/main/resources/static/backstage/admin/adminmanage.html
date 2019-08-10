@@ -36,7 +36,7 @@
 					id:'adminmanage_table',
 					elem: '#admins',
 					title: '管理账户数据表',
-					url: webUrl + 'backstage/adminmanage',
+					url: WEBURL_API + 'backstage/adminmanage',
 					method: 'get',
 					toolbar: '#toolbar', //定义表格的头部工具栏
 					cellMinWidth: 80, //全局定义常规单元格的最小宽度，layui 2.2.1 新增
@@ -98,7 +98,7 @@
 								    }
 								}
 								layer.confirm('确定要批量删除这些账户(' + usernames + ')吗？', function(index) {
-									$.deleteResful(webUrl + "//backstage/adminmanage/deletes/" + ids, 
+									$.deleteResful(WEBURL_API + "backstage/adminmanage/deletes/" + ids, 
 										function(msg) {
 											if(msg.code == code_success) {
 												layer.msg("删除成功");
@@ -127,7 +127,7 @@
 					if(obj.event === 'del') {
 						layer.confirm('确定删除账户' + data.username + '吗', function(index) {
 							//$.deleteResful，自定义的删除插件，针对resful风格设计
-							$.deleteResful(webUrl + "//backstage/adminmanage/" + data.id, function(msg) {
+							$.deleteResful(WEBURL_API + "backstage/adminmanage/" + data.id, function(msg) {
 								if(msg.code == code_success) {
 									obj.del();
 								}else{
