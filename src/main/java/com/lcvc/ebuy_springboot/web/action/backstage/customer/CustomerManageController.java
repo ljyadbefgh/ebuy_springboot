@@ -1,18 +1,23 @@
 package com.lcvc.ebuy_springboot.web.action.backstage.customer;
 
 
-import com.lcvc.ebuy_springboot.model.Constant;
 import com.lcvc.ebuy_springboot.model.Customer;
+import com.lcvc.ebuy_springboot.model.base.Constant;
 import com.lcvc.ebuy_springboot.model.base.JsonCode;
 import com.lcvc.ebuy_springboot.model.base.PageObject;
 import com.lcvc.ebuy_springboot.model.exception.MyFormException;
 import com.lcvc.ebuy_springboot.model.query.CustomerQuery;
 import com.lcvc.ebuy_springboot.service.CustomerService;
+import com.lcvc.ebuy_springboot.util.file.MyFileOperator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.util.ClassUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -108,13 +113,55 @@ public class CustomerManageController {
 		return map;
 	}
 
-
+	/**
+	 * 重置密码
+	 * @param id 客户的id
+	 * @return
+	 */
 	@PatchMapping("/resetPassword/{id}")
 	public Map<String, Object> resetPassword(@PathVariable Integer id){
 		Map<String, Object> map=new HashMap<String, Object>();
 		customerService.resetPassword(id);
 		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
 		map.put(Constant.JSON_MESSAGE, "密码重置成功");
+		return map;
+	}
+
+	/**
+	 * 上传客户头像
+	 * @param id 客户的Id
+	 * @param file 要上传的头像
+	 * @return
+	 */
+	@PostMapping("/uploadPhoto/{id}")
+	public Map<String, Object> uploadPhoto(@PathVariable Integer id,MultipartFile file){
+		Map<String, Object> map=new HashMap<String, Object>();
+		map.put(Constant.JSON_CODE, JsonCode.ERROR.getValue());//默认失败
+		if(!file.isEmpty()){
+			Customer customer=customerService.getCustomer(id);//获取账户对象
+			if(customer!=null){//如果该账户存在，则执行上传
+				String basepath=ClassUtils.getDefaultClassLoader().getResource("").getPath();//获取项目的根目录，注意不能用JSP那套获取根目录，因为spring boot的tomcat为内置，每次都变
+				String filePath=basepath+Constant.CUSTOMER_PROFILE_PICTURE;//获取图片保存的物理路径
+				MyFileOperator.createDir(filePath);//创建存储目录
+				String fileName=file.getOriginalFilename();//获取文件名
+				String extensionName=MyFileOperator.getExtensionName(fileName);//获取文件扩展名
+				fileName=id+"."+extensionName;//根据id重新生成文件名
+				try {
+					file.transferTo(new File(filePath+fileName));
+					if(!fileName.equals(customer.getPicUrl())){//如果新上传的文件名和原来的不一样，则需要删除原来的文件；如果一样则直接覆盖，不需要处理
+						MyFileOperator.deleteFile(filePath+customer.getPicUrl());//删除原文件
+					}
+					customer.setPicUrl(fileName);
+					customerService.updateCustomer(customer);//将新的图片信息存入数据库
+					map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
+					map.put(Constant.JSON_MESSAGE, "上传成功");
+				} catch (IOException e) {
+					map.put(Constant.JSON_MESSAGE, e.getMessage());
+				}
+			}
+		}else{
+			map.put(Constant.JSON_MESSAGE, "上传失败：请先选择文件");
+		}
 		return map;
 	}
 

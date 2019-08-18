@@ -168,7 +168,18 @@
 						});
 					}else if(obj.event === 'uploadPhoto') {
 						rowId=data.id;//将id值传递给全局变量
-						layer.msg("该功能还在开发中");
+						layer.open({
+								title: '头像上传',
+								type: 2,
+								area: ['450px', '370px'],
+								content: 'photoupload.html', //这里content是一个URL，如果你不想让iframe出现滚动条，你还可以content: ['http://sentsin.com', 'no']
+								cancel: function(index, layero) { //当前层索引参数（index）、当前层的DOM对象（layero)
+									table.reload('customermanage_table');//重新刷新表格数据
+									rowId=null;//清空保存的行信息（用于传递给子窗口）
+									layer.close(index);
+								}
+						});
+						//layer.msg("该功能还在开发中");
 					}
 				})
 				

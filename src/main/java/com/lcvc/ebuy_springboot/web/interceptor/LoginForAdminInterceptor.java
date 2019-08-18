@@ -1,6 +1,6 @@
 package com.lcvc.ebuy_springboot.web.interceptor;
 
-import com.lcvc.ebuy_springboot.model.Constant;
+import com.lcvc.ebuy_springboot.model.base.Constant;
 import com.lcvc.ebuy_springboot.model.base.JsonCode;
 import com.lcvc.ebuy_springboot.service.AdminService;
 import net.sf.json.JSONObject;

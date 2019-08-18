@@ -12,3 +12,11 @@ https://blog.csdn.net/qq_15870133/article/details/78732680
                 withCredentials: true//要进行跨域必须设置，但在服务端也必须允许。这样可以保持登录状态
             },
         });
+
+5、获取项目的根目录（物理路径）
+String basepath=ClassUtils.getDefaultClassLoader().getResource("").getPath();
+说明：这里不能用用
+rquest.getSession().getServletContext().getRealPath("/")
+来获取路径，因为这是spring boot内置tomcat的原因，每次启动项目他的Tomcat的路径都不相同，是虚拟的路径，而且很多，
+过一段时间它可以自动清楚这些不用的文件夹，这个方法在spring boot里面不好用，也是刚要使用一个图片，
+放在tomcat服务器上可以访问到，但是重启就访问不到了，

@@ -73,15 +73,18 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public void updateCustomer(Customer customer) throws MyFormException {
         boolean status = false;// 默认编辑失败
-        if(customer.getUsername().equals("")){
-            throw new MyFormException("账户名不能为空");
-        }else if(customer.getName().equals("")){
+        //进行账户名验证
+        String username=customer.getUsername();
+        if(username!=null){//如果有这个字段
+            if(customer.getUsername().equals("")){
+                throw new MyFormException("账户名不能为空");
+            }else if(customerDao.countOtherUsername(customer.getUsername(),customer.getId())>0){//如果有重名的
+                throw new MyFormException("账户名重名");
+            }
+        }else if(customer.getName()!=null&&customer.getName().equals("")){//姓名验证
             throw new MyFormException("姓名不能为空");
-        }else if(customerDao.countOtherUsername(customer.getUsername(),customer.getId())>0){//如果有重名的
-            throw new MyFormException("账户名重名");
-        }else{
-            customerDao.update(customer);
         }
+        customerDao.update(customer);
     }
 
     @Override

@@ -4,3 +4,11 @@
 body {
   font-size: 12px;
 }
+/*图片边框设置*/
+.my_img_border {
+	border-image-source: linear-gradient(red, blue);/*这个属性代表的图片，这里可以使用 url 来引入图片，当然也可以使用CSS的渐变属性绘制的图片，比如 linear-gradient*/
+	border-image-slice: 5;/*切线距离边的距离，不需要加上 px。*/
+	border-style: solid;
+	border-width: 1px;/*图片展示的宽度，类似图片边框*/
+}
+
