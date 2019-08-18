@@ -27,5 +27,6 @@ public class Constant {
             put("file", "doc,docx,xls,xlsx,ppt,htm,html,txt,zip,rar,gz,bz2,chm");
         }
     };
-    public static final String CUSTOMER_PROFILE_PICTURE="static/upload/customer_profile_picture/";//保存客户个人头像的目录
+    public static final String CUSTOMER_PROFILE_PICTURE_UPLOAD_URL= "static/server/upload/customer_profile_picture/";//保存客户个人头像的目录，用于上传的时候，必须指明static下的绝对路径
+    public static final String CUSTOMER_PROFILE_PICTURE_URL="server/upload/customer_profile_picture/";//保存客户个人头像的目录,用于展示的时候，不需要加上static
 }

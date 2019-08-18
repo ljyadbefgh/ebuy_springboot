@@ -2,11 +2,13 @@ package com.lcvc.ebuy_springboot.service.impl;
 
 import com.lcvc.ebuy_springboot.dao.CustomerDao;
 import com.lcvc.ebuy_springboot.model.Customer;
+import com.lcvc.ebuy_springboot.model.base.Constant;
 import com.lcvc.ebuy_springboot.model.base.PageObject;
 import com.lcvc.ebuy_springboot.model.exception.MyFormException;
 import com.lcvc.ebuy_springboot.model.query.CustomerQuery;
 import com.lcvc.ebuy_springboot.service.CustomerService;
 import com.lcvc.ebuy_springboot.util.SHA;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -24,10 +26,15 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public PageObject searchCustomers(Integer page, Integer limit, CustomerQuery customerQuery) {
+    public PageObject searchCustomers(Integer page, Integer limit, CustomerQuery customerQuery, String basePath) {
         PageObject pageObject = new PageObject(limit,page,customerDao.querySize(customerQuery));
         pageObject.setList(customerDao.query(pageObject.getOffset(),pageObject.getLimit(),customerQuery));
         for(Customer customer:(List<Customer>)pageObject.getList()){
+            //将头像网址进行处理，变为完整的地址
+            if(!StringUtils.isEmpty(customer.getPicUrl())){//只要有图片则加上绝对地址
+                customer.setPicUrl(basePath+ Constant.CUSTOMER_PROFILE_PICTURE_URL+customer.getPicUrl());
+            }
+            //设置密码展示状态
             if(customer.getPassword().equals(SHA.getResult("123456"))){//默认初始密码123456
                 customer.setInitialPasswordStatus(true);
             }else{

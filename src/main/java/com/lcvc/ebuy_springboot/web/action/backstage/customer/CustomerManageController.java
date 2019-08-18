@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -39,10 +40,11 @@ public class CustomerManageController {
 	 * @return
 	 */
 	@GetMapping
-	public Map<String, Object> toManageCustomer(Integer page, Integer limit, CustomerQuery customerQuery){
+	public Map<String, Object> toManageCustomer(Integer page, Integer limit, CustomerQuery customerQuery, HttpServletRequest request){
         Map<String, Object> map=new HashMap<String, Object>();
         map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
-		PageObject pageObject =customerService.searchCustomers(page,limit,customerQuery);
+		String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+request.getContextPath()+"/";//获取项目根目录网址
+		PageObject pageObject =customerService.searchCustomers(page,limit,customerQuery,basePath);
 		map.put(Constant.JSON_TOTAL,pageObject.getTotalRecords());
         map.put(Constant.JSON_DATA,pageObject.getList());
 		return map;
@@ -141,7 +143,7 @@ public class CustomerManageController {
 			Customer customer=customerService.getCustomer(id);//获取账户对象
 			if(customer!=null){//如果该账户存在，则执行上传
 				String basepath=ClassUtils.getDefaultClassLoader().getResource("").getPath();//获取项目的根目录，注意不能用JSP那套获取根目录，因为spring boot的tomcat为内置，每次都变
-				String filePath=basepath+Constant.CUSTOMER_PROFILE_PICTURE;//获取图片保存的物理路径
+				String filePath=basepath+Constant.CUSTOMER_PROFILE_PICTURE_UPLOAD_URL;//获取图片上传后保存的物理路径
 				MyFileOperator.createDir(filePath);//创建存储目录
 				String fileName=file.getOriginalFilename();//获取文件名
 				String extensionName=MyFileOperator.getExtensionName(fileName);//获取文件扩展名

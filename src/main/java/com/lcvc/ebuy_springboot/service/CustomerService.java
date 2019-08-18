@@ -18,8 +18,13 @@ public interface CustomerService {
 
     /**
      * 分页查询账户
+     * @param page 当前页面
+     * @param limit  每页最多显示的记录数
+     * @param customerQuery 查询条件类
+     * @param basePath 项目根目录网址，用于配合个人头像地址生成完整网址后传给前端
+     * @return
      */
-    PageObject searchCustomers(Integer page, Integer limit, CustomerQuery customerQuery);
+    PageObject searchCustomers(Integer page, Integer limit, CustomerQuery customerQuery, String basePath);
 
 
     /**

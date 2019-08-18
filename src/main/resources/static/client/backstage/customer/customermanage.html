@@ -42,10 +42,24 @@
 					method: 'get',
 					toolbar: '#toolbar', //定义表格的头部工具栏
 					cellMinWidth: 80, //全局定义常规单元格的最小宽度，layui 2.2.1 新增
-					height: 550,
+					height: 'full-50' ,//也可以用绝对高度，full-50表示屏幕最大高度-50
 					page: true, //开启分页
+					limits: [10,20,30,50,100] ,//可供选择的每页显示条数
+           			limit: 20, //默认每页显示记录数
 					cols: [[
 						{type: 'checkbox'} //假如复选框，用于批量操作
+						, {
+							field: 'picUrl', 
+							title: '头像', 
+							align: 'center',
+							event: 'showBigPic',//定义事件名称
+							templet:function(d){
+								if(d.picUrl!=null&&d.picUrl!=''){
+									return '<div><img style="height:30px;" src="'+d.picUrl+'"></div>'
+						   	 	}else{
+						   	 		return '<div><img style="height:30px;" src="../../image/nopic.jpg"></div>'
+						   		}						   	
+						   }}
 						, {field: 'username',title: '用户名'}
 						, {
 							field: 'initialPasswordStatus',
@@ -180,9 +194,22 @@
 								}
 						});
 						//layer.msg("该功能还在开发中");
-					}
+					}else if(obj.event === 'showBigPic'){//监听单元格(头像)事件，当点击头像时展示大图
+				    	if(data.picUrl!=null&&data.picUrl!=''){//只有图片存在时才展示出来
+					    	layer.open({
+				                type: 1,
+				                title:false,
+				                skin: 'layui-layer-rim', //加上边框
+				                //area: ['50%', '80%'], //宽高
+				                maxHeight:'80%',
+				                offset: 'auto',//谷歌浏览器有时候无法自动居中，火狐可以
+				                anim:5,
+				                shadeClose: true, //开启遮罩关闭
+				                content: '<div style="text-align:center;"><img src="' + data.picUrl+ '" style="max-width:100%;"/></div>'
+				            });
+			           }
+				    }
 				})
-				
 				
 				
 				 // 执行搜索，表格重载
@@ -202,7 +229,12 @@
 	    				}	    				
     				});
     			});	
-    		});	
+    			
+    				
+    		});	//layui.use结尾
+    		
+    	
+    			
     		
 
 		</script>
