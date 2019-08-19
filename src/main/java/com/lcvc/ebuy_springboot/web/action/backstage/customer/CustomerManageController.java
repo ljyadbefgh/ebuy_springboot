@@ -103,6 +103,25 @@ public class CustomerManageController {
 	}
 
 	/**
+	 * 重置密码
+	 * @param ids 客户的id集合
+	 * @return
+	 */
+	@PatchMapping("/removeCustomersProfilePicture/{ids}")
+	public Map<String, Object> removeCustomersProfilePicture(@PathVariable("ids")Integer[] ids){
+		Map<String, Object> map=new HashMap<String, Object>();
+		String basepath=ClassUtils.getDefaultClassLoader().getResource("").getPath();//获取项目的根目录，注意不能用JSP那套获取根目录，因为spring boot的tomcat为内置，每次都变
+		try {
+			customerService.removeCustomersProfilePicture(ids,basepath);
+			map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());//默认失败
+		} catch (Exception e) {
+			map.put(Constant.JSON_CODE, JsonCode.ERROR.getValue());//默认失败
+			map.put(Constant.JSON_MESSAGE, "头像移除失败："+e.getMessage());
+		}
+		return map;
+	}
+
+	/**
 	 * 批量删除指定的多个账户
 	 * @param ids 账户id集合，前端必须以“15,25,74”这样的方式传回
 	 * @return
@@ -110,8 +129,14 @@ public class CustomerManageController {
 	@DeleteMapping("/{ids}")
 	public Map<String, Object> deleteCustomers(@PathVariable("ids")Integer[] ids){
 		Map<String, Object> map=new HashMap<String, Object>();
-		customerService.deleteCustomers(ids);
-		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
+		try {
+			map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
+			customerService.deleteCustomers(ids);
+		} catch (MyFormException e) {
+			map.put(Constant.JSON_CODE, JsonCode.ERROR.getValue());
+			map.put(Constant.JSON_MESSAGE, "账户删除失败："+e.getMessage());
+		}
+
 		return map;
 	}
 

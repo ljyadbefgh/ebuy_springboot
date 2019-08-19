@@ -19,6 +19,7 @@
 			<div class="layui-btn-container">
 				<button class="layui-btn layui-btn-sm" lay-event="createCustomer">创建客户</button>
 				<button class="layui-btn layui-btn-sm" lay-event="deleteCustomers">批量删除客户</button>
+				<button class="layui-btn layui-btn-sm" lay-event="removeCustomersProfilePicture">批量移除客户的头像</button>
 			</div>
 		</script>
 		<!--定义表格邮编的行工具栏-->
@@ -126,7 +127,7 @@
 										usernames+=checkStatus.data[i].username+",";
 								    }
 								}
-								layer.confirm('确定要批量删除这些账户(' + usernames + ')吗？', function(index) {
+								layer.confirm('确定要批量删除这些账户(' + usernames + ')吗？删除后所有数据都将无法恢复！', function(index) {
 									$.deleteResful(WEBURL_API + "//backstage/customermanage/" + ids, 
 										function(msg) {
 											if(msg.code == 0) {
@@ -142,9 +143,37 @@
 								});								
 							}
 							break;
-						case 'getCheckLength':
-							var data = checkStatus.data;
-							layer.msg('选中了：' + data.length + ' 个');
+						case 'removeCustomersProfilePicture':
+							var datas = checkStatus.data;//获取选中的数据
+							if(datas.length==0){
+								layer.msg('请先选择记录');
+							}else{								
+								var ids = "";//定义要批量删除的主键id
+								var usernames="";//定义账户名集合
+								for(var i=0;i<datas.length;i++){//遍历数组，将id用","相隔									
+								    if(i==datas.length-1){//如果是最后一条记录，则不添加","
+								    	ids += checkStatus.data[i].id;
+										usernames+=checkStatus.data[i].username;
+								    }else{
+								    	ids += checkStatus.data[i].id+",";
+										usernames+=checkStatus.data[i].username+",";
+								    }
+								}
+								layer.confirm('确定要批量移除这些账户(' + usernames + ')的头像吗？移除后相关照片都将无法恢复！', function(index) {
+									$.patchResful(WEBURL_API + "backstage/customermanage/removeCustomersProfilePicture/" + ids, 
+										function(msg) {
+											if(msg.code == 0) {
+												layer.msg("移除成功");
+												table.reload('customermanage_table');//重新刷新表格数据
+												 //location.reload(true);刷新整个页面											
+											} else {
+												layer.msg(msg.msg);
+											}
+										}
+									)
+									layer.close(index);//关闭窗口
+								});								
+							}
 							break;
 					};
 				});

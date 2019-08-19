@@ -8,13 +8,18 @@ import com.lcvc.ebuy_springboot.model.exception.MyFormException;
 import com.lcvc.ebuy_springboot.model.query.CustomerQuery;
 import com.lcvc.ebuy_springboot.service.CustomerService;
 import com.lcvc.ebuy_springboot.util.SHA;
+import com.lcvc.ebuy_springboot.util.file.MyFileOperator;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.Calendar;
 import java.util.List;
 
+@Transactional(propagation = Propagation.REQUIRED,isolation = Isolation.DEFAULT,timeout=36000,rollbackFor=Exception.class)
 @Service
 public class CustomerServiceImpl implements CustomerService {
     @Resource
@@ -45,8 +50,30 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public void deleteCustomers(Integer[] ids) {
+    public void deleteCustomers(Integer[] ids) throws MyFormException{
+        for(Integer id:ids){
+            //删除账户对应的图片
+            Customer customer=customerDao.get(id);//读取相应的记录
+            String picUrl=customer.getPicUrl();//获取头像地址
+            if(!StringUtils.isEmpty(picUrl)){//如果头像存在
+              throw new MyFormException("请先删除头像，再执行账户删除");
+            }
+        }
         customerDao.deletes(ids);
+    }
+
+    @Override
+    public void removeCustomersProfilePicture(Integer[] ids, String basePath) {
+        for(Integer id:ids){
+            //删除账户对应的图片
+            Customer customer=customerDao.get(id);//读取相应的记录
+            String picUrl=customer.getPicUrl();//获取头像地址
+            if(!StringUtils.isEmpty(picUrl)){//如果头像存在
+                customer.setPicUrl("");//清空图片地址
+                customerDao.update(customer);
+                MyFileOperator.deleteFile(basePath+ Constant.CUSTOMER_PROFILE_PICTURE_UPLOAD_URL+picUrl);//删除图片
+            }
+        }
     }
 
     @Override

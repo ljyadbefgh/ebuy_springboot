@@ -29,14 +29,27 @@ public interface CustomerService {
 
     /**
      * 批量删除指定账户
+     * 说明：
+     * 1.如果客户存在头像文件，则不允许删除
      * @param ids 多个账户的主键集合
+     * @throws MyFormException
      */
-    void deleteCustomers(Integer[] ids);
+    void deleteCustomers(Integer[] ids) throws MyFormException;
+
+
+    /**
+     * 批量删除客户的头像文件，并将数据库对应的头像信息清空
+     * 说明：无论该客户是否真的存在头像文件，都会一并删除不会出BUG
+     * @param ids 多个账户的主键集合
+     * @param basePath 项目根目录网址，用于删除账户对应的头像文件
+     */
+    void removeCustomersProfilePicture(Integer[] ids,String basePath);
 
     /**
      * 添加管理员
      * 说明：账户名和密码不能为空
      * @param customer
+     * @throws MyFormException
      */
     void addCustomer(Customer customer) throws MyFormException;
 
