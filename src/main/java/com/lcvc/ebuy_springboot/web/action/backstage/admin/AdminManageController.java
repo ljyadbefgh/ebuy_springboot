@@ -5,7 +5,6 @@ import com.lcvc.ebuy_springboot.model.Admin;
 import com.lcvc.ebuy_springboot.model.base.Constant;
 import com.lcvc.ebuy_springboot.model.base.JsonCode;
 import com.lcvc.ebuy_springboot.model.base.PageObject;
-import com.lcvc.ebuy_springboot.model.exception.MyFormException;
 import com.lcvc.ebuy_springboot.service.AdminService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -38,7 +37,6 @@ public class AdminManageController {
         Map<String, Object> map=new HashMap<String, Object>();
 		//新建/刷新session对象
 		HttpSession session = request.getSession();
-		System.out.printf("sessionId: %s%n", session.getId());
         map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
 		PageObject pageObject =adminService.searchAdmins(page,limit);
 		map.put(Constant.JSON_TOTAL,pageObject.getTotalRecords());
@@ -54,17 +52,9 @@ public class AdminManageController {
 	@DeleteMapping("/{id}")
 	public Map<String, Object> deleteAdmin(@PathVariable Integer id, HttpSession session){
 		Map<String, Object> map=new HashMap<String, Object>();
-		adminService.deleteAdmin(id);
+		Admin admin=(Admin)session.getAttribute("admin");
+		adminService.deleteAdmin(admin,id);
 		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
-		/*Admin admin=(Admin)session.getAttribute("admin");
-		if(admin.getId()==id.intValue()){//如果登录账户的id与被删除账户的id一致
-			//不允许删除自己的账户
-			map.put(Constant.JSON_CODE, JsonCode.ERROR.getValue());
-			map.put("myMessage", "删除失败：不允许删除自己");
-		}else{
-			adminService.deleteAdmin(id);
-			map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
-		}*/
 		return map;
 	}
 
@@ -74,9 +64,10 @@ public class AdminManageController {
 	 * @return
 	 */
 	@DeleteMapping("/deletes/{ids}")
-	public Map<String, Object> deleteAdmins(@PathVariable("ids")Integer[] ids){
+	public Map<String, Object> deleteAdmins(@PathVariable("ids")Integer[] ids, HttpSession session){
 		Map<String, Object> map=new HashMap<String, Object>();
-		adminService.deleteAdmins(ids);
+		Admin admin=(Admin)session.getAttribute("admin");
+		adminService.deleteAdmins(admin,ids);
 		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
 		return map;
 	}
@@ -90,14 +81,9 @@ public class AdminManageController {
 	@PostMapping
 	public Map<String, Object> doAddAdmin(@RequestBody Admin admin){
 		Map<String, Object> map=new HashMap<String, Object>();
-		try {
-			adminService.addAdmin(admin);
-			map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
-			map.put(Constant.JSON_MESSAGE, "账户添加成功");
-		} catch (MyFormException e) {
-			map.put(Constant.JSON_CODE, JsonCode.ERROR.getValue());
-			map.put(Constant.JSON_MESSAGE, e.getMessage());
-		}
+		adminService.addAdmin(admin);
+		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
+		map.put(Constant.JSON_MESSAGE, "账户添加成功");
 		return map;
 	}
 
@@ -123,15 +109,11 @@ public class AdminManageController {
 	public Map<String, Object> updateAdmin(@RequestBody Admin admin){
 		Map<String, Object> map=new HashMap<String, Object>();
 		map.put(Constant.JSON_CODE, JsonCode.ERROR.getValue());
-		try {
-			if(adminService.updateAdmin(admin)){
-				map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
-				map.put(Constant.JSON_MESSAGE, "账户信息修改成功");
-			}else{
-				map.put(Constant.JSON_MESSAGE, "账户信息修改失败");
-			}
-		} catch (MyFormException e) {
-			map.put(Constant.JSON_MESSAGE, "账户信息编辑失败："+e.getMessage());
+		if(adminService.updateAdmin(admin)){
+			map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
+			map.put(Constant.JSON_MESSAGE, "账户信息修改成功");
+		}else{
+			map.put(Constant.JSON_MESSAGE, "账户信息修改失败");
 		}
 		return map;
 	}

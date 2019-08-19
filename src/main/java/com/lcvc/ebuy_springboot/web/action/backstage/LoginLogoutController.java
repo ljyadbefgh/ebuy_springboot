@@ -4,7 +4,6 @@ package com.lcvc.ebuy_springboot.web.action.backstage;
 import com.lcvc.ebuy_springboot.model.Admin;
 import com.lcvc.ebuy_springboot.model.base.Constant;
 import com.lcvc.ebuy_springboot.model.base.JsonCode;
-import com.lcvc.ebuy_springboot.model.exception.MyFormException;
 import com.lcvc.ebuy_springboot.service.AdminService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,20 +29,38 @@ public class LoginLogoutController {
 	public Map<String, Object> login(String username, String password, HttpSession session){
 		Map<String, Object> map=new HashMap<String, Object>();
 		map.put(Constant.JSON_CODE, JsonCode.ERROR.getValue());
+		if(adminService.login(username, password)){//如果登录成功
+			Admin admin=adminService.getAdmin(username);
+			session.setAttribute("admin",admin);
+			map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
+			map.put(Constant.JSON_DATA,admin.getUsername());//将账户名值传递到前端先存储，供后端交互
+		}else{
+			map.put(Constant.JSON_MESSAGE, "登录失败：用户名和密码错误");
+		}
+		return map;
+	}
+
+	/**
+	 * 后台登录处理
+	 */
+	/*@GetMapping("/login")
+	public ResultInfo login(String username, String password, HttpSession session){
+		ResultInfo resultInfo=new ResultInfo();
+		resultInfo.setCode(JsonCode.ERROR.getValue());
 		try {
 			if(adminService.login(username, password)){//如果登录成功
 				Admin admin=adminService.getAdmin(username);
 				session.setAttribute("admin",admin);
-				map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
-				map.put(Constant.JSON_DATA,admin.getUsername());//将账户名值传递到前端先存储，供后端交互
+				resultInfo.setCode(JsonCode.SUCCESS.getValue());
+				resultInfo.setData(admin.getUsername());//将账户名值传递到前端先存储，供后端交互
 			}else{
-				map.put(Constant.JSON_MESSAGE, "登录失败：用户名和密码错误");
+				resultInfo.setMsg( "登录失败：用户名和密码错误");
 			}
 		} catch (MyFormException e) {
-			map.put(Constant.JSON_MESSAGE, e.getMessage());
+			resultInfo.setMsg(e.getMessage());
 		}
-		return map;
-	}
+		return resultInfo;
+	}*/
 
 	/**
      * 注销

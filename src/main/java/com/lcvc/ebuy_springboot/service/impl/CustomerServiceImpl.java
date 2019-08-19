@@ -56,7 +56,7 @@ public class CustomerServiceImpl implements CustomerService {
             Customer customer=customerDao.get(id);//读取相应的记录
             String picUrl=customer.getPicUrl();//获取头像地址
             if(!StringUtils.isEmpty(picUrl)){//如果头像存在
-              throw new MyFormException("请先删除头像，再执行账户删除");
+              throw new MyFormException("账户删除失败：请先删除头像，再执行账户删除");
             }
         }
         customerDao.deletes(ids);
@@ -80,18 +80,18 @@ public class CustomerServiceImpl implements CustomerService {
     public void addCustomer(Customer customer) throws MyFormException {
         if(customer!=null){
             if(customer.getUsername().equals("")){
-                throw new MyFormException("添加失败：账户名不能为空");
+                throw new MyFormException("客户信息创建失败：账户名不能为空");
             }else if(customer.getName().equals("")){
-                throw new MyFormException("添加失败：姓名不能为空");
+                throw new MyFormException("客户信息创建失败：姓名不能为空");
             }else if(customerDao.countUsername(customer.getUsername())>0){//如果有重名的
-                throw new MyFormException("添加失败：账户名重名");
+                throw new MyFormException("客户信息创建失败：账户名重名");
             }else{
                 customer.setPassword(SHA.getResult("123456"));
                 customer.setCreateTime(Calendar.getInstance().getTime());//获取当前时间为创建时间
                 customerDao.save(customer);
             }
         }else{
-            throw new MyFormException("添加失败：表单数据不能为空");
+            throw new MyFormException("客户信息创建失败：表单数据不能为空");
         }
     }
 
@@ -111,12 +111,12 @@ public class CustomerServiceImpl implements CustomerService {
         String username=customer.getUsername();
         if(username!=null){//如果有这个字段
             if(customer.getUsername().equals("")){
-                throw new MyFormException("账户名不能为空");
+                throw new MyFormException("客户信息编辑失败：账户名不能为空");
             }else if(customerDao.countOtherUsername(customer.getUsername(),customer.getId())>0){//如果有重名的
-                throw new MyFormException("账户名重名");
+                throw new MyFormException("客户信息编辑失败：账户名重名");
             }
         }else if(customer.getName()!=null&&customer.getName().equals("")){//姓名验证
-            throw new MyFormException("姓名不能为空");
+            throw new MyFormException("客户信息编辑失败：姓名不能为空");
         }
         customerDao.update(customer);
     }

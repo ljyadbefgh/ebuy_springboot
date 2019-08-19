@@ -5,7 +5,6 @@ import com.lcvc.ebuy_springboot.model.Customer;
 import com.lcvc.ebuy_springboot.model.base.Constant;
 import com.lcvc.ebuy_springboot.model.base.JsonCode;
 import com.lcvc.ebuy_springboot.model.base.PageObject;
-import com.lcvc.ebuy_springboot.model.exception.MyFormException;
 import com.lcvc.ebuy_springboot.model.query.CustomerQuery;
 import com.lcvc.ebuy_springboot.service.CustomerService;
 import com.lcvc.ebuy_springboot.util.file.MyFileOperator;
@@ -42,11 +41,11 @@ public class CustomerManageController {
 	@GetMapping
 	public Map<String, Object> toManageCustomer(Integer page, Integer limit, CustomerQuery customerQuery, HttpServletRequest request){
         Map<String, Object> map=new HashMap<String, Object>();
-        map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
 		String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+request.getContextPath()+"/";//获取项目根目录网址
 		PageObject pageObject =customerService.searchCustomers(page,limit,customerQuery,basePath);
 		map.put(Constant.JSON_TOTAL,pageObject.getTotalRecords());
         map.put(Constant.JSON_DATA,pageObject.getList());
+		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
 		return map;
 	}
 
@@ -59,14 +58,9 @@ public class CustomerManageController {
 	@PostMapping
 	public Map<String, Object> doAddCustomer(@RequestBody Customer customer){
 		Map<String, Object> map=new HashMap<String, Object>();
-		try {
-			customerService.addCustomer(customer);
-			map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
-			map.put(Constant.JSON_MESSAGE, "账户添加成功");
-		} catch (MyFormException e) {
-			map.put(Constant.JSON_CODE, JsonCode.ERROR.getValue());
-			map.put(Constant.JSON_MESSAGE, e.getMessage());
-		}
+		customerService.addCustomer(customer);
+		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
+		map.put(Constant.JSON_MESSAGE, "账户添加成功");
 		return map;
 	}
 
@@ -92,13 +86,9 @@ public class CustomerManageController {
 	public Map<String, Object> updateCustomer(@RequestBody Customer customer){
 		Map<String, Object> map=new HashMap<String, Object>();
 		map.put(Constant.JSON_CODE, JsonCode.ERROR.getValue());
-		try {
-			customerService.updateCustomer(customer);
-			map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
-			map.put(Constant.JSON_MESSAGE, "账户信息修改成功");
-		} catch (MyFormException e) {
-			map.put(Constant.JSON_MESSAGE, "账户信息编辑失败："+e.getMessage());
-		}
+		customerService.updateCustomer(customer);
+		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
+		map.put(Constant.JSON_MESSAGE, "账户信息修改成功");
 		return map;
 	}
 
@@ -111,13 +101,8 @@ public class CustomerManageController {
 	public Map<String, Object> removeCustomersProfilePicture(@PathVariable("ids")Integer[] ids){
 		Map<String, Object> map=new HashMap<String, Object>();
 		String basepath=ClassUtils.getDefaultClassLoader().getResource("").getPath();//获取项目的根目录，注意不能用JSP那套获取根目录，因为spring boot的tomcat为内置，每次都变
-		try {
-			customerService.removeCustomersProfilePicture(ids,basepath);
-			map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());//默认失败
-		} catch (Exception e) {
-			map.put(Constant.JSON_CODE, JsonCode.ERROR.getValue());//默认失败
-			map.put(Constant.JSON_MESSAGE, "头像移除失败："+e.getMessage());
-		}
+		customerService.removeCustomersProfilePicture(ids,basepath);
+		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());//默认失败
 		return map;
 	}
 
@@ -129,14 +114,8 @@ public class CustomerManageController {
 	@DeleteMapping("/{ids}")
 	public Map<String, Object> deleteCustomers(@PathVariable("ids")Integer[] ids){
 		Map<String, Object> map=new HashMap<String, Object>();
-		try {
-			map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
-			customerService.deleteCustomers(ids);
-		} catch (MyFormException e) {
-			map.put(Constant.JSON_CODE, JsonCode.ERROR.getValue());
-			map.put(Constant.JSON_MESSAGE, "账户删除失败："+e.getMessage());
-		}
-
+		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
+		customerService.deleteCustomers(ids);
 		return map;
 	}
 
@@ -183,7 +162,7 @@ public class CustomerManageController {
 					map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
 					map.put(Constant.JSON_MESSAGE, "上传成功");
 				} catch (IOException e) {
-					map.put(Constant.JSON_MESSAGE, e.getMessage());
+					map.put(Constant.JSON_MESSAGE, "头像上传失败："+e.getMessage());
 				}
 			}
 		}else{

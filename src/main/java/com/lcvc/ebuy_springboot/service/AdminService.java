@@ -29,15 +29,19 @@ public interface AdminService {
 
     /**
      * 删除指定账户
+     * 说明：不能自己删除自己
+     * @param admin 执行删除的管理员账户
      * @param id
      */
-    void deleteAdmin(Integer id);
+    void deleteAdmin(Admin admin,Integer id)  throws MyFormException;
 
     /**
      * 批量删除指定账户
+     * 说明：不能自己删除自己
+     * @param admin 执行删除的管理员账户
      * @param ids 多个账户的主键集合
      */
-    void deleteAdmins(Integer[] ids);
+    void deleteAdmins(Admin admin,Integer[] ids)  throws MyFormException;
 
     /**
      * 添加管理员
