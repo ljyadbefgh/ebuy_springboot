@@ -9,8 +9,12 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author ljy
@@ -31,6 +35,27 @@ public class MyExceptionAdvice {
         //log.error("前端提交异常", e.getMessage());
         return map;
     }
+
+    //处理spring 校验框架validation抛出的异常：ConstraintViolationException（官方定义）
+    @ExceptionHandler(ConstraintViolationException.class)
+    public Map<String, Object> myFormException(ConstraintViolationException e) {
+        Set<ConstraintViolation<?>> violations = new LinkedHashSet(e.getConstraintViolations());
+        StringBuilder strBuilder = new StringBuilder();
+        strBuilder.append("操作失败：");
+        for (ConstraintViolation<?> violation : violations) {
+            //violation.getInvalidValue();表示出错的属性的值
+            strBuilder.append(violation.getMessage());
+            break;//因为所有验证在前端显示，格式需要假如html和css进行控制，如果前端包括android等不好控制，所以只显示一条
+        }
+        String result = strBuilder.toString();
+        Map<String, Object> map=new HashMap<String, Object>();
+        map.put(Constant.JSON_MESSAGE, result);
+        map.put(Constant.JSON_CODE, JsonCode.ERROR.getValue());//返回错误信息
+        //log.error("前端提交异常", e.getMessage());
+        return map;
+    }
+
+
 
     @ExceptionHandler
     public Map<String, Object> unknownException(Exception e) {

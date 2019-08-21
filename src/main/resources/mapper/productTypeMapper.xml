@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 为这个mapper指定一个唯一的namespace，namespace的值习惯上设置成包名+sql映射文件名，这样就能够保证namespace的值是唯一的
+例如namespace="com.cn.mybatis.test1.dao.userMapper"就是com.cn.mybatis.test1.dao(包名)+userMapper(userMapper.xml文件去除后缀)
+ -->
+<mapper namespace="com.lcvc.ebuy_springboot.dao.ProductTypeDao">
+    <select id="get" resultType="ProductType">
+        select * from producttype where id=#{id}
+    </select>
+
+    <insert id="save">
+        insert into producttype(id,name,linkUrl,imageUrl,intro,orderNum) values(null,#{name},#{linkUrl},#{imageUrl},#{intro},#{orderNum})
+    </insert>
+
+    <update id="update" parameterType="ProductType">
+        update producttype
+        <!--set标签可以剔除末尾的,-->
+        <set>
+            <if test="name!=null and name.length()>0">name=#{name},</if>
+            <if test="linkUrl!=null">linkUrl=#{linkUrl},</if>
+            <if test="imageUrl!=null">imageUrl=#{imageUrl},</if>
+            <if test="orderNum!=null">orderNum=#{orderNum},</if>
+            <if test="intro!=null">intro=#{intro},</if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <delete id="delete">
+        delete from producttype where id=#{id}
+    </delete>
+
+    <delete id="deletes" >
+        delete from producttype where id in
+        <foreach item="item" collection="array" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+
+
+    <select id="readAll" resultType="ProductType">
+        select * from producttype order by id asc
+    </select>
+
+    <select id="total" resultType="int">
+       select count(1) from producttype
+    </select>
+
+
+
+
+
+
+
+
+
+</mapper>

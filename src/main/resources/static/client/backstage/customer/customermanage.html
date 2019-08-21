@@ -32,6 +32,10 @@
 		<script>
 			var rowId;//获取行的信息，此处设置的目的是为了在打开账户编辑窗口时，将账户id传递给子窗口（注：如果不是前后端分离，可以直接通过url将参数传递过去,不需要单独处理）
 			var dataSearchFrom;
+			
+			
+			var tableData=new Array(); // 用于存放表格数据
+
 			layui.use('table', function() {
 				var table = layui.table;				
 
@@ -44,9 +48,10 @@
 					toolbar: '#toolbar', //定义表格的头部工具栏
 					cellMinWidth: 80, //全局定义常规单元格的最小宽度，layui 2.2.1 新增
 					height: 'full-50' ,//也可以用绝对高度，full-50表示屏幕最大高度-50
+					//even:true,//开启表格隔行变色
 					page: true, //开启分页
 					limits: [10,20,30,50,100] ,//可供选择的每页显示条数
-           			limit: 20, //默认每页显示记录数
+           			limit: 10, //默认每页显示记录数
 					cols: [[
 						{type: 'checkbox'} //假如复选框，用于批量操作
 						, {
@@ -68,7 +73,7 @@
 							sort: true,
 							templet:function(d){
 								if(d.initialPasswordStatus==true){
-									return '初始密码';
+									return '<span style="color: #F581B1;">初始密码</span>';
 						   	 	}else{
 						   	 		return '密码已变更';
 						   		}						   	
@@ -222,7 +227,6 @@
 									layer.close(index);
 								}
 						});
-						//layer.msg("该功能还在开发中");
 					}else if(obj.event === 'showBigPic'){//监听单元格(头像)事件，当点击头像时展示大图
 				    	if(data.picUrl!=null&&data.picUrl!=''){//只有图片存在时才展示出来
 					    	layer.open({
@@ -247,6 +251,7 @@
 	    			var username = $('input[name="username"]').val();
 	    			var name = $('input[name="name"]').val();
 	    			var sex = $('select[name="sex"]').val();
+	    			var changeInitialPassword = $('select[name="changeInitialPassword"]').val();
 	    			table.reload('customermanage_table', {
 	    				page: {
 	    					curr: 1
@@ -254,7 +259,8 @@
 	    				where: {
 	    					'username': username,
 	    					'name': name,
-	    					'sex': sex
+	    					'sex': sex,
+	    					'changeInitialPassword':changeInitialPassword
 	    				}	    				
     				});
     			});	
@@ -285,6 +291,14 @@
 						<option value="">请选择</option>
 						<option value="1">男</option>
 						<option value="2">女</option>
+					</select>
+			</div>
+			初始密码：
+			<div class="layui-input-inline">
+					<select name="changeInitialPassword">
+						<option value="">请选择</option>
+						<option value="true">已变更</option>
+						<option value="false">未变更</option>
 					</select>
 			</div>
 			

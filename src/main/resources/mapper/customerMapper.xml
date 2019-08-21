@@ -63,6 +63,16 @@
 				<if test="objectQuery.sex!=null and  objectQuery.sex!=0">
 					and sex=#{objectQuery.sex}
 				</if>
+				<if test="objectQuery.changeInitialPassword!=null">
+					<choose>
+						<when test="objectQuery.changeInitialPassword==true">
+							and password!='${@com.lcvc.ebuy_springboot.util.SHA@getResult(123456)}'
+						</when>
+						<otherwise>
+							and password='${@com.lcvc.ebuy_springboot.util.SHA@getResult(123456)}'
+						</otherwise>
+					</choose>
+				</if>
 			</where>
 		</if>
     </select>
@@ -82,6 +92,16 @@
 				</if>
 				<if test="objectQuery.sex!=null and  objectQuery.sex!=0">
 					and sex=#{objectQuery.sex}
+				</if>
+				<if test="objectQuery.changeInitialPassword!=null">
+					<choose>
+						<when test="objectQuery.changeInitialPassword==true">
+							and password!='${@com.lcvc.ebuy_springboot.util.SHA@getResult(123456)}'
+						</when>
+						<otherwise>
+							and password='${@com.lcvc.ebuy_springboot.util.SHA@getResult(123456)}'
+						</otherwise>
+					</choose>
 				</if>
 			</where>
 		</if>

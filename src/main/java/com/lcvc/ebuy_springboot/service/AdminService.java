@@ -45,7 +45,7 @@ public interface AdminService {
 
     /**
      * 添加管理员
-     * 说明：账户名和密码不能为空
+     * 说明：账户名和姓名不能为空
      * @param admin
      */
     void addAdmin(Admin admin) throws MyFormException;
