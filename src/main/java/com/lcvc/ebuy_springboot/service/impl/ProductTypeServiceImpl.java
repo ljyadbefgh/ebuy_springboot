@@ -46,14 +46,10 @@ public class ProductTypeServiceImpl implements ProductTypeService {
         return judge;
     }
 
-    public boolean saveProductType(ProductType productType){
-        boolean judge=false;
+    public void saveProductType(ProductType productType){
         if(productType!=null){
-            if(productTypeDao.save(productType)>0){
-                judge=true;
-            }
+            productTypeDao.save(productType);
         }
-        return judge;
     }
 
     public ProductType getProductType(Integer id){
@@ -66,11 +62,6 @@ public class ProductTypeServiceImpl implements ProductTypeService {
 
     public void updateProductType(ProductType productType) throws MyFormException {
         if(productType!=null){
-            if(productType.getName()!=null){
-                if(productType.getName().length()==0) {
-                    throw new MyFormException("产品类别编辑失败:产品分类名称不能为空");
-                }
-            }
             productTypeDao.update(productType);
         }else{
             throw new MyFormException("产品类别编辑失败:表单异常");

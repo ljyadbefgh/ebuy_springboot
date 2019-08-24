@@ -33,6 +33,9 @@ spring:
   jackson:    #设置全局json格式
     date-format: yyyy-MM-dd HH:mm   #将日期类型设置为字符串表示
     time-zone: GMT+8
+#  servlet:
+#    multipart:
+#      max-file-size: 100MB
 #控制台打印sql语句
 logging:
   file: target/ebuy.log

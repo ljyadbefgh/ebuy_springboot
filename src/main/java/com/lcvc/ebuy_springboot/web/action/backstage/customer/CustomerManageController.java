@@ -100,8 +100,8 @@ public class CustomerManageController {
 	@PatchMapping("/removeCustomersProfilePicture/{ids}")
 	public Map<String, Object> removeCustomersProfilePicture(@PathVariable("ids")Integer[] ids){
 		Map<String, Object> map=new HashMap<String, Object>();
-		String basepath=ClassUtils.getDefaultClassLoader().getResource("").getPath();//获取项目的根目录，注意不能用JSP那套获取根目录，因为spring boot的tomcat为内置，每次都变
-		customerService.removeCustomersProfilePicture(ids,basepath);
+		String basePath=ClassUtils.getDefaultClassLoader().getResource("").getPath();//获取项目的根目录(物理路径)，注意不能用JSP那套获取根目录，因为spring boot的tomcat为内置，每次都变
+		customerService.removeCustomersProfilePicture(ids,basePath);
 		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());//默认失败
 		return map;
 	}
@@ -146,7 +146,7 @@ public class CustomerManageController {
 		if(!file.isEmpty()){
 			Customer customer=customerService.getCustomer(id);//获取账户对象
 			if(customer!=null){//如果该账户存在，则执行上传
-				String basepath=ClassUtils.getDefaultClassLoader().getResource("").getPath();//获取项目的根目录，注意不能用JSP那套获取根目录，因为spring boot的tomcat为内置，每次都变
+				String basepath=ClassUtils.getDefaultClassLoader().getResource("").getPath();//获取项目的根目录(物理路径)，注意不能用JSP那套获取根目录，因为spring boot的tomcat为内置，每次都变
 				String filePath=basepath+Constant.CUSTOMER_PROFILE_PICTURE_UPLOAD_URL;//获取图片上传后保存的物理路径
 				MyFileOperator.createDir(filePath);//创建存储目录
 				String fileName=file.getOriginalFilename();//获取文件名

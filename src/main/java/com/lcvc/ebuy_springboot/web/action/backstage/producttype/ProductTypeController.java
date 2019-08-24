@@ -8,7 +8,6 @@ import com.lcvc.ebuy_springboot.service.ProductTypeService;
 import com.lcvc.ebuy_springboot.util.file.MyFileOperator;
 import org.springframework.ui.Model;
 import org.springframework.util.ClassUtils;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -38,7 +37,7 @@ public class ProductTypeController {
     }
 
     @PatchMapping
-    public Map<String, Object> updateProductType(@RequestBody ProductType productType, BindingResult bindingResult){
+    public Map<String, Object> updateProductType(@RequestBody ProductType productType){
         Map<String, Object> map=new HashMap<String, Object>();
         productType.setImageUrl(null);//更新不能更改上传图片，只能用上传图片方式更改
         productTypeService.updateProductType(productType);
@@ -47,8 +46,17 @@ public class ProductTypeController {
         return map;
     }
 
+    @PostMapping
+    public  Map<String, Object> addProductType(@RequestBody ProductType productType){
+        Map<String, Object> map=new HashMap<String, Object>();
+        productTypeService.saveProductType(productType);
+        map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
+        map.put(Constant.JSON_MESSAGE, "产品类别创建成功");
+        return map;
+    }
+
     /**
-     * 上传客户头像
+     * 上传产品类别头像
      * @param id 客户的Id
      * @param file 要上传的头像
      * @return
@@ -98,24 +106,7 @@ public class ProductTypeController {
         return "/jsp/backstage/producttype/producttypeadd.jsp";
     }
 
-    @RequestMapping(value = "/backstage/producttype/doAddProductType", method = RequestMethod.POST)
-    public String doAddProductType(Model model, ProductType productType){
-        if(productType.getName().length()==0){
-            model.addAttribute("myMessage","产品分类创建失败:产品分类名称不能为空");
-        }else if(productType.getImageUrl().length()==0){
-            model.addAttribute("myMessage","产品分类创建失败:必须上传图片");
-        }else if(productType.getOrderNum()==null){
-            model.addAttribute("myMessage","产品分类创建失败:优先级不能为空");
-        }else{
-            if(productTypeService.saveProductType(productType)){
-                model.addAttribute("myMessage","产品分类创建成功");
-                model.addAttribute("productType",null);
-            }else{
-                model.addAttribute("myMessage","产品分类创建失败");
-            }
-        }
-        return "/jsp/backstage/producttype/producttypeadd.jsp";
-    }
+
 
 
     @RequestMapping(value = "/backstage/producttype/toUpdateProductType", method = RequestMethod.GET)

@@ -32,6 +32,14 @@ public class ProductTypeDaoTest extends EbuySpringbootApplicationTests {
     }
 
     @Test
+    public void testSave(){
+        ProductType productType=new ProductType();
+        productType.setName("测试1");
+        System.out.println(productTypeDao.save(productType));
+        System.out.println(productType.getId());
+    }
+
+    @Test
     public void testTotal(){
         System.out.println("账户总数："+productTypeDao.total());
     }

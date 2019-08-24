@@ -14,14 +14,18 @@ import javax.validation.constraints.NotNull;
 public class ProductType implements java.io.Serializable {
 
 	private Integer id;
+
 	@NotBlank(message = "产品类别的名称不允许为空")
-	@Length(min = 2, max = 10, message = "产品类别的名称长度必须在 {min} - {max} 之间")
+	@Length(min = 2, max = 20, message = "产品类别的名称长度必须在 {min} - {max} 之间")
 	private String name;//产品类别名称
+
 	@Length(max = 255, message = "产品类别的外部链接地址不能超过{max}个字符")
 	private String linkUrl;//转向链接地址（如果存在则直接转向链接地址，否则打开本网站栏目）
+
 	@Length(max = 200, message = "产品的图片地址不能超过{max}个字符")
 	private String imageUrl;//栏目的标题图片地址
 	private String intro;//栏目简介
+
 	@NotNull(message = "优先级不允许为空")
 	private Integer orderNum;//排序（默认0，规则由前台决定，一般排序为最大）
 	

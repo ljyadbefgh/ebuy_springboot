@@ -26,11 +26,9 @@ public interface ProductTypeService {
 
     /**
      * 保存产品分类
-     *
      * @param productType
-     * @return true表示保存成功
      */
-    boolean saveProductType(ProductType productType);
+    void saveProductType(@Valid ProductType productType);
 
     /**
      * 根据id获取产品分类对象
@@ -41,8 +39,7 @@ public interface ProductTypeService {
     ProductType getProductType(Integer id);
 
     /**
-     * 执行指定产品分类的编辑
-     *
+     * 执行指定产品分类的编辑     *
      * @param productType
      */
     void updateProductType(@Valid ProductType productType) throws MyFormException;

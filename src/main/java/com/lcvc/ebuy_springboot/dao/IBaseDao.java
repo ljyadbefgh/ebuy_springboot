@@ -13,11 +13,11 @@ public interface IBaseDao<T>{
 	T get(java.io.Serializable id);
 
 	/**
-	 * 保存指定记录
+	 * 保存指定记录(并返回主键值，主键值自动存储在t对象里)
 	 * @param t 注意表中的非空字段不能为空
 	 * @return 1表示成功，0表示失败，>1表示数据库存在异常
 	 */
-	int save(T t);	
+	int save(T t);
 	
 	/**
 	 * 编辑指定记录

@@ -47,7 +47,7 @@
 					method: 'get',
 					toolbar: '#toolbar', //定义表格的头部工具栏
 					cellMinWidth: 80, //全局定义常规单元格的最小宽度，layui 2.2.1 新增
-					height: 'full-50' ,//也可以用绝对高度，full-50表示屏幕最大高度-50
+					height: 'full-100' ,//也可以用绝对高度，full-50表示屏幕最大高度-50
 					//even:true,//开启表格隔行变色
 					page: true, //开启分页
 					limits: [10,20,30,50,100] ,//可供选择的每页显示条数
@@ -252,6 +252,7 @@
 	    			var name = $('input[name="name"]').val();
 	    			var sex = $('select[name="sex"]').val();
 	    			var changeInitialPassword = $('select[name="changeInitialPassword"]').val();
+	    			var uploadPhoto = $('select[name="uploadPhoto"]').val();
 	    			table.reload('customermanage_table', {
 	    				page: {
 	    					curr: 1
@@ -260,7 +261,8 @@
 	    					'username': username,
 	    					'name': name,
 	    					'sex': sex,
-	    					'changeInitialPassword':changeInitialPassword
+	    					'changeInitialPassword':changeInitialPassword,
+	    					'uploadPhoto':uploadPhoto
 	    				}	    				
     				});
     			});	
@@ -276,32 +278,49 @@
 	</head>
 
 	<body>
-		<form class="layui-form">
-			账户名：
-			<div class="layui-inline">
-				<input type="text" name="username" autocomplete="off" placeholder="请输入账户名" class="layui-input">
-			</div>		
-			姓名：
-			<div class="layui-inline">
-				<input type="text" name="name" autocomplete="off" placeholder="请输入姓名" class="layui-input">
-			</div>	
-			性别：
-			<div class="layui-input-inline">
-					<select name="sex" lay-verify="sex">
-						<option value="">请选择</option>
-						<option value="1">男</option>
-						<option value="2">女</option>
-					</select>
+		<form class="layui-form layui-form-pane">
+			<div class="layui-inline" style="margin-top:5px;">
+				<label class="layui-form-label">账户名：</label>
+				<div class="layui-inline">
+					<input type="text" name="username" autocomplete="off" placeholder="请输入账户名" class="layui-input">
+				</div>	
 			</div>
-			初始密码：
-			<div class="layui-input-inline">
-					<select name="changeInitialPassword">
-						<option value="">请选择</option>
-						<option value="true">已变更</option>
-						<option value="false">未变更</option>
-					</select>
+			<div class="layui-inline" style="margin-top:5px;">
+				<label class="layui-form-label">姓名</label>
+				<div class="layui-inline">
+					<input type="text" name="name" autocomplete="off" placeholder="请输入姓名" class="layui-input">
+				</div>	
 			</div>
-			
+			<div class="layui-inline" style="margin-top:5px;">
+				<label class="layui-form-label">性别</label>
+				<div class="layui-input-inline">
+						<select name="sex" lay-verify="sex">
+							<option value="">请选择</option>
+							<option value="1">男</option>
+							<option value="2">女</option>
+						</select>
+				</div>
+			</div>
+			<div class="layui-inline" style="margin-top:5px;">
+				<label class="layui-form-label">初始密码</label>
+				<div class="layui-input-inline">
+						<select name="changeInitialPassword">
+							<option value="">请选择</option>
+							<option value="true">已变更</option>
+							<option value="false">未变更</option>
+						</select>
+				</div>
+			</div>
+			<div class="layui-inline" style="margin-top:5px;">
+				<label class="layui-form-label">上传头像</label>
+				<div class="layui-input-inline">
+						<select name="uploadPhoto">
+							<option value="">请选择</option>
+							<option value="true">已上传</option>
+							<option value="false">未上传</option>
+						</select>
+				</div>
+			</div>
 			<button class="layui-btn" data-type="reload" id="search_button" type="button">搜索</button>
 		</form>
 		<table class="layui-hide" id="customers" lay-filter="customers"></table>

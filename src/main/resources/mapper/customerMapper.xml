@@ -73,6 +73,16 @@
 						</otherwise>
 					</choose>
 				</if>
+				<if test="objectQuery.uploadPhoto!=null">
+					<choose>
+						<when test="objectQuery.uploadPhoto==true">
+							and (picUrl!='' or picUrl!=null)
+						</when>
+						<otherwise>
+							and (picUrl='' or picUrl is null)
+						</otherwise>
+					</choose>
+				</if>
 			</where>
 		</if>
     </select>
@@ -100,6 +110,16 @@
 						</when>
 						<otherwise>
 							and password='${@com.lcvc.ebuy_springboot.util.SHA@getResult(123456)}'
+						</otherwise>
+					</choose>
+				</if>
+				<if test="objectQuery.uploadPhoto!=null">
+					<choose>
+						<when test="objectQuery.uploadPhoto==true">
+							and (picUrl!='' or picUrl!=null)
+						</when>
+						<otherwise>
+							and (picUrl='' or picUrl is null)
 						</otherwise>
 					</choose>
 				</if>

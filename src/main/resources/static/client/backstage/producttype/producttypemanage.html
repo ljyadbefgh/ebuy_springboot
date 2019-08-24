@@ -71,6 +71,7 @@
 					var checkStatus = table.checkStatus(obj.config.id);
 					switch(obj.event) {
 						case 'createProductType':
+							/*//下面是动态添加行的方式，不过因为和url方式冲突，故暂时放弃
 							var oldData = table.cache["producttypemanage_table"];//获取原表格数据的js对象数组
 							var newRow = {//要添加的新的一行的数据初始值
 								id:1,
@@ -82,11 +83,19 @@
 							};							
 							oldData.push(newRow);//将新的一行数据传入原表格数组中
 							obj.data=oldData;
-							alert(obj.data);
-							//alert(JSON.stringify(oldData));
-							/*table.reload("producttypemanage_table",{//根据原数据重新加载表格
+							table.reload("producttypemanage_table",{//根据原数据重新加载表格
    								data:JSON.stringify(oldData)   // 将新数据重新载入表格
 							})*/
+							layer.open({
+								title:false,
+								type: 2,
+								area: ['600px', '550px'],
+								content: 'producttypeadd.html', //这里content是一个URL，如果你不想让iframe出现滚动条，你还可以content: ['http://sentsin.com', 'no']
+								cancel: function(index, layero) { //当前层索引参数（index）、当前层的DOM对象（layero)
+									table.reload('producttypemanage_table');//重新刷新表格数据
+									layer.close(index);
+								}
+							});
 							break;
 						case 'deleteProductTypes':
 							var datas = checkStatus.data;//获取选中的数据
