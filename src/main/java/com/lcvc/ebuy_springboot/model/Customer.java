@@ -14,6 +14,7 @@ public class Customer implements java.io.Serializable {
 	private String name;//客户名称
 	private Integer sex;//性别
 	private String picUrl;//头像路径
+	//@Pattern(regexp = "^1(3|4|5|7|8)\\d{9}$",message = "手机号码格式错误")
 	private String tel;//电话号码
 	private String address;//客户地址
 	private String zip;//客户邮编

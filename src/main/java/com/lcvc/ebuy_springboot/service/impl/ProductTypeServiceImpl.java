@@ -66,6 +66,5 @@ public class ProductTypeServiceImpl implements ProductTypeService {
         }else{
             throw new MyFormException("产品类别编辑失败:表单异常");
         }
-
     }
 }

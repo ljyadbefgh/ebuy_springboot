@@ -28,7 +28,7 @@ public interface ProductTypeService {
      * 保存产品分类
      * @param productType
      */
-    void saveProductType(@Valid ProductType productType);
+    void saveProductType(@Valid ProductType productType) throws MyFormException;
 
     /**
      * 根据id获取产品分类对象

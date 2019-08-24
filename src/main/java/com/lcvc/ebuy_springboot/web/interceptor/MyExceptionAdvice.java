@@ -5,6 +5,7 @@ import com.lcvc.ebuy_springboot.model.base.JsonCode;
 import com.lcvc.ebuy_springboot.model.exception.MyFormException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -56,9 +57,20 @@ public class MyExceptionAdvice {
     }
 
     @ExceptionHandler
-    public Map<String, Object> numberFormatExceptionException(NumberFormatException e) {
+    public Map<String, Object> numberFormatException(NumberFormatException e) {
         Map<String, Object> map=new HashMap<String, Object>();
         map.put(Constant.JSON_MESSAGE, "数字转换异常：必须输入整数");
+        map.put(Constant.JSON_CODE, JsonCode.ERROR.getValue());//返回错误信息
+        //未知异常一般是计划外的，需要重点处理，比如记录下日志，或是自动发送错误信息邮件给技术部
+        //log.error("前端提交异常", e.getMessage());
+        return map;
+    }
+
+    //json转换异常时出现
+    @ExceptionHandler
+    public Map<String, Object> httpMessageNotReadableException(HttpMessageNotReadableException e) {
+        Map<String, Object> map=new HashMap<String, Object>();
+        map.put(Constant.JSON_MESSAGE, "类型转换异常："+e.getMessage());
         map.put(Constant.JSON_CODE, JsonCode.ERROR.getValue());//返回错误信息
         //未知异常一般是计划外的，需要重点处理，比如记录下日志，或是自动发送错误信息邮件给技术部
         //log.error("前端提交异常", e.getMessage());

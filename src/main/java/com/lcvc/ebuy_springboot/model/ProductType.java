@@ -24,7 +24,8 @@ public class ProductType implements java.io.Serializable {
 
 	@Length(max = 200, message = "产品的图片地址不能超过{max}个字符")
 	private String imageUrl;//栏目的标题图片地址
-	private String intro;//栏目简介
+	private String summary;//栏目简介（纯文本）,从intro提取纯文本内容作为摘要
+	private String intro;//栏目简介（富文本）
 
 	@NotNull(message = "优先级不允许为空")
 	private Integer orderNum;//排序（默认0，规则由前台决定，一般排序为最大）
@@ -98,5 +99,12 @@ public class ProductType implements java.io.Serializable {
 	public void setProductNumber(Integer productNumber) {
 		this.productNumber = productNumber;
 	}
-	
+
+	public String getSummary() {
+		return summary;
+	}
+
+	public void setSummary(String summary) {
+		this.summary = summary;
+	}
 }
