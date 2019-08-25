@@ -18,11 +18,15 @@ public interface ProductTypeService {
     List<ProductType> getProductTypes(String basePath);
 
     /**
-     * 删除指定的产品分类
-     * @param id 产品分类的主键
+     * 批量删除指定的产品分类
+     * 说明：
+     * 1.如果产品栏目下有图片，将一并删除
+     * 2.如果产品栏目下有产品，将不允许删除
+     * @param ids 产品分类的主键
+     * @param basePath 项目根目录网址，用于配合LOGO地址生成完整网址后传给前端
      * @return true表示删除成功，false表示删除失败
      */
-    boolean deleteProductType(Integer id);
+    void deleteProductTypes(Integer[] ids, String basePath);
 
     /**
      * 保存产品分类

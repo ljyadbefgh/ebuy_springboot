@@ -42,8 +42,10 @@
 					toolbar: '#toolbar', //定义表格的头部工具栏
 					cellMinWidth: 80, //全局定义常规单元格的最小宽度，layui 2.2.1 新增
 					height: 'full',
+					page: { //支持传入 laypage 组件的所有参数（某些参数除外，如：jump/elem） - 详见文档
+				      	layout: ['count'] //自定义分页布局
+				  	 },
 					//even:true,//开启表格隔行变色
-					page: true, //开启分页
 					cols: [[
 						{type: 'checkbox'} //假如复选框，用于批量操作
 						, {
@@ -61,7 +63,8 @@
 						, {field: 'name',title: '产品名称',sore: true,edit: 'text'}
 						, {field: 'linkUrl',title: '外部链接地址',width: 200,edit: 'text'}
 						, {field: 'orderNum',title: '优先级别',sort: true,edit: 'text'}
-						, {field: 'productNumber',title: '产品数量',sort: true}						
+						, {field: 'productNumber',title: '产品数量',sort: true}			
+						, {field: 'summary',title: '栏目简介'}	
 						, {fixed: 'right',title: '操作',toolbar: '#barDemo'}
 					]]
 				});
@@ -103,23 +106,22 @@
 								layer.msg('请先选择记录');
 							}else{								
 								var ids = "";//定义要批量删除的主键id
-								var usernames="";//定义账户名集合
+								var names="";//定义名字集合
 								for(var i=0;i<datas.length;i++){//遍历数组，将id用","相隔									
 								    if(i==datas.length-1){//如果是最后一条记录，则不添加","
 								    	ids += checkStatus.data[i].id;
-										usernames+=checkStatus.data[i].username;
+										names+=checkStatus.data[i].name;
 								    }else{
 								    	ids += checkStatus.data[i].id+",";
-										usernames+=checkStatus.data[i].username+",";
+										names+=checkStatus.data[i].name+",";
 								    }
 								}
-								layer.confirm('确定要批量删除这些账户(' + usernames + ')吗？', function(index) {
-									$.deleteResful(WEBURL_API + "backstage/adminmanage/deletes/" + ids, 
+								layer.confirm('确定要批量删除这些产品类别(' + names + ')吗？', function(index) {
+									$.deleteResful(WEBURL_API + "backstage/producttype/" + ids, 
 										function(msg) {
 											if(msg.code == code_success) {
 												layer.msg("删除成功");
-												table.reload('adminmanage_table');//重新刷新表格数据
-												 //location.reload(true);刷新整个页面											
+												table.reload('producttypemanage_table');//重新刷新表格数据									
 											} else{
 												layer.msg(msg.msg);
 											}
@@ -149,16 +151,16 @@
 									layer.close(index);
 								}
 						});
-					} else if(obj.event === 'uploadPhoto') {
+					} else if(obj.event === 'edit') {
 						rowId=data.id;//将id值传递给全局变量
 						layer.open({
 								title:false,
 								//title: '编辑管理账户',
 								type: 2,
-								area: ['450px', '370px'],
-								content: 'adminupdate.html', //这里content是一个URL，如果你不想让iframe出现滚动条，你还可以content: ['http://sentsin.com', 'no']
+								area: ['600px', '550px'],
+								content: 'producttypeupdate.html', //这里content是一个URL，如果你不想让iframe出现滚动条，你还可以content: ['http://sentsin.com', 'no']
 								cancel: function(index, layero) { //当前层索引参数（index）、当前层的DOM对象（layero)
-									table.reload('adminmanage_table');//重新刷新表格数据
+									table.reload('producttypemanage_table');//重新刷新表格数据
 									rowId=null;//清空保存的行信息（用于传递给子窗口）
 									layer.close(index);
 								}

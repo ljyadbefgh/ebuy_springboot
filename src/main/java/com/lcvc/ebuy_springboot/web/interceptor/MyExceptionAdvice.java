@@ -3,6 +3,7 @@ package com.lcvc.ebuy_springboot.web.interceptor;
 import com.lcvc.ebuy_springboot.model.base.Constant;
 import com.lcvc.ebuy_springboot.model.base.JsonCode;
 import com.lcvc.ebuy_springboot.model.exception.MyFormException;
+import com.lcvc.ebuy_springboot.model.exception.MyServiceException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -30,6 +31,15 @@ public class MyExceptionAdvice {
 
     @ExceptionHandler
     public Map<String, Object> myFormException(MyFormException e) {
+        Map<String, Object> map=new HashMap<String, Object>();
+        map.put(Constant.JSON_MESSAGE, e.getMessage());
+        map.put(Constant.JSON_CODE, JsonCode.ERROR.getValue());//返回错误信息
+        //log.error("前端提交异常", e.getMessage());
+        return map;
+    }
+
+    @ExceptionHandler
+    public Map<String, Object> myServiceException(MyServiceException e) {
         Map<String, Object> map=new HashMap<String, Object>();
         map.put(Constant.JSON_MESSAGE, e.getMessage());
         map.put(Constant.JSON_CODE, JsonCode.ERROR.getValue());//返回错误信息

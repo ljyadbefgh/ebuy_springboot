@@ -4,7 +4,9 @@ import com.lcvc.ebuy_springboot.dao.ProductTypeDao;
 import com.lcvc.ebuy_springboot.model.ProductType;
 import com.lcvc.ebuy_springboot.model.base.Constant;
 import com.lcvc.ebuy_springboot.model.exception.MyFormException;
+import com.lcvc.ebuy_springboot.model.exception.MyServiceException;
 import com.lcvc.ebuy_springboot.service.ProductTypeService;
+import com.lcvc.ebuy_springboot.util.file.MyFileOperator;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -36,14 +38,18 @@ public class ProductTypeServiceImpl implements ProductTypeService {
         return productTypeList;
     }
 
-    public boolean deleteProductType(Integer id){
-        boolean judge=false;
-        if(id!=null){
-            if(productTypeDao.delete(id)>0){
-                judge=true;
+    public void deleteProductTypes(Integer[] ids, String basePath) throws MyFormException, MyServiceException {
+        for(Integer id:ids){
+            //删除账户对应的图片
+            ProductType productType=productTypeDao.get(id);//读取相应的记录
+            if(productType!=null){
+                String imageUrl=productType.getImageUrl();//获取图片地址
+                if(!StringUtils.isEmpty(imageUrl)){//如果图片地址存在
+                    MyFileOperator.deleteFile(basePath+ Constant.PRODUCTTYPE_PICTURE_UPLOAD_URL+imageUrl);//删除图片
+                }
             }
         }
-        return judge;
+        productTypeDao.deletes(ids);
     }
 
     public void saveProductType(ProductType productType){

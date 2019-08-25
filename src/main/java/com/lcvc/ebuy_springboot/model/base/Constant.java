@@ -31,6 +31,6 @@ public class Constant {
     public static final String CUSTOMER_PROFILE_PICTURE_UPLOAD_URL= "static/server/upload/customer_profile_picture/";//保存客户个人头像的目录，用于上传的时候，必须指明static下的绝对路径
     public static final String CUSTOMER_PROFILE_PICTURE_URL="server/upload/customer_profile_picture/";//保存客户个人头像的目录,用于展示的时候，不需要加上static
     //产品类别图片上传配置
-    public static final String PRODUCTTYPE_PICTURE_UPLOAD_URL= "static/server/upload/producttype/";//保存产品栏目的目录，用于上传的时候，必须指明static下的绝对路径
+    public static final String PRODUCTTYPE_PICTURE_UPLOAD_URL= "static/server/upload/producttype/";//保存产品栏目的目录，用于上传和删除的时候，必须指明static下的绝对路径
     public static final String PRODUCTTYPE_PICTURE_URL= "server/upload/producttype/";//保存产品栏目的目录,用于展示的时候，不需要加上static
 }

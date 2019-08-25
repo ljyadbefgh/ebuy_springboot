@@ -4,6 +4,7 @@ package com.lcvc.ebuy_springboot.service;
 import com.lcvc.ebuy_springboot.model.Customer;
 import com.lcvc.ebuy_springboot.model.base.PageObject;
 import com.lcvc.ebuy_springboot.model.exception.MyFormException;
+import com.lcvc.ebuy_springboot.model.exception.MyServiceException;
 import com.lcvc.ebuy_springboot.model.query.CustomerQuery;
 
 public interface CustomerService {
@@ -34,7 +35,7 @@ public interface CustomerService {
      * @param ids 多个账户的主键集合
      * @throws MyFormException
      */
-    void deleteCustomers(Integer[] ids) throws MyFormException;
+    void deleteCustomers(Integer[] ids) throws MyFormException, MyServiceException;
 
 
     /**

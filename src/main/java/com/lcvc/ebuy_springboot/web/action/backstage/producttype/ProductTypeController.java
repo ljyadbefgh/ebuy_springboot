@@ -6,7 +6,6 @@ import com.lcvc.ebuy_springboot.model.base.Constant;
 import com.lcvc.ebuy_springboot.model.base.JsonCode;
 import com.lcvc.ebuy_springboot.service.ProductTypeService;
 import com.lcvc.ebuy_springboot.util.file.MyFileOperator;
-import org.springframework.ui.Model;
 import org.springframework.util.ClassUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -93,27 +92,26 @@ public class ProductTypeController {
         return map;
     }
 
-    @RequestMapping(value = "/backstage/producttype/doDeleteProductType", method = RequestMethod.GET)
-    public String doDeleteProductType(Model model,Integer id){
-        if(productTypeService.deleteProductType(id)==false){
-            model.addAttribute("myMessage","删除失败");
-        }
-        return "/backstage/producttype/toManageProductType";
+    @DeleteMapping("/{ids}")
+    public  Map<String, Object> doDeleteProductTypes(@PathVariable("ids")Integer[] ids){
+        Map<String, Object> map=new HashMap<String, Object>();
+        String basepath= ClassUtils.getDefaultClassLoader().getResource("").getPath();//获取项目的根目录，注意不能用JSP那套获取根目录，因为spring boot的tomcat为内置，每次都变
+        productTypeService.deleteProductTypes(ids,basepath);
+        map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
+        return map;
     }
 
-    @RequestMapping(value = "/backstage/producttype/toAddProductType", method = RequestMethod.GET)
-    public String toAddProductType(Integer id){
-        return "/jsp/backstage/producttype/producttypeadd.jsp";
+    /**
+     * 读取指定产品分类
+     * @param id 指定产品分类的主键
+     * @return
+     */
+    @GetMapping("/{id}")
+    public Map<String, Object>  getProductType(@PathVariable Integer id){
+        Map<String, Object> map=new HashMap<String, Object>();
+        map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
+        map.put(Constant.JSON_DATA,productTypeService.getProductType(id));
+        return map;
     }
-
-
-
-
-    @RequestMapping(value = "/backstage/producttype/toUpdateProductType", method = RequestMethod.GET)
-    public String toUpdateProductType(Model model,Integer id){
-        model.addAttribute("productType",productTypeService.getProductType(id));
-        return "/jsp/backstage/producttype/producttypeupdate.jsp";
-    }
-
 
 }

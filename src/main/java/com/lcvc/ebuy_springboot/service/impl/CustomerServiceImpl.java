@@ -5,6 +5,7 @@ import com.lcvc.ebuy_springboot.model.Customer;
 import com.lcvc.ebuy_springboot.model.base.Constant;
 import com.lcvc.ebuy_springboot.model.base.PageObject;
 import com.lcvc.ebuy_springboot.model.exception.MyFormException;
+import com.lcvc.ebuy_springboot.model.exception.MyServiceException;
 import com.lcvc.ebuy_springboot.model.query.CustomerQuery;
 import com.lcvc.ebuy_springboot.service.CustomerService;
 import com.lcvc.ebuy_springboot.util.SHA;
@@ -50,13 +51,13 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public void deleteCustomers(Integer[] ids) throws MyFormException{
+    public void deleteCustomers(Integer[] ids) throws MyFormException, MyServiceException {
         for(Integer id:ids){
             //删除账户对应的图片
             Customer customer=customerDao.get(id);//读取相应的记录
             String picUrl=customer.getPicUrl();//获取头像地址
             if(!StringUtils.isEmpty(picUrl)){//如果头像存在
-              throw new MyFormException("账户删除失败：请先删除头像，再执行账户删除");
+              throw new MyServiceException("账户删除失败：请先删除头像，再执行账户删除");
             }
         }
         customerDao.deletes(ids);
