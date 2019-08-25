@@ -1,4 +1,4 @@
-package com.lcvc.ebuy_springboot.service.impl;
+package com.lcvc.ebuy_springboot.junit.service;
 
 import com.lcvc.ebuy_springboot.EbuySpringbootApplicationTests;
 import com.lcvc.ebuy_springboot.model.Admin;

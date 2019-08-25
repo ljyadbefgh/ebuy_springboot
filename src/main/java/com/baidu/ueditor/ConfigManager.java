@@ -176,7 +176,7 @@ public final class ConfigManager {
 		}
 	}
 
-	private String[] getArray ( String key ) {
+	private String[] getArray ( String key ){
 		
 		JSONArray jsonArray = this.jsonConfig.getJSONArray( key );
 		String[] result = new String[ jsonArray.length() ];

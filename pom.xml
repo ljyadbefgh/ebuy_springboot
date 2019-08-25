@@ -19,6 +19,8 @@
 		<!--mysal驱动包-->
 		<mysql.version>8.0.16</mysql.version>
 		<mybatis.version>3.4.2</mybatis.version>
+		<!--junit本来会由spring-boot-starter-test自动导入4.12版本以上，但是有时候这个版本会出错，可以将本地maven的Junit删除重新下载即可-->
+		<junit.version>4.12</junit.version>
 		<!--实现JSON必须包，添加该包后Maven会自动下载该类需要的其他jar:如common-collection,commons-beanutils，commons-lang，commons-logging，ezmorph等依赖包-->
 		<json-lib.version>2.4</json-lib.version>
 		<!--ueditor编辑器-->
@@ -42,6 +44,13 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-thymeleaf</artifactId>
 		</dependency>
+
+		<!--<dependency>-->
+			<!--<groupId>junit</groupId>-->
+			<!--<artifactId>junit</artifactId>-->
+			<!--<version>${junit.version}</version>-->
+		<!--</dependency>-->
+
 
 
 		<!--mysql驱动包-->
@@ -109,7 +118,8 @@
 			<artifactId>json</artifactId>
 			<version>20160212</version>
 		</dependency>
-		<!--ueditor所需的架包，结束-->
+
+        <!--ueditor所需的架包，结束-->
 
 	</dependencies>
 
