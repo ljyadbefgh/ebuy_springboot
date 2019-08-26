@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>产品管理模块</title>
+		<meta name="renderer" content="webkit">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<!--导入layui插件-->
+		<link rel="stylesheet" href="../../plugins/layui/css/layui.css">
+		<script src="../../plugins/layui/layui.js"></script>
+		<!--导入jquery插件-->
+		<script src="../../plugins/jquery.js"></script>
+		<!--导入自己插件：前端基础设置-->
+		<script src="../../js/my_base_js.js"></script>
+		<!--定义表格的头部工具栏-->
+		<script type="text/html" id="toolbar">
+			<div class="layui-btn-container">
+				<button class="layui-btn layui-btn-sm" lay-event="createProduct">创建产品</button>
+				<button class="layui-btn layui-btn-sm" lay-event="removeProductsProfilePicture">变更产品所有图片为当前域名</button>
+				<button class="layui-btn layui-btn-sm" lay-event="deleteProducts">批量删除产品</button>				
+			</div>
+		</script>
+		<!--定义表格邮编的行工具栏-->
+		<script type="text/html" id="barDemo">
+			<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+		</script>
+
+		<script>
+			var rowId;//获取行的信息，此处设置的目的是为了在打开账户编辑窗口时，将账户id传递给子窗口（注：如果不是前后端分离，可以直接通过url将参数传递过去,不需要单独处理）
+			var dataSearchFrom;
+			
+			
+			var tableData=new Array(); // 用于存放表格数据
+
+			layui.use('table', function() {
+				var table = layui.table;				
+
+				table.render({
+					id:'productmanage_table',
+					elem: '#products',
+					title: '产品数据表',
+					url: WEBURL_API + 'backstage/product',
+					method: 'get',
+					toolbar: '#toolbar', //定义表格的头部工具栏
+					cellMinWidth: 80, //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+					height: 'full-100' ,//也可以用绝对高度，full-50表示屏幕最大高度-50
+					//even:true,//开启表格隔行变色
+					page: true, //开启分页
+					limits: [10,20,30,50,100] ,//可供选择的每页显示条数
+           			limit: 10, //默认每页显示记录数
+					cols: [[
+						{type: 'checkbox'} //假如复选框，用于批量操作
+						, {
+							field: 'picUrl', 
+							title: '产品图片', 
+							align: 'center',
+							event: 'showBigPic',//定义事件名称
+							templet:function(d){
+								return '<div><img style="height:30px;" src="'+d.picUrl+'"></div>'					   	
+						   }}
+						, {field: 'name',title: '产品名称'}
+						, {
+							field: 'productType'
+							,title: '所属栏目'
+							,templet:function(d){
+								return d.productType.name					   	
+						  }}
+						, {field: 'orderNum',title: '优先级'}
+						, {field: 'price',title: '现价'}
+						, {field: 'originalPrice',title: '原价'}
+						, {field: 'number',title: '库存'}
+						, {field: 'click',title: '人气'}
+						, {
+							field: 'onSale',
+							title: '是否上架',
+							sort: true,
+							templet:function(d){
+								if(d.onSale==true){
+									return '已上架';
+						   	 	}else{
+						   	 		return '已下架';
+						   		}						   	
+						   }}
+						, {field: 'createTime',title: '发布时间',sort: true}
+						, {fixed: 'right',title: '操作',width: 100,toolbar: '#barDemo'}
+					]]
+				});
+
+				//头工具栏事件
+				table.on('toolbar(products)', function(obj) {
+					var checkStatus = table.checkStatus(obj.config.id);
+					switch(obj.event) {
+						case 'createProduct':
+							layer.open({
+								title:false,
+								//title: '创建产品',
+								type: 2,
+								area: ['600px', '550px'],
+								content: 'Productadd.html', //这里content是一个URL，如果你不想让iframe出现滚动条，你还可以content: ['http://sentsin.com', 'no']
+								cancel: function(index, layero) { //当前层索引参数（index）、当前层的DOM对象（layero)
+									table.reload('productmanage_table');//重新刷新表格数据
+									layer.close(index);
+								}
+							});
+							break;
+						case 'deleteProducts':
+							var datas = checkStatus.data;//获取选中的数据
+							if(datas.length==0){
+								layer.msg('请先选择记录');
+							}else{								
+								var ids = "";//定义要批量删除的主键id
+								var usernames="";//定义账户名集合
+								for(var i=0;i<datas.length;i++){//遍历数组，将id用","相隔									
+								    if(i==datas.length-1){//如果是最后一条记录，则不添加","
+								    	ids += checkStatus.data[i].id;
+										usernames+=checkStatus.data[i].username;
+								    }else{
+								    	ids += checkStatus.data[i].id+",";
+										usernames+=checkStatus.data[i].username+",";
+								    }
+								}
+								layer.confirm('确定要批量删除这些账户(' + usernames + ')吗？删除后所有数据都将无法恢复！', function(index) {
+									$.deleteResful(WEBURL_API + "//backstage/Productmanage/" + ids, 
+										function(msg) {
+											if(msg.code == 0) {
+												layer.msg("删除成功");
+												table.reload('productmanage_table');//重新刷新表格数据
+												 //location.reload(true);刷新整个页面											
+											} else {
+												layer.msg(msg.msg);
+											}
+										}
+									)
+									layer.close(index);//关闭窗口
+								});								
+							}
+							break;
+						case 'removeProductsProfilePicture':
+							var datas = checkStatus.data;//获取选中的数据
+							if(datas.length==0){
+								layer.msg('请先选择记录');
+							}else{								
+								var ids = "";//定义要批量删除的主键id
+								var usernames="";//定义账户名集合
+								for(var i=0;i<datas.length;i++){//遍历数组，将id用","相隔									
+								    if(i==datas.length-1){//如果是最后一条记录，则不添加","
+								    	ids += checkStatus.data[i].id;
+										usernames+=checkStatus.data[i].username;
+								    }else{
+								    	ids += checkStatus.data[i].id+",";
+										usernames+=checkStatus.data[i].username+",";
+								    }
+								}
+								layer.confirm('确定要批量移除这些账户(' + usernames + ')的头像吗？移除后相关照片都将无法恢复！', function(index) {
+									$.patchResful(WEBURL_API + "backstage/productmanage/removeProductsProfilePicture/" + ids, 
+										function(msg) {
+											if(msg.code == 0) {
+												layer.msg("移除成功");
+												table.reload('Productmanage_table');//重新刷新表格数据
+												 //location.reload(true);刷新整个页面											
+											} else {
+												layer.msg(msg.msg);
+											}
+										}
+									)
+									layer.close(index);//关闭窗口
+								});								
+							}
+							break;
+					};
+				});
+				
+				//监听行工具事件
+				table.on('tool(products)', function(obj) {
+					var data = obj.data; //获取该行的记录
+					//console.log(obj)
+					if(obj.event === 'resetPassword') {
+						layer.confirm('确定重置账户（' + data.username + '）的密码吗？', function(index) {
+							//$.deleteResful，自定义的删除插件，针对resful风格设计
+							$.patchResful(WEBURL_API + "backstage/Productmanage/resetPassword/" + data.id, function(msg) {
+								if(msg.code == code_success) {
+									layer.msg("密码重置成功");
+									table.reload('productmanage_table');//重新刷新表格数据
+								} else{
+									layer.msg(msg.msg);
+								}
+							})
+							layer.close(index);
+						});
+					} else if(obj.event === 'edit') {
+						rowId=data.id;//将id值传递给全局变量
+						layer.open({
+								title:false,
+								//title: '编辑管理账户',
+								type: 2,
+								area: ['450px', '370px'],
+								content: 'Productupdate.html', //这里content是一个URL，如果你不想让iframe出现滚动条，你还可以content: ['http://sentsin.com', 'no']
+								cancel: function(index, layero) { //当前层索引参数（index）、当前层的DOM对象（layero)
+									table.reload('productmanage_table');//重新刷新表格数据
+									rowId=null;//清空保存的行信息（用于传递给子窗口）
+									layer.close(index);
+								}
+						});
+					}else if(obj.event === 'uploadPhoto') {
+						rowId=data.id;//将id值传递给全局变量
+						layer.open({
+								title: '头像上传',
+								type: 2,
+								area: ['450px', '370px'],
+								content: 'photoupload.html', //这里content是一个URL，如果你不想让iframe出现滚动条，你还可以content: ['http://sentsin.com', 'no']
+								cancel: function(index, layero) { //当前层索引参数（index）、当前层的DOM对象（layero)
+									table.reload('productmanage_table');//重新刷新表格数据
+									rowId=null;//清空保存的行信息（用于传递给子窗口）
+									layer.close(index);
+								}
+						});
+					}else if(obj.event === 'showBigPic'){//监听单元格(头像)事件，当点击头像时展示大图
+				    	if(data.picUrl!=null&&data.picUrl!=''){//只有图片存在时才展示出来
+					    	layer.open({
+				                type: 1,
+				                title:false,
+				                skin: 'layui-layer-rim', //加上边框
+				                //area: ['50%', '80%'], //宽高
+				                maxHeight:'80%',
+				                offset: 'auto',//谷歌浏览器有时候无法自动居中，火狐可以
+				                anim:5,
+				                shadeClose: true, //开启遮罩关闭
+				                content: '<div style="text-align:center;"><img src="' + data.picUrl+ '" style="max-width:100%;"/></div>'
+				            });
+			           }
+				    }
+				})
+				
+				
+				 // 执行搜索，表格重载
+    			$('#search_button').on('click', function() {
+	    			// 搜索条件
+	    			var name = $('input[name="name"]').val();
+	    			var onSale = $('select[name="onSale"]').val();
+	    			table.reload('productmanage_table', {
+	    				page: {
+	    					curr: 1
+	    				},
+	    				where: {
+	    					'name': name,
+	    					'onSale': onSale
+	    				}	    				
+    				});
+    			});	
+    			
+    				
+    		});	//layui.use结尾
+    		
+    	
+    			
+    		
+
+		</script>
+	</head>
+
+	<body>
+		<form class="layui-form layui-form-pane">
+			<div class="layui-inline" style="margin-top:5px;">
+				<label class="layui-form-label">产品名称</label>
+				<div class="layui-inline">
+					<input type="text" name="name" autocomplete="off" placeholder="请输入要查询的产品名称" class="layui-input">
+				</div>	
+			</div>
+			<div class="layui-inline" style="margin-top:5px;">
+				<label class="layui-form-label">是否上架</label>
+				<div class="layui-input-inline">
+						<select name="onSale" lay-verify="onSale">
+							<option value="">请选择</option>
+							<option value="true">已上架</option>
+							<option value="false">未上架</option>
+						</select>
+				</div>
+			</div>			
+			<button class="layui-btn" data-type="reload" id="search_button" type="button">搜索</button>
+		</form>
+		<table class="layui-hide" id="products" lay-filter="products"></table>
+	</body>
+
+</html>

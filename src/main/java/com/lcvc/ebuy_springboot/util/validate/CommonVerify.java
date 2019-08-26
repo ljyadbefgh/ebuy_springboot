@@ -1,6 +1,6 @@
 package com.lcvc.ebuy_springboot.util.validate;
 
-import com.lcvc.ebuy_springboot.model.exception.MyFormException;
+import com.lcvc.ebuy_springboot.model.exception.MyWebException;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -63,7 +63,7 @@ public class CommonVerify {
 	 * @param endTime 结束日期
 	 * @return true表示在两个日期之间，false表示不在
 	 */
-	public static boolean judgeBetweenData(Date beginTime,Date endTime) throws MyFormException {
+	public static boolean judgeBetweenData(Date beginTime,Date endTime) throws MyWebException {
 		boolean judge=false;
 		Calendar c=Calendar.getInstance();
 		Date d=c.getTime();//获取当前日期
@@ -80,7 +80,7 @@ public class CommonVerify {
 			}
 		}else if(beginTime!=null&&endTime!=null){
 			if(!endTime.after(beginTime)){
-				throw new MyFormException("操作错误：请保持传递参数正确，endTime必须大于等于beginTime");
+				throw new MyWebException("操作错误：请保持传递参数正确，endTime必须大于等于beginTime");
 			}
 			if((!d.before(beginTime))&&(!d.after(endTime))){
 				judge=true;

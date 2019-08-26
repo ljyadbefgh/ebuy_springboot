@@ -25,7 +25,7 @@ public class ProductTypeController {
     private ProductTypeService productTypeService;
 
     @GetMapping
-    public Map<String, Object>  toManageProductType(Integer page, Integer limit, HttpServletRequest request){
+    public Map<String, Object>  toManageProductType(HttpServletRequest request){
         Map<String, Object> map=new HashMap<String, Object>();
         String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+request.getContextPath()+"/";//获取项目根目录网址
         List<ProductType> list=productTypeService.getProductTypes(basePath);

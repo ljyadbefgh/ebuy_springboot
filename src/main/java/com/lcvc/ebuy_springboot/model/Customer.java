@@ -1,6 +1,8 @@
 package com.lcvc.ebuy_springboot.model;
 
 
+import javax.validation.constraints.Email;
+
 /**
  * 客户
  * 
@@ -18,6 +20,7 @@ public class Customer implements java.io.Serializable {
 	private String tel;//电话号码
 	private String address;//客户地址
 	private String zip;//客户邮编
+	@Email(message ="电子邮箱格式错误")
 	private String email;//客户电子邮箱
 	private String intro;//客户简介，备注等
 	private java.util.Date createTime;//创建时间、注册时间

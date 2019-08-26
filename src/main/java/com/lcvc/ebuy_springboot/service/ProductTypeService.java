@@ -1,7 +1,7 @@
 package com.lcvc.ebuy_springboot.service;
 
 import com.lcvc.ebuy_springboot.model.ProductType;
-import com.lcvc.ebuy_springboot.model.exception.MyFormException;
+import com.lcvc.ebuy_springboot.model.exception.MyWebException;
 import org.springframework.stereotype.Service;
 
 import javax.validation.Valid;
@@ -32,7 +32,7 @@ public interface ProductTypeService {
      * 保存产品分类
      * @param productType
      */
-    void saveProductType(@Valid ProductType productType) throws MyFormException;
+    void saveProductType(@Valid ProductType productType) throws MyWebException;
 
     /**
      * 根据id获取产品分类对象
@@ -46,5 +46,5 @@ public interface ProductTypeService {
      * 执行指定产品分类的编辑     *
      * @param productType
      */
-    void updateProductType(@Valid ProductType productType) throws MyFormException;
+    void updateProductType(@Valid ProductType productType) throws MyWebException;
 }

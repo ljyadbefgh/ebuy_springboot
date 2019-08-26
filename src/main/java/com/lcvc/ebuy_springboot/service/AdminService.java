@@ -3,7 +3,7 @@ package com.lcvc.ebuy_springboot.service;
 
 import com.lcvc.ebuy_springboot.model.Admin;
 import com.lcvc.ebuy_springboot.model.base.PageObject;
-import com.lcvc.ebuy_springboot.model.exception.MyFormException;
+import com.lcvc.ebuy_springboot.model.exception.MyWebException;
 
 import java.util.List;
 
@@ -15,7 +15,7 @@ public interface AdminService {
      * @param password 密码，不能为空
      * @return null表示登录失败
      */
-    boolean login(String username, String password) throws MyFormException;
+    boolean login(String username, String password) throws MyWebException;
 
     /**
      * 获取所有账户集合
@@ -33,7 +33,7 @@ public interface AdminService {
      * @param admin 执行删除的管理员账户
      * @param id
      */
-    void deleteAdmin(Admin admin,Integer id)  throws MyFormException;
+    void deleteAdmin(Admin admin,Integer id)  throws MyWebException;
 
     /**
      * 批量删除指定账户
@@ -41,14 +41,14 @@ public interface AdminService {
      * @param admin 执行删除的管理员账户
      * @param ids 多个账户的主键集合
      */
-    void deleteAdmins(Admin admin,Integer[] ids)  throws MyFormException;
+    void deleteAdmins(Admin admin,Integer[] ids)  throws MyWebException;
 
     /**
      * 添加管理员
      * 说明：账户名和姓名不能为空
      * @param admin
      */
-    void addAdmin(Admin admin) throws MyFormException;
+    void addAdmin(Admin admin) throws MyWebException;
 
 
     /**
@@ -70,5 +70,5 @@ public interface AdminService {
      * 说明：
      * @param admin
      */
-    boolean updateAdmin(Admin admin) throws MyFormException;
+    boolean updateAdmin(Admin admin) throws MyWebException;
 }

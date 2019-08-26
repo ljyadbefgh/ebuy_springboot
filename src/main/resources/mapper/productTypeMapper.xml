@@ -41,7 +41,7 @@
 
 
     <select id="readAll" resultType="ProductType">
-        select * from producttype order by id asc
+        select * from producttype order by orderNum asc,id asc
     </select>
 
     <select id="total" resultType="int">

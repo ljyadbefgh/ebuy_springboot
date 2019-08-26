@@ -1,23 +1,23 @@
 package com.lcvc.ebuy_springboot.model.exception;
 
 /*定义web层传递过来的值异常；（如值不符合条件）*/
-public class MyFormException extends RuntimeException {
+public class MyWebException extends RuntimeException {
 
-    public MyFormException() {
+    public MyWebException() {
         super();
     }
 
-    public MyFormException(String message) {
+    public MyWebException(String message) {
         super(message);
     }
 
-    public MyFormException(String message, Throwable cause) {
+    public MyWebException(String message, Throwable cause) {
         super(message, cause);
     }
 
 
 
-    public MyFormException(Throwable cause) {
+    public MyWebException(Throwable cause) {
         super(cause);
     }
 

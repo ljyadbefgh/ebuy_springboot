@@ -1,6 +1,9 @@
 package com.lcvc.ebuy_springboot.model;
 
 
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.Range;
+
 /**
  * 产品
  * 
@@ -10,12 +13,16 @@ public class Product implements java.io.Serializable {
 
 	private Integer id;
 	private ProductType productType;//所属产品类别
+	@Length(min = 1, max = 20, message = "产品的名称长度必须在 {min} - {max} 之间")
 	private String name;//产品名称
 	private Integer orderNum;//优先级
 	private String description;//产品描述
 	private String content;//产品详细描述
+	@Range(min=0,message="产品现价不能为负数")
 	private Float price;//产品现价。
+	@Range(min=0,message="产品原价不能为负数")
 	private Float originalPrice;//产品原价
+	@Length(max = 200, message = "产品的图片地址不能超过{max}个字符")
 	private String picUrl;//产品图片路径
 	private Integer number;//库存数量
 	private Integer click;//点击数
@@ -24,11 +31,12 @@ public class Product implements java.io.Serializable {
 	private Admin creator;//创建产品管理员
 	private Admin finalEditor;//最后编辑管理员
 	private java.util.Date updateTime;//最后编辑时间
-	
+
 	//非数据库字段
 	//private List<ProductOrder> productOrders = new ArrayList<ProductOrder>();//该产品对应的订单
 	//private Float totalPriceOfTrade;//该产品的总交易额
 	private Integer totalNumberOfOrder;//该产品的订单数
+	private String nameOfProductType;//产品分类名称
 	
 	//private Integer numberOfCart;//获取购物车的数量，用于在下订单时候显示
 	
@@ -179,6 +187,15 @@ public class Product implements java.io.Serializable {
 	public void setUpdateTime(java.util.Date updateTime) {
 		this.updateTime = updateTime;
 	}
+
+	public String getNameOfProductType() {
+		return nameOfProductType;
+	}
+
+	public void setNameOfProductType(String nameOfProductType) {
+		this.nameOfProductType = nameOfProductType;
+	}
+
 
 	@Override
 	public boolean equals(Object o) {

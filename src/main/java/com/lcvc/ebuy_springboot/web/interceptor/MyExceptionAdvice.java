@@ -2,7 +2,7 @@ package com.lcvc.ebuy_springboot.web.interceptor;
 
 import com.lcvc.ebuy_springboot.model.base.Constant;
 import com.lcvc.ebuy_springboot.model.base.JsonCode;
-import com.lcvc.ebuy_springboot.model.exception.MyFormException;
+import com.lcvc.ebuy_springboot.model.exception.MyWebException;
 import com.lcvc.ebuy_springboot.model.exception.MyServiceException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -10,6 +10,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartException;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -30,7 +31,7 @@ public class MyExceptionAdvice {
     public static final Log log= LogFactory.getLog(MyExceptionAdvice.class);
 
     @ExceptionHandler
-    public Map<String, Object> myFormException(MyFormException e) {
+    public Map<String, Object> myFormException(MyWebException e) {
         Map<String, Object> map=new HashMap<String, Object>();
         map.put(Constant.JSON_MESSAGE, e.getMessage());
         map.put(Constant.JSON_CODE, JsonCode.ERROR.getValue());//返回错误信息
@@ -81,6 +82,18 @@ public class MyExceptionAdvice {
     public Map<String, Object> httpMessageNotReadableException(HttpMessageNotReadableException e) {
         Map<String, Object> map=new HashMap<String, Object>();
         map.put(Constant.JSON_MESSAGE, "类型转换异常："+e.getMessage());
+        map.put(Constant.JSON_CODE, JsonCode.ERROR.getValue());//返回错误信息
+        //未知异常一般是计划外的，需要重点处理，比如记录下日志，或是自动发送错误信息邮件给技术部
+        //log.error("前端提交异常", e.getMessage());
+        return map;
+    }
+
+    //spring的文件上传大小异常
+    @ExceptionHandler(MultipartException.class)
+    public Map<String, Object> multipartException(MultipartException e) {
+        Map<String, Object> map=new HashMap<String, Object>();
+        map.put("state", "上传文件超出大小");  //专门为ueditor写的返回信息，如果不需要可以去掉该行
+        map.put(Constant.JSON_MESSAGE, "上传文件超出大小");
         map.put(Constant.JSON_CODE, JsonCode.ERROR.getValue());//返回错误信息
         //未知异常一般是计划外的，需要重点处理，比如记录下日志，或是自动发送错误信息邮件给技术部
         //log.error("前端提交异常", e.getMessage());

@@ -1,5 +1,7 @@
 package com.lcvc.ebuy_springboot.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.Date;
 
 /**
@@ -10,6 +12,7 @@ public class Admin implements java.io.Serializable{
 
 	private Integer id;
 	private String username;//用户名
+	@JsonIgnore
 	private String password;//用户密码
 	private String name;//网名
 	private Integer sex;//性别

@@ -4,7 +4,7 @@ import com.lcvc.ebuy_springboot.dao.CustomerDao;
 import com.lcvc.ebuy_springboot.model.Customer;
 import com.lcvc.ebuy_springboot.model.base.Constant;
 import com.lcvc.ebuy_springboot.model.base.PageObject;
-import com.lcvc.ebuy_springboot.model.exception.MyFormException;
+import com.lcvc.ebuy_springboot.model.exception.MyWebException;
 import com.lcvc.ebuy_springboot.model.exception.MyServiceException;
 import com.lcvc.ebuy_springboot.model.query.CustomerQuery;
 import com.lcvc.ebuy_springboot.service.CustomerService;
@@ -51,7 +51,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public void deleteCustomers(Integer[] ids) throws MyFormException, MyServiceException {
+    public void deleteCustomers(Integer[] ids) throws MyWebException, MyServiceException {
         for(Integer id:ids){
             //删除账户对应的图片
             Customer customer=customerDao.get(id);//读取相应的记录
@@ -78,21 +78,21 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public void addCustomer(Customer customer) throws MyFormException {
+    public void addCustomer(Customer customer) throws MyWebException {
         if(customer!=null){
             if(customer.getUsername().equals("")){
-                throw new MyFormException("客户信息创建失败：账户名不能为空");
+                throw new MyWebException("客户信息创建失败：账户名不能为空");
             }else if(customer.getName().equals("")){
-                throw new MyFormException("客户信息创建失败：姓名不能为空");
+                throw new MyWebException("客户信息创建失败：姓名不能为空");
             }else if(customerDao.countUsername(customer.getUsername())>0){//如果有重名的
-                throw new MyFormException("客户信息创建失败：账户名重名");
+                throw new MyWebException("客户信息创建失败：账户名重名");
             }else{
                 customer.setPassword(SHA.getResult("123456"));
                 customer.setCreateTime(Calendar.getInstance().getTime());//获取当前时间为创建时间
                 customerDao.save(customer);
             }
         }else{
-            throw new MyFormException("客户信息创建失败：表单数据不能为空");
+            throw new MyWebException("客户信息创建失败：表单数据不能为空");
         }
     }
 
@@ -106,18 +106,18 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public void updateCustomer(Customer customer) throws MyFormException {
+    public void updateCustomer(Customer customer) throws MyWebException {
         boolean status = false;// 默认编辑失败
         //进行账户名验证
         String username=customer.getUsername();
         if(username!=null){//如果有这个字段
             if(customer.getUsername().equals("")){
-                throw new MyFormException("客户信息编辑失败：账户名不能为空");
+                throw new MyWebException("客户信息编辑失败：账户名不能为空");
             }else if(customerDao.countOtherUsername(customer.getUsername(),customer.getId())>0){//如果有重名的
-                throw new MyFormException("客户信息编辑失败：账户名重名");
+                throw new MyWebException("客户信息编辑失败：账户名重名");
             }
         }else if(customer.getName()!=null&&customer.getName().equals("")){//姓名验证
-            throw new MyFormException("客户信息编辑失败：姓名不能为空");
+            throw new MyWebException("客户信息编辑失败：姓名不能为空");
         }
         customerDao.update(customer);
     }

@@ -31,6 +31,14 @@
 
 		<form id="myForm" lay-filter="myForm" class="layui-form layui-form-pane" action="" style="padding:10px 20px">
 			<div class="layui-form-item">
+				<label class="layui-form-label">产品类别</label>
+				<div class="layui-input-inline">
+					<select id="productTypeId" lay-verify="productTypeId">
+						<option value="">请选择</option>
+					</select>
+				</div>
+			</div>
+			<div class="layui-form-item">
 				<label class="layui-form-label">名称</label>
 				<div class="layui-input-block">
 					<input type="text" name="name" required lay-verify="name" autocomplete="off" class="layui-input">
@@ -44,21 +52,44 @@
 			</div>-->
 			<div class="layui-form-item">
 				<label class="layui-form-label" style="display: block;">LOGO</label>
-				<div class="layui-input-block">					
-					<input type="text" id="pirUrl" class="layui-input"/>
-					<button id="uploadPicButton" class="layui-btn" type="button">上传图片</button>
+				<div class="layui-input-inline">					
+					<input type="text" id="pirUrl" class="layui-input"/>					
+				</div>
+				<div class="layui-input-inline">	
+					<button id="uploadPicButton" class="layui-btn layui-btn-radius layui-btn-normal" type="button">上传图片</button>
+				</div>
+			</div>			
+			<div class="layui-form-item">
+				<label class="layui-form-label">优先级</label>
+				<div class="layui-input-inline">
+					<!--<input type="text" name="orderNum" lay-verify="required|number" autocomplete="off" class="layui-input">-->
+					<select id="orderNum" name="orderNum" lay-verify="orderNum">
+						
+					</select>
 				</div>
 			</div>
 			<div class="layui-form-item">
-				<label class="layui-form-label">外部链接</label>
+				<label class="layui-form-label">产品现价</label>
+				<div class="layui-input-block">
+					<input type="text" name="price" lay-verify="price" autocomplete="off" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">产品原价</label>
+				<div class="layui-input-block">
+					<input type="text" name="originalPrice" lay-verify="originalPrice" autocomplete="off" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">产品原价</label>
 				<div class="layui-input-block">
 					<input type="text" name="linkUrl" lay-verify="linkUrl" autocomplete="off" class="layui-input">
 				</div>
 			</div>
 			<div class="layui-form-item">
-				<label class="layui-form-label">优先级</label>
+				<label class="layui-form-label">产品原价</label>
 				<div class="layui-input-block">
-					<input type="text" name="orderNum" lay-verify="required|number" autocomplete="off" class="layui-input">
+					<input type="text" name="linkUrl" lay-verify="linkUrl" autocomplete="off" class="layui-input">
 				</div>
 			</div>
 			<div class="layui-form-item layui-form-text">
@@ -67,7 +98,9 @@
 					<textarea id="editor" type="text/plain" style="height:500px;"></textarea>
 					<!-- 实例化编辑器 -->
 				    <script type="text/javascript">
-				        var ue = UE.getEditor('editor');
+				    	var ue = UE.getEditor('editor',{
+				    		zIndex: 100
+				    	});
 				    </script>
 				</div>
 			</div>
@@ -81,19 +114,84 @@
 		</form>
 
 		<script>
+			//设置ueditor图片编辑器
 			var myEditorImage= new UE.ui.Editor();
 			myEditorImage.render('uploadPicButton');
 			myEditorImage.ready(function(){
 				myEditorImage.setDisabled();
 				myEditorImage.hide();//隐藏UE框体
 				myEditorImage.addListener('beforeInsertImage',function(t, arg){
-					alert(arg[0].src);//arg就是上传图片的返回值，是个数组，如果上传多张图片，请遍历该值。
+					//alert(arg[0].src);//arg就是上传图片的返回值，是个数组，如果上传多张图片，请遍历该值。
 					//把图片地址赋值给页面input，我这里使用了jquery，可以根据自己的写法赋值，到这里就很简单了，会js的都会写了。
 					$("#pirUrl").attr("value", arg[0].src);
 				});
 			});
 			layui.use(['layedit','form'], function() { //表单插件初始化
 				var form = layui.form;//只有执行了这一步，部分表单元素才会自动修饰成功
+				
+				//读取当前记录
+				$.getJSON(//先读取产品栏目列表初始化下拉框，作为第一读取顺序
+					WEBURL_API + "backstage/producttype",
+				    function(producttypesMsg){
+				    	if(producttypesMsg.code==code_success){
+					    	$.each(producttypesMsg.data,function(index,item){//对于java的list集合转换为的json格式的遍历
+					        	//option  第一个参数是页面显示的值，第二个参数是传递到后台的值
+					        	$('#productTypeId').append(new Option(item.name,item.id));//往下拉菜单里添加元素				        	
+					        })
+				    		form.render('select'); //刷新表单select选择框渲染
+				    		//form.render(); //更新全部表单内容		
+				    		initOrderNumSelect();//调用优先级列表初始化				    		
+				    	}else{
+				    		layer.msg(producttypesMsg.msg);
+				    	}
+				    }
+				)
+				
+				//初始化优先级列表，这里定义为函数，是保证多个ajax的顺序，将其给第一个ajax调用
+				function initOrderNumSelect(){
+					//读取当前记录
+					$.getJSON(
+						WEBURL_API + "backstage/product/orderNumMap",//获取初始化表单信息
+					    function(msg){
+					    	if(msg.code==code_success){		
+					    		$.each(msg.data,function(key,value){
+					        		//option  第一个参数是页面显示的值，第二个参数是传递到后台的值
+					        		$('#orderNum').append(new Option(value,key));//往下拉菜单里添加元素
+					      		});
+					    		form.render('select'); //刷新表单select选择框渲染
+					    		initForm();//初始化表单信息
+					    	}else{
+								layer.msg(msg.msg);
+							}				    	
+					    }
+					)
+				}
+				
+				
+				
+				//初始化表单，这里定义为函数，是保证多个ajax的顺序，将其给第一个ajax调用
+				function initForm(){
+					var result=false;//该方法是否成功
+					//读取当前记录
+					$.getJSON(
+						WEBURL_API + "backstage/product/init",//获取初始化表单信息
+					    function(msg){
+					    	result=msg.code;
+					    	if(msg.code==code_success){
+					    		var product=msg.data;
+					    		$('#orderNum').val(product.orderNum);//设定优先级初始选项
+					    		form.val("myForm", {
+					    			"click":product.click
+								});
+					    	}else{
+								layer.msg(msg.msg);
+							}				    	
+					    }
+					)
+					return result;
+				}
+				
+				    	
 				
 				$("#uploadPicButton").click(function(){
 					d = myEditorImage.getDialog("insertimage");
@@ -108,23 +206,27 @@
 				form.verify({
 					name: function(value) {
 						if(value.length == 0) {
-							return '请填写产品类别名称';
+							return '请填写产品名称';
 						}
 						if(value.length > 20) {
-							return '产品类别名称的长度不能超过20个字符';
+							return '产品名称的长度不能超过20个字符';
 						}
 					}
 				});
 
 				//监听提交
 				form.on('submit(addProduct)', function(data) {
+					var productType ={//创建所属产品类别对象
+				        id: $("#productTypeId").val()
+				    };
+				    data.field.productType=productType;//将产品类别对象组装到表单中
 					$.postResful(WEBURL_API+"backstage/product"
 						,JSON.stringify(data.field)
 						,function(msg){
 							if(msg.code==code_success){
 								$('#myForm')[0].reset();
 								layui.form.render();//这个一定要加上去，不然的话，select/checkbox/radio不会重置的
-								layer.msg("产品类别创建成功");
+								layer.msg("产品创建成功");
 							}else{
 								layer.msg(msg.msg);
 							}

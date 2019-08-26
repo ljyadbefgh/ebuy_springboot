@@ -3,7 +3,7 @@ package com.lcvc.ebuy_springboot.service;
 
 import com.lcvc.ebuy_springboot.model.Customer;
 import com.lcvc.ebuy_springboot.model.base.PageObject;
-import com.lcvc.ebuy_springboot.model.exception.MyFormException;
+import com.lcvc.ebuy_springboot.model.exception.MyWebException;
 import com.lcvc.ebuy_springboot.model.exception.MyServiceException;
 import com.lcvc.ebuy_springboot.model.query.CustomerQuery;
 
@@ -33,9 +33,9 @@ public interface CustomerService {
      * 说明：
      * 1.如果客户存在头像文件，则不允许删除
      * @param ids 多个账户的主键集合
-     * @throws MyFormException
+     * @throws MyWebException
      */
-    void deleteCustomers(Integer[] ids) throws MyFormException, MyServiceException;
+    void deleteCustomers(Integer[] ids) throws MyWebException, MyServiceException;
 
 
     /**
@@ -50,9 +50,9 @@ public interface CustomerService {
      * 添加管理员
      * 说明：账户名和密码不能为空
      * @param customer
-     * @throws MyFormException
+     * @throws MyWebException
      */
-    void addCustomer(Customer customer) throws MyFormException;
+    void addCustomer(Customer customer) throws MyWebException;
 
 
     /**
@@ -68,7 +68,7 @@ public interface CustomerService {
      * 说明：
      * @param customer
      */
-    void updateCustomer(Customer customer) throws MyFormException;
+    void updateCustomer(Customer customer) throws MyWebException;
 
     /**
      * 重置指定账户为初始密码

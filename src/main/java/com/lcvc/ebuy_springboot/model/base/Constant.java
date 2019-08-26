@@ -1,6 +1,7 @@
 package com.lcvc.ebuy_springboot.model.base;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 /**
  * 保留网站的常规设置
@@ -33,4 +34,15 @@ public class Constant {
     //产品类别图片上传配置
     public static final String PRODUCTTYPE_PICTURE_UPLOAD_URL= "static/server/upload/producttype/";//保存产品栏目的目录，用于上传和删除的时候，必须指明static下的绝对路径
     public static final String PRODUCTTYPE_PICTURE_URL= "server/upload/producttype/";//保存产品栏目的目录,用于展示的时候，不需要加上static
+
+    //产品优先级
+    public final static HashMap<Integer,String> orderNumMapOfProduct = new LinkedHashMap<Integer,String>(){//产品优先级别
+        {
+            put(100,"普通");
+            put(50,"精品");
+            put(20,"vip2");
+            put(10,"vip1");
+            put(0,"置顶");
+        }
+    };
 }

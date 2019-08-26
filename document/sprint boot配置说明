@@ -68,3 +68,27 @@ rquest.getSession().getServletContext().getRealPath("/")
     //, serverUrl: URL + "jsp/controller.jsp"
     , serverUrl: "http://127.0.0.1:8088/ebuy_springboot/api/ueditor"//注意：如果服务器更换务必更改。读取ueditor原controller.jsp的替代控制器
 （3）剩下的按照编辑器常规方式调用即可
+6.3 缺陷（待解决）
+在使用ueditor多图上传（含视频、涂鸦）时，不知道什么原因无法将登陆状态的JSESSIONID正确值跨域传递到服务端，导致无法进行登陆状态的验证，影响实际项目开发
+最后选了个个折中方案：因为ueditor每次调用上传组件前会先访问服务端配置，如果访问不了服务端配置无法调用相关组件，
+所以这里只要拦截了服务端配置就可以（暂行办法），其他的请求不拦截。
+if(path.equals("/api/backstage/ueditor")){
+            String method=request.getParameter("action");
+            if(!method.equals("config")){
+                flag=true;//直接通过验证
+            }
+ }
+但是这样是有问题的，比如用户已经注销了，但是只要不刷新页面，服务端配置还是一直保存，允许上传文件
+
+7.关于在spring mvc中接收前端的JSON对象（关联属性时）的处理办法
+问题出现：首先，由于前后端分离，表单值的传递使用JSON而不是以往的$("#myForm").serialize()序列化传递，这导致了如下情况
+public class Product implements java.io.Serializable {
+	private Integer id;
+	private ProductType productType;//所属产品类别
+	private String name;//产品名称
+	……
+}
+从上述代码可以得知，productType这种关联属性，在以往用$("#myForm").serialize()传递时，只要在前端使用<input name="productType.id">传值，
+后端就可以自动将id值封装到productType属性中
+
+

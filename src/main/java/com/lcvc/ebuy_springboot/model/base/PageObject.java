@@ -36,6 +36,9 @@ public class PageObject<T> {
 		this.setTotalRecords(totalRecords);
 		//根据总记录数和每页最大记录数计算并获得最大页数，并赋值
 		this.maxPage = ((totalRecords % limit) == 0)?(totalRecords / limit):(totalRecords / limit + 1);
+		if(maxPage==0){//一般出现在记录数为0的情况
+			maxPage=1;
+		}
 		//计算当前页，并赋值
 		if(page==null){//如果page为null,默认为第一页
 			page=1;

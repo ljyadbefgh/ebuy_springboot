@@ -45,7 +45,7 @@
 					cols: [[
 						{type: 'checkbox'} //假如复选框，用于批量操作
 						, {field: 'username',width: 200,title: '用户名',sore: true,edit: 'text'}
-						, {field: 'password',width: 300,title: '密码'}
+						//, {field: 'password',width: 300,title: '密码'}
 						, {field: 'name',width: 200,title: '网名',sort: true}
 						, {
 							field: 'sex',
@@ -59,8 +59,8 @@
 						   	 		return '女';
 						   		}						   	
 						   }}
-						, {field: 'createTime',width: 200,title: '注册时间',sort: true}
-						, {fixed: 'right',title: '操作',toolbar: '#barDemo'}
+						, {field: 'createTime',title: '注册时间',sort: true}
+						, {fixed: 'right',width: 100,title: '操作',toolbar: '#barDemo'}
 					]]
 				});
 

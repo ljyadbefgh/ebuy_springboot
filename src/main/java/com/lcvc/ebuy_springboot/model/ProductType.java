@@ -12,7 +12,6 @@ import javax.validation.constraints.NotNull;
  */
 
 public class ProductType implements java.io.Serializable {
-
 	private Integer id;
 
 	@NotBlank(message = "产品类别的名称不允许为空")
