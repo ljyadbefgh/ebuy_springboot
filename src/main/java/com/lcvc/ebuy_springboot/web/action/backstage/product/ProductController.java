@@ -1,6 +1,7 @@
 package com.lcvc.ebuy_springboot.web.action.backstage.product;
 
 
+import com.lcvc.ebuy_springboot.model.Admin;
 import com.lcvc.ebuy_springboot.model.Product;
 import com.lcvc.ebuy_springboot.model.base.Constant;
 import com.lcvc.ebuy_springboot.model.base.JsonCode;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -74,9 +76,9 @@ public class ProductController {
 	 * @return
 	 */
 	@PostMapping
-	public Map<String, Object> addProduct(@RequestBody Product product){
+	public Map<String, Object> addProduct(@RequestBody Product product,HttpSession session){
 		Map<String, Object> map=new HashMap<String, Object>();
-		productService.addProduct(product);
+		productService.addProduct(product,(Admin)session.getAttribute("admin"));
 		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
 		map.put(Constant.JSON_MESSAGE, "产品添加成功");
 		return map;

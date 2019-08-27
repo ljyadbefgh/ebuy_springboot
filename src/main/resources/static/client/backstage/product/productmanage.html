@@ -93,17 +93,18 @@
 					var checkStatus = table.checkStatus(obj.config.id);
 					switch(obj.event) {
 						case 'createProduct':
-							layer.open({
+							var index=layer.open({
 								title:false,
 								//title: '创建产品',
 								type: 2,
-								area: ['600px', '550px'],
+								area: ['100%', '100%'],
 								content: 'Productadd.html', //这里content是一个URL，如果你不想让iframe出现滚动条，你还可以content: ['http://sentsin.com', 'no']
 								cancel: function(index, layero) { //当前层索引参数（index）、当前层的DOM对象（layero)
 									table.reload('productmanage_table');//重新刷新表格数据
 									layer.close(index);
 								}
 							});
+							//layer.full(index);//最大化窗口
 							break;
 						case 'deleteProducts':
 							var datas = checkStatus.data;//获取选中的数据
@@ -127,38 +128,6 @@
 											if(msg.code == 0) {
 												layer.msg("删除成功");
 												table.reload('productmanage_table');//重新刷新表格数据
-												 //location.reload(true);刷新整个页面											
-											} else {
-												layer.msg(msg.msg);
-											}
-										}
-									)
-									layer.close(index);//关闭窗口
-								});								
-							}
-							break;
-						case 'removeProductsProfilePicture':
-							var datas = checkStatus.data;//获取选中的数据
-							if(datas.length==0){
-								layer.msg('请先选择记录');
-							}else{								
-								var ids = "";//定义要批量删除的主键id
-								var usernames="";//定义账户名集合
-								for(var i=0;i<datas.length;i++){//遍历数组，将id用","相隔									
-								    if(i==datas.length-1){//如果是最后一条记录，则不添加","
-								    	ids += checkStatus.data[i].id;
-										usernames+=checkStatus.data[i].username;
-								    }else{
-								    	ids += checkStatus.data[i].id+",";
-										usernames+=checkStatus.data[i].username+",";
-								    }
-								}
-								layer.confirm('确定要批量移除这些账户(' + usernames + ')的头像吗？移除后相关照片都将无法恢复！', function(index) {
-									$.patchResful(WEBURL_API + "backstage/productmanage/removeProductsProfilePicture/" + ids, 
-										function(msg) {
-											if(msg.code == 0) {
-												layer.msg("移除成功");
-												table.reload('Productmanage_table');//重新刷新表格数据
 												 //location.reload(true);刷新整个页面											
 											} else {
 												layer.msg(msg.msg);
@@ -195,8 +164,8 @@
 								title:false,
 								//title: '编辑管理账户',
 								type: 2,
-								area: ['450px', '370px'],
-								content: 'Productupdate.html', //这里content是一个URL，如果你不想让iframe出现滚动条，你还可以content: ['http://sentsin.com', 'no']
+								area: ['100%', '100%'],
+								content: 'productupdate.html', //这里content是一个URL，如果你不想让iframe出现滚动条，你还可以content: ['http://sentsin.com', 'no']
 								cancel: function(index, layero) { //当前层索引参数（index）、当前层的DOM对象（layero)
 									table.reload('productmanage_table');//重新刷新表格数据
 									rowId=null;//清空保存的行信息（用于传递给子窗口）

@@ -1,10 +1,11 @@
 package com.lcvc.ebuy_springboot.service;
 
 
+import com.lcvc.ebuy_springboot.model.Admin;
 import com.lcvc.ebuy_springboot.model.Product;
 import com.lcvc.ebuy_springboot.model.base.PageObject;
-import com.lcvc.ebuy_springboot.model.exception.MyWebException;
 import com.lcvc.ebuy_springboot.model.exception.MyServiceException;
+import com.lcvc.ebuy_springboot.model.exception.MyWebException;
 import com.lcvc.ebuy_springboot.model.query.ProductQuery;
 
 import javax.validation.Valid;
@@ -30,9 +31,10 @@ public interface ProductService {
     /**
      * 添加产品信息
      * @param product
+     * @param admin 执行的管理账户
      * @throws MyWebException
      */
-    void addProduct(@Valid Product product) throws MyWebException;
+    void addProduct(@Valid Product product, Admin admin);
 
 
     /**

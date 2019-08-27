@@ -4,6 +4,9 @@ package com.lcvc.ebuy_springboot.model;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.Range;
 
+import javax.validation.constraints.Min;
+import java.math.BigDecimal;
+
 /**
  * 产品
  * 
@@ -18,13 +21,15 @@ public class Product implements java.io.Serializable {
 	private Integer orderNum;//优先级
 	private String description;//产品描述
 	private String content;//产品详细描述
-	@Range(min=0,message="产品现价不能为负数")
-	private Float price;//产品现价。
+	@Min(value = 0,message = "产品价格必须大于0")
+	private BigDecimal price;//产品现价。
 	@Range(min=0,message="产品原价不能为负数")
-	private Float originalPrice;//产品原价
+	private BigDecimal originalPrice;//产品原价
 	@Length(max = 200, message = "产品的图片地址不能超过{max}个字符")
 	private String picUrl;//产品图片路径
+	@Range(min=0,message="库存不能为负数")
 	private Integer number;//库存数量
+	@Range(min=0,message="点击数不能为负数")
 	private Integer click;//点击数
 	private Boolean onSale;//是否上架（true表示上架，但是要考虑上架时间；false表示不上架）
 	private java.util.Date createTime;//创建时间
@@ -100,19 +105,19 @@ public class Product implements java.io.Serializable {
 		this.content = content;
 	}
 
-	public Float getPrice() {
+	public BigDecimal getPrice() {
 		return price;
 	}
 
-	public void setPrice(Float price) {
+	public void setPrice(BigDecimal price) {
 		this.price = price;
 	}
 
-	public Float getOriginalPrice() {
+	public BigDecimal getOriginalPrice() {
 		return originalPrice;
 	}
 
-	public void setOriginalPrice(Float originalPrice) {
+	public void setOriginalPrice(BigDecimal originalPrice) {
 		this.originalPrice = originalPrice;
 	}
 
