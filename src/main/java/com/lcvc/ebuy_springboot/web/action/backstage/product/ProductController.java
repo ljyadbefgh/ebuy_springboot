@@ -57,17 +57,6 @@ public class ProductController {
 		return map;
 	}
 
-	/**
-	 * 产品优先级列表，用于选择框
-	 * @return
-	 */
-	@GetMapping("/orderNumMap")
-	public Map<String, Object>  getOrderNumMapOfProduct(){
-		Map<String, Object> map=new HashMap<String, Object>();
-		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
-		map.put(Constant.JSON_DATA, Constant.orderNumMapOfProduct);
-		return map;
-	}
 
 
 	/**
@@ -102,11 +91,10 @@ public class ProductController {
 	 * @param product
 	 * @return
 	 */
-	@PatchMapping
-	public Map<String, Object> updateProduct(@RequestBody Product product){
+	@PutMapping
+	public Map<String, Object> updateProduct(@RequestBody Product product,HttpSession session){
 		Map<String, Object> map=new HashMap<String, Object>();
-		map.put(Constant.JSON_CODE, JsonCode.ERROR.getValue());
-		productService.updateProduct(product);
+		productService.updateProduct(product,(Admin)session.getAttribute("admin"));
 		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
 		map.put(Constant.JSON_MESSAGE, "产品信息修改成功");
 		return map;
@@ -125,4 +113,29 @@ public class ProductController {
 		productService.deleteProducts(ids);
 		return map;
 	}
+
+	/**
+	 * 产品优先级列表，用于选择框
+	 * @return
+	 */
+	@GetMapping("/orderNumMap")
+	public Map<String, Object>  getOrderNumMapOfProduct(){
+		Map<String, Object> map=new HashMap<String, Object>();
+		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
+		map.put(Constant.JSON_DATA, Constant.orderNumMapOfProduct);
+		return map;
+	}
+
+	/**
+	 * 产品排序规则列表，用于选择框
+	 * @return
+	 */
+	@GetMapping("/orderTypeMap")
+	public Map<String, Object>  getOrderTypeMapOfProduct(){
+		Map<String, Object> map=new HashMap<String, Object>();
+		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
+		map.put(Constant.JSON_DATA, Constant.orderTypeMapOfProduct);
+		return map;
+	}
+
 }

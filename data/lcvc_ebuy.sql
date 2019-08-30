@@ -11,7 +11,7 @@
  Target Server Version : 80016
  File Encoding         : 65001
 
- Date: 27/08/2019 00:21:58
+ Date: 30/08/2019 23:32:21
 */
 
 SET NAMES utf8mb4;
@@ -35,11 +35,10 @@ CREATE TABLE `admin`  (
 -- Records of admin
 -- ----------------------------
 INSERT INTO `admin` VALUES (-99, 'liandian1', 'e10adc3949ba59abbe56e057f20f883e', '管理员1', 1, '2013-08-23 15:33:01');
-INSERT INTO `admin` VALUES (1, 'user', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '阿斯顿发1', 1, '2013-08-23 15:33:01');
-INSERT INTO `admin` VALUES (15, '666aasdf', 'e10adc3949ba59abbe56e057f20f883e', '密码是777', 1, '2013-10-15 17:28:57');
+INSERT INTO `admin` VALUES (1, 'user', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '我是默认管理员', 1, '2013-08-23 15:33:01');
 INSERT INTO `admin` VALUES (18, '77676', 'e10adc3949ba59abbe56e057f20f883e', '密码是', 1, '2013-10-15 17:30:01');
-INSERT INTO `admin` VALUES (19, '75565', 'c605e6e35ed4c1c955a081a2980a7fa5', '密码是！@#', 1, '2013-10-15 17:30:27');
-INSERT INTO `admin` VALUES (23, '554523', 'e10adc3949ba59abbe56e057f20f883e', 'kkk', 1, '2013-10-15 17:38:10');
+INSERT INTO `admin` VALUES (19, 'a75565', 'c605e6e35ed4c1c955a081a2980a7fa5', 'aaa', 1, '2013-10-15 17:30:27');
+INSERT INTO `admin` VALUES (23, 'a554523', 'e10adc3949ba59abbe56e057f20f883e', 'kkk1', 1, '2013-10-15 17:38:10');
 INSERT INTO `admin` VALUES (25, 'dfdsfsdf', 'e10adc3949ba59abbe56e057f20f883e', '665656', 1, '2013-10-15 17:38:34');
 INSERT INTO `admin` VALUES (31, '67457464', 'e10adc3949ba59abbe56e057f20f883e', '6464565', 1, '2013-10-15 17:39:50');
 INSERT INTO `admin` VALUES (42, '1213df', 'e10adc3949ba59abbe56e057f20f883e', '85445', 1, '2013-10-16 09:14:26');
@@ -140,7 +139,7 @@ INSERT INTO `order_detail` VALUES (45, 'f653aec2da68487ea69a0adcce58b107', 76, 8
 INSERT INTO `order_detail` VALUES (46, 'f653aec2da68487ea69a0adcce58b107', 81, 12, 15, 13);
 INSERT INTO `order_detail` VALUES (47, '3ba0104bc84b4b4f85ad71a11e5ca8d2', 73, 13, 28, 9);
 INSERT INTO `order_detail` VALUES (48, '3ba0104bc84b4b4f85ad71a11e5ca8d2', 78, 12, 15, 12);
-INSERT INTO `order_detail` VALUES (49, '3ba0104bc84b4b4f85ad71a11e5ca8d2', 82, 18.5, 21, 13);
+INSERT INTO `order_detail` VALUES (49, '3ba0104bc84b4b4f85ad71a11e5ca8d2', NULL, 18.5, 21, 13);
 INSERT INTO `order_detail` VALUES (50, 'da247d46a58540a381aad88462f0f20b', 76, 8, 12, 9);
 INSERT INTO `order_detail` VALUES (51, 'da247d46a58540a381aad88462f0f20b', 73, 13, 28, 12);
 INSERT INTO `order_detail` VALUES (52, '480b807046b84c85b4ab241106aac39b', 72, 66, 88, 6);
@@ -191,10 +190,10 @@ CREATE TABLE `product`  (
   `orderNum` int(11) NULL DEFAULT NULL COMMENT '产品优先级',
   `description` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '产品描述',
   `content` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '产品详细描述',
-  `price` float NULL DEFAULT NULL COMMENT '产品现价',
-  `originalPrice` float NULL DEFAULT NULL COMMENT '产品原价',
+  `price` decimal(10, 2) NULL DEFAULT NULL COMMENT '产品现价',
+  `originalPrice` decimal(10, 2) NULL DEFAULT NULL COMMENT '产品原价',
   `picUrl` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '产品图片路径',
-  `number` int(11) NULL DEFAULT 0 COMMENT '库存',
+  `repository` int(11) NULL DEFAULT 0 COMMENT '库存',
   `click` int(11) NULL DEFAULT 0 COMMENT '点击数',
   `onSale` bit(1) NULL DEFAULT b'1' COMMENT '是否上架（1表示上架，但是要考虑上架时间；0表示不上架）',
   `createTime` datetime(0) NULL DEFAULT NULL COMMENT '产品创建时间',
@@ -208,27 +207,27 @@ CREATE TABLE `product`  (
   CONSTRAINT `product_ibfk_1` FOREIGN KEY (`productTypeId`) REFERENCES `producttype` (`id`) ON DELETE SET NULL ON UPDATE SET NULL,
   CONSTRAINT `product_ibfk_2` FOREIGN KEY (`creatorId`) REFERENCES `admin` (`id`) ON DELETE SET NULL ON UPDATE SET NULL,
   CONSTRAINT `product_ibfk_3` FOREIGN KEY (`finalEditorId`) REFERENCES `admin` (`id`) ON DELETE SET NULL ON UPDATE SET NULL
-) ENGINE = InnoDB AUTO_INCREMENT = 87 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 95 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of product
 -- ----------------------------
-INSERT INTO `product` VALUES (71, 25, '芒果冰', 100, '芒果冰很好吃', '芒果冰很好吃', 17, 26, '/lcvc_ebuy/upload/image/20170907/20170907202328_453.jpg', 60, 3001, b'1', '2017-09-07 20:24:21', NULL, NULL, NULL);
-INSERT INTO `product` VALUES (72, 25, '8寸蛋糕', 100, '蛋糕很好吃', '蛋糕很好吃蛋糕很好吃', 66, 88, '/lcvc_ebuy/upload/image/20170907/20170907202746_301.jpg', 94, 123, b'1', '2017-09-07 20:28:07', NULL, NULL, '2017-09-07 20:31:16');
-INSERT INTO `product` VALUES (73, 25, '圣诞老人蛋糕', 100, '打发', '阿萨德发的算法的', 13, 28, '/lcvc_ebuy/upload/image/20170907/20170907202856_20.jpg', 510, 645, b'1', '2017-09-07 20:29:16', NULL, NULL, NULL);
-INSERT INTO `product` VALUES (74, 25, '南瓜甜点', 100, '打发的是发', '阿萨德发的是法师打发的是发', 12, 16, '/lcvc_ebuy/upload/image/20170907/20170907203009_184.jpg', 41, 545, b'1', '2017-09-07 20:30:33', NULL, NULL, NULL);
-INSERT INTO `product` VALUES (75, 6, '螺蛳粉', 100, '大法师的法师的法师的发大发', '大法师的法师的法师的发大发大法师的法师的法师的发大发', 12, 16, '/lcvc_ebuy/upload/image/20170907/20170907203134_218.jpg', 899, 45, b'1', '2017-09-07 20:31:47', NULL, NULL, NULL);
-INSERT INTO `product` VALUES (76, 6, '桂林米粉', 100, '桂林米粉甲天下', '桂林米粉甲天下桂林米粉甲天下桂林米粉甲天下桂林米粉甲天下', 8, 12, '/lcvc_ebuy/upload/image/20170907/20170907203238_612.jpg', 779, 34, b'1', '2017-09-07 20:32:57', NULL, NULL, NULL);
-INSERT INTO `product` VALUES (77, 6, '老友粉', 100, '打发打发斯蒂芬', '打发打发斯蒂芬打发打发斯蒂芬', 6, 10, '/lcvc_ebuy/upload/image/20170907/20170907203401_181.jpg', 653, 45, b'1', '2017-09-07 20:34:15', NULL, NULL, NULL);
-INSERT INTO `product` VALUES (78, 6, '叉烧饭', 100, '真的很好吃', '真的很好吃真的很好吃', 12, 15, '/lcvc_ebuy/upload/image/20170907/20170907203501_900.jpg', 348, 234, b'1', '2017-09-07 20:35:24', NULL, NULL, NULL);
-INSERT INTO `product` VALUES (79, 6, '烧鸭饭', 100, '真的很好吃', '真的很好吃真的很好吃', 8, 12, '/lcvc_ebuy/upload/image/20170907/20170907203536_774.jpg', 650, 5645, b'1', '2017-09-07 20:35:50', NULL, NULL, NULL);
-INSERT INTO `product` VALUES (80, 6, '白切鸡饭', 100, '真的很好吃', '真的很好吃真的很好吃', 12, 18, '/lcvc_ebuy/upload/image/20170907/20170907203645_950.jpg', 532, 324, b'1', '2017-09-07 20:37:02', NULL, NULL, NULL);
-INSERT INTO `product` VALUES (81, 6, '鸡腿饭', 100, '真的很好吃', '真的很好吃真的很好吃', 12, 15, '/lcvc_ebuy/upload/image/20170907/20170907203714_815.jpg', 12339, 22, b'1', '2017-09-07 20:37:30', NULL, NULL, NULL);
-INSERT INTO `product` VALUES (82, 25, '芒果冰', 100, '真的很好吃', '真的很好吃真的很好吃', 18.5, 21, '/lcvc_ebuy/upload/image/20170907/20170907203805_103.jpg', 287, 0, b'1', '2017-09-07 20:38:22', NULL, NULL, NULL);
-INSERT INTO `product` VALUES (83, 25, '泰芒了', 100, '真的很好吃', '真的很好吃真的很好吃', 15.6, 28, '/lcvc_ebuy/upload/image/20170907/20170907204013_283.jpg', 499, 0, b'1', '2017-09-07 20:40:30', NULL, NULL, NULL);
-INSERT INTO `product` VALUES (84, 25, '南瓜饼', 100, '真的很好吃', '真的很好吃真的很好吃', 21, 25, '/lcvc_ebuy/upload/image/20170907/20170907204123_274.jpg', 689, 234, b'1', '2017-09-07 20:41:39', NULL, NULL, NULL);
-INSERT INTO `product` VALUES (85, 25, '特色猪肉肠粉', 100, '真的很好吃', '真的很好吃真的很好吃', 12, 16, '/lcvc_ebuy/upload/image/20170907/20170907204212_590.jpg', 300, 0, b'1', '2017-09-07 20:42:25', NULL, NULL, NULL);
-INSERT INTO `product` VALUES (86, 25, '冰淇淋', 100, '打发撒旦法第三方', '啊是打发是打发第三方额', 3, 6, '/lcvc_ebuy/upload/image/20170907/20170907232230_82.jpg', 124, 32, b'1', '2017-09-07 23:22:49', NULL, NULL, NULL);
+INSERT INTO `product` VALUES (71, 25, '芒果冰', 100, '芒果冰很好吃', '<p>芒果冰很好吃</p>', 15.00, 21.00, 'http://localhost:8088/ebuy_springboot//server/upload/website/image/20190828/1566968006397012095.jpg', 60, 3001, b'1', '2017-09-07 20:24:21', 1, NULL, NULL);
+INSERT INTO `product` VALUES (72, 25, '8寸蛋糕', 100, '蛋糕很好吃', '<p>蛋糕很好吃蛋糕很好吃</p>', 66.50, 88.00, 'http://localhost:8088/ebuy_springboot//server/upload/website/image/20190828/1566968777074027597.jpg', 94, 123, b'1', '2017-09-07 20:28:07', 1, NULL, '2017-09-07 20:31:16');
+INSERT INTO `product` VALUES (73, 25, '奶油蛋糕', 100, '打发', '<p>阿萨德发的算法的</p>', 13.00, 28.00, 'http://localhost:8088/ebuy_springboot//server/upload/website/image/20190828/1566968777063038328.jpg', 510, 645, b'1', '2017-09-07 20:29:16', 1, NULL, NULL);
+INSERT INTO `product` VALUES (74, 25, '南瓜甜点', 100, '打发的是发', '<p>阿萨德发的是法师打发的是发</p>', 12.00, 16.00, 'http://localhost:8088/ebuy_springboot//server/upload/website/image/20190828/1566968777296017822.jpg', 41, 545, b'1', '2017-09-07 20:30:33', 1, NULL, NULL);
+INSERT INTO `product` VALUES (75, 6, '螺蛳粉', 100, '大法师的法师的法师的发大发', '<p>大法师的法师的法师的发大发大法师的法师的法师的发大发</p>', 12.00, 16.00, 'http://localhost:8088/ebuy_springboot//server/upload/website/image/20190828/1566968777144092172.jpg', 899, 45, b'1', '2017-09-07 20:31:47', 1, NULL, NULL);
+INSERT INTO `product` VALUES (76, 6, '桂林米粉', 100, '桂林米粉甲天下', '<p>桂林米粉甲天下桂林米粉甲天下桂林米粉甲天下桂林米粉甲天下</p>', 8.00, 12.00, 'http://localhost:8088/ebuy_springboot//server/upload/website/image/20190828/1566968777165044785.jpg', 779, 34, b'1', '2017-09-07 20:32:57', 1, NULL, NULL);
+INSERT INTO `product` VALUES (77, 6, '老友粉', 100, '打发打发斯蒂芬', '<p>打发打发斯蒂芬打发打发斯蒂芬</p>', 6.00, 10.00, 'http://localhost:8088/ebuy_springboot//server/upload/website/image/20190828/1566968777193045028.jpg', 653, 45, b'1', '2017-09-07 20:34:15', 1, NULL, NULL);
+INSERT INTO `product` VALUES (78, 6, '叉烧饭', 100, '真的很好吃', '<p>真的很好吃真的很好吃</p>', 12.00, 15.00, 'http://localhost:8088/ebuy_springboot//server/upload/website/image/20190828/1566968777188073500.jpg', 348, 234, b'1', '2017-09-07 20:35:24', 1, NULL, NULL);
+INSERT INTO `product` VALUES (79, 6, '烧鸭饭', 100, '真的很好吃', '<p>真的很好吃真的很好吃</p>', 8.00, 12.00, 'http://localhost:8088/ebuy_springboot//server/upload/website/image/20190828/1566968777208023195.jpg', 650, 5645, b'1', '2017-09-07 20:35:50', 1, NULL, NULL);
+INSERT INTO `product` VALUES (80, 6, '白切鸡饭', 100, '真的很好吃', '<p>真的很好吃真的很好吃</p>', 12.00, 18.00, 'http://localhost:8088/ebuy_springboot//server/upload/website/image/20190828/1566968105516095998.jpg', 532, 324, b'1', '2017-09-07 20:37:02', 1, NULL, NULL);
+INSERT INTO `product` VALUES (81, 6, '鸡腿饭', 100, '真的很好吃', '<p>真的很好吃真的很好吃</p>', 12.00, 15.00, 'http://localhost:8088/ebuy_springboot//server/upload/website/image/20190828/1566968105516095998.jpg', 12339, 22, b'1', '2017-09-07 20:37:30', 1, NULL, NULL);
+INSERT INTO `product` VALUES (83, 25, '泰芒了', 100, '真的很好吃', '<p>真的很好吃真的很好吃</p>', 16.00, 28.00, 'http://localhost:8088/ebuy_springboot//server/upload/website/image/20190828/1566968777290063133.jpg', 499, 0, b'1', '2017-09-07 20:40:30', 1, NULL, NULL);
+INSERT INTO `product` VALUES (84, 25, '南瓜饼', 100, '真的很好吃', '<p>真的很好吃真的很好吃</p>', 21.00, 25.00, 'http://localhost:8088/ebuy_springboot//server/upload/website/image/20190828/1566968777296017822.jpg', 689, 234, b'1', '2017-09-07 20:41:39', 1, NULL, NULL);
+INSERT INTO `product` VALUES (85, 25, '特色猪肉肠粉', 100, '真的很好吃', '<p>真的很好吃真的很好吃</p>', 12.00, 16.00, 'http://localhost:8088/ebuy_springboot//server/upload/website/image/20190828/1566968777334032540.jpg', 300, 0, b'1', '2017-09-07 20:42:25', 1, NULL, NULL);
+INSERT INTO `product` VALUES (86, 25, '巧克力冰淇淋', 100, '打发撒旦法第三方', '<p>啊是打发是打发第三方额</p>', 3.00, 6.00, 'http://localhost:8088/ebuy_springboot//server/upload/website/image/20190828/1566968777334037207.jpg', 124, 32, b'1', '2017-09-07 23:22:49', 1, NULL, NULL);
+INSERT INTO `product` VALUES (94, 26, 'adfsd', 100, '123123', '<p>123123<br/></p>', 0.00, 0.00, 'http://localhost:8088/ebuy_springboot//server/upload/website/image/20190828/1566968105516095998.jpg', 1, 0, b'0', '2019-08-28 16:10:46', 18, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for producttype
@@ -243,15 +242,16 @@ CREATE TABLE `producttype`  (
   `intro` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '栏目简介（富文本）',
   `orderNum` int(11) NULL DEFAULT 0 COMMENT '排序（默认0，规则由前台决定，一般排序为最大）',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 42 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 44 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of producttype
 -- ----------------------------
 INSERT INTO `producttype` VALUES (6, '小吃快餐', '', '6.png', '小吃是一类在口味上具有特定风格特色的食品的总称。小吃就地取材，能够突出反映当地的物质文化及社会生活风貌，是一个地区不可或缺的重要特色，更是离乡游子们对家乡思念的主要对象。', '<p>小吃是一类在<a target=\"_blank\" href=\"https://baike.baidu.com/item/%E5%8F%A3%E5%91%B3/2536129\" data-lemmaid=\"2536129\">口味</a>上具有特定风格<a target=\"_blank\" href=\"https://baike.baidu.com/item/%E7%89%B9%E8%89%B2/3690806\" data-lemmaid=\"3690806\">特色</a>的<a target=\"_blank\" href=\"https://baike.baidu.com/item/%E9%A3%9F%E5%93%81/174284\" data-lemmaid=\"174284\">食品</a>的<a target=\"_blank\" href=\"https://baike.baidu.com/item/%E6%80%BB%E7%A7%B0/8996550\" data-lemmaid=\"8996550\">总称</a>。小吃<a target=\"_blank\" href=\"https://baike.baidu.com/item/%E5%B0%B1%E5%9C%B0%E5%8F%96%E6%9D%90/1539770\" data-lemmaid=\"1539770\">就地取材</a>，能够突出反映当地的<a target=\"_blank\" href=\"https://baike.baidu.com/item/%E7%89%A9%E8%B4%A8/661503\" data-lemmaid=\"661503\">物质</a>文化及<a target=\"_blank\" href=\"https://baike.baidu.com/item/%E7%A4%BE%E4%BC%9A%E7%94%9F%E6%B4%BB/9324529\" data-lemmaid=\"9324529\">社会生活</a>风貌，是一个地区不可或缺的重要特色，更是离乡游子们对<a target=\"_blank\" href=\"https://baike.baidu.com/item/%E5%AE%B6%E4%B9%A1/1954\" data-lemmaid=\"1954\">家乡</a>思念的主要对象。</p>', 20);
-INSERT INTO `producttype` VALUES (25, '甜点饮品', '', '25.png', NULL, '', 30);
+INSERT INTO `producttype` VALUES (25, '甜点饮品', '', '25.png', '甜点，也叫甜品，是一个很广的概念，大致分为甜味点心和广式的糖水。甜点，一般不会被当作正餐，通常作为下午茶的小食。自古以来，中国人的饮食之道讲究养生，保健，滋补。特别是女生，饭后来一杯甜品，一碗甜汤，它们不含咖啡因、不含人工色素、不含食用香精等。让您里里外外都能有无处不在的健康美丽。在高温的夏季，酷暑吞噬着城市的每一个角落，人们走在街头通常想到的是找一家店，能喝上一杯让身心舒畅的冰凉饮品。平衡一下身体的热气，那该是多美妙的享受，而且吃一点甜品会感到开心和放松。在冬季，热食滋补甜品、手工磨糊、牛奶炖品、精选奶制甜品等让喜欢甜食的人们在寒冷的冬天也能品尝到可口的甜品。', '<p>甜点，也叫甜品，是一个很广的概念，大致分为甜味点心和广式的糖水。甜点，一般不会被当作正餐，通常作为下午茶的小食。</p><p>自古以来，中国人的饮食之道讲究养生，保健，滋补。特别是女生，饭后来一杯甜品，一碗甜汤，它们不含咖啡因、不含人工色素、不含食用香精等。让您里里外外都能有无处不在的健康美丽。在高温的夏季，酷暑吞噬着城市的每一个角落，人们走在街头通常想到的是找一家店，能喝上一杯让身心舒畅的冰凉饮品。平衡一下身体的热气，那该是多美妙的享受，而且吃一点甜品会感到开心和放松。</p><p>在冬季，热食滋补甜品、手工磨糊、牛奶炖品、精选奶制甜品等让喜欢甜食的人们在寒冷的冬天也能品尝到可口的甜品。<br></p>', 20);
 INSERT INTO `producttype` VALUES (26, 'ad2', '', NULL, '12', '12<img src=\"http://127.0.0.1:8020/ebuy_web/plugins/layui/images/face/42.gif\" alt=\"[抓狂]\">', 32);
-INSERT INTO `producttype` VALUES (29, '测试1', NULL, NULL, NULL, NULL, NULL);
 INSERT INTO `producttype` VALUES (41, '测试富文本', '', NULL, '阿斯顿发送到发斯蒂芬阿斯顿发达的说法按时大多数非       阿斯顿发达阿斯顿发斯蒂芬阿斯顿发', '<p>阿斯顿发送到发斯蒂芬阿<img src=\"http://127.0.0.1:8020/ebuy_web/plugins/layui/images/face/22.gif\" alt=\"[委屈]\">斯顿发达的说法按时大多数非</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <img src=\"http://127.0.0.1:8020/ebuy_web/plugins/layui/images/face/21.gif\" alt=\"[衰]\">阿斯顿发达阿斯顿发斯蒂芬阿斯顿发<br></p>', 123);
+INSERT INTO `producttype` VALUES (42, '火锅', '', NULL, '', '', 20);
+INSERT INTO `producttype` VALUES (43, '蛋糕奶茶', '', NULL, '', '', 20);
 
 SET FOREIGN_KEY_CHECKS = 1;

@@ -18,8 +18,8 @@
 		<script type="text/html" id="toolbar">
 			<div class="layui-btn-container">
 				<button class="layui-btn layui-btn-sm" lay-event="createProduct">创建产品</button>
-				<button class="layui-btn layui-btn-sm" lay-event="removeProductsProfilePicture">变更产品所有图片为当前域名</button>
-				<button class="layui-btn layui-btn-sm" lay-event="deleteProducts">批量删除产品</button>				
+				<button class="layui-btn layui-btn-sm" lay-event="deleteProducts">批量删除产品</button>			
+				<button class="layui-btn layui-btn-sm" lay-event="updatePicUrls">变更产品所有图片为当前域名</button>
 			</div>
 		</script>
 		<!--定义表格邮编的行工具栏-->
@@ -60,7 +60,7 @@
 							templet:function(d){
 								return '<div><img style="height:30px;" src="'+d.picUrl+'"></div>'					   	
 						   }}
-						, {field: 'name',title: '产品名称'}
+						, {field: 'name',title: '产品名称',width:150}
 						, {
 							field: 'productType'
 							,title: '所属栏目'
@@ -70,7 +70,7 @@
 						, {field: 'orderNum',title: '优先级'}
 						, {field: 'price',title: '现价'}
 						, {field: 'originalPrice',title: '原价'}
-						, {field: 'number',title: '库存'}
+						, {field: 'repository',title: '库存'}
 						, {field: 'click',title: '人气'}
 						, {
 							field: 'onSale',
@@ -83,7 +83,13 @@
 						   	 		return '已下架';
 						   		}						   	
 						   }}
-						, {field: 'createTime',title: '发布时间',sort: true}
+						, {
+							field: 'creator'
+							,title: '发布人'
+							,templet:function(d){
+								return d.creator.username					   	
+						  }}
+						, {field: 'createTime',title: '发布时间',width:150,sort: true}
 						, {fixed: 'right',title: '操作',width: 100,toolbar: '#barDemo'}
 					]]
 				});
@@ -112,18 +118,18 @@
 								layer.msg('请先选择记录');
 							}else{								
 								var ids = "";//定义要批量删除的主键id
-								var usernames="";//定义账户名集合
+								var names="";//定义名字集合
 								for(var i=0;i<datas.length;i++){//遍历数组，将id用","相隔									
 								    if(i==datas.length-1){//如果是最后一条记录，则不添加","
 								    	ids += checkStatus.data[i].id;
-										usernames+=checkStatus.data[i].username;
+										names+=checkStatus.data[i].name;
 								    }else{
 								    	ids += checkStatus.data[i].id+",";
-										usernames+=checkStatus.data[i].username+",";
+										names+=checkStatus.data[i].name+",";
 								    }
 								}
-								layer.confirm('确定要批量删除这些账户(' + usernames + ')吗？删除后所有数据都将无法恢复！', function(index) {
-									$.deleteResful(WEBURL_API + "//backstage/Productmanage/" + ids, 
+								layer.confirm('确定要批量删除这些产品(' + names + ')吗？删除后所有数据都将无法恢复！', function(index) {
+									$.deleteResful(WEBURL_API + "/backstage/product/" + ids, 
 										function(msg) {
 											if(msg.code == 0) {
 												layer.msg("删除成功");
@@ -138,6 +144,10 @@
 								});								
 							}
 							break;
+						case 'updatePicUrls':
+							layer.msg("该功能未开放，敬请期待");
+							break;
+							
 					};
 				});
 				
@@ -172,19 +182,6 @@
 									layer.close(index);
 								}
 						});
-					}else if(obj.event === 'uploadPhoto') {
-						rowId=data.id;//将id值传递给全局变量
-						layer.open({
-								title: '头像上传',
-								type: 2,
-								area: ['450px', '370px'],
-								content: 'photoupload.html', //这里content是一个URL，如果你不想让iframe出现滚动条，你还可以content: ['http://sentsin.com', 'no']
-								cancel: function(index, layero) { //当前层索引参数（index）、当前层的DOM对象（layero)
-									table.reload('productmanage_table');//重新刷新表格数据
-									rowId=null;//清空保存的行信息（用于传递给子窗口）
-									layer.close(index);
-								}
-						});
 					}else if(obj.event === 'showBigPic'){//监听单元格(头像)事件，当点击头像时展示大图
 				    	if(data.picUrl!=null&&data.picUrl!=''){//只有图片存在时才展示出来
 					    	layer.open({
@@ -208,13 +205,19 @@
 	    			// 搜索条件
 	    			var name = $('input[name="name"]').val();
 	    			var onSale = $('select[name="onSale"]').val();
+	    			var orderType = $('select[name="orderType"]').val();
+	    			var orderNum = $('select[name="orderNum"]').val();
+	    			var productTypeId = $('select[name="productTypeId"]').val();
 	    			table.reload('productmanage_table', {
 	    				page: {
 	    					curr: 1
 	    				},
 	    				where: {
-	    					'name': name,
-	    					'onSale': onSale
+	    					'name': name
+	    					,'productType.id': productTypeId
+	    					,'orderNum': orderNum
+	    					,'onSale': onSale
+	    					,'orderType': orderType
 	    				}	    				
     				});
     			});	
@@ -238,18 +241,106 @@
 				</div>	
 			</div>
 			<div class="layui-inline" style="margin-top:5px;">
+				<label class="layui-form-label">产品类别</label>
+				<div class="layui-input-inline">
+						<select name="productTypeId" lay-verify="required">
+						<option value="">请选择</option>
+					</select>
+				</div>
+			</div>	
+			<div class="layui-inline" style="margin-top:5px;">
+				<label class="layui-form-label">优先级</label>
+				<div class="layui-input-inline">
+						<select name="orderNum">
+							<option value="">请选择</option>
+						</select>
+				</div>
+			</div>	
+			<div class="layui-inline" style="margin-top:5px;">
 				<label class="layui-form-label">是否上架</label>
 				<div class="layui-input-inline">
-						<select name="onSale" lay-verify="onSale">
+						<select name="onSale">
 							<option value="">请选择</option>
 							<option value="true">已上架</option>
 							<option value="false">未上架</option>
 						</select>
 				</div>
-			</div>			
+			</div>				
+			<div class="layui-inline" style="margin-top:5px;">
+				<label class="layui-form-label">排序规则</label>
+				<div class="layui-input-inline">
+						<select name="orderType">
+							<option value="">请选择</option>
+						</select>
+				</div>
+			</div>	
 			<button class="layui-btn" data-type="reload" id="search_button" type="button">搜索</button>
 		</form>
 		<table class="layui-hide" id="products" lay-filter="products"></table>
+		
+		
+		<script>
+			layui.use(['layedit','form'], function() { //表单插件初始化
+				var form = layui.form;//只有执行了这一步，部分表单元素才会自动修饰成功
+				
+				//读取当前记录
+				$.getJSON(//先读取产品栏目列表初始化下拉框，作为第一读取顺序
+					WEBURL_API + "backstage/producttype",
+				    function(producttypesMsg){
+				    	if(producttypesMsg.code==code_success){
+					    	$.each(producttypesMsg.data,function(index,item){//对于java的list集合转换为的json格式的遍历
+					        	//option  第一个参数是页面显示的值，第二个参数是传递到后台的值
+					        	$('select[name="productTypeId"]').append(new Option(item.name,item.id));//往下拉菜单里添加元素				        	
+					        })
+				    		form.render('select'); //刷新表单select选择框渲染
+				    		initOrderNumSelect();//调用优先级列表初始化				    		
+				    	}else{
+				    		layer.msg(producttypesMsg.msg);
+				    	}
+				    }
+				)
+				
+				//初始化优先级列表，这里定义为函数，是保证多个ajax的顺序，将其给第一个ajax调用
+				function initOrderNumSelect(){
+					//读取当前记录
+					$.getJSON(
+						WEBURL_API + "backstage/product/orderNumMap",//获取初始化表单信息
+					    function(msg){
+					    	if(msg.code==code_success){		
+					    		$.each(msg.data,function(key,value){
+					        		//option  第一个参数是页面显示的值，第二个参数是传递到后台的值
+					        		$('select[name="orderNum"]').append(new Option(value,key));//往下拉菜单里添加元素
+					      		});
+					    		form.render('select'); //刷新表单select选择框渲染
+					    		initOrderTypeSelect()//初始化排序规则列表
+					    	}else{
+								layer.msg(msg.msg);
+							}				    	
+					    }
+					)
+				}
+				
+				//初始化排序规则列表，这里定义为函数，是保证多个ajax的顺序，将其给第一个ajax调用
+				function initOrderTypeSelect(){
+					//读取当前记录
+					$.getJSON(
+						WEBURL_API + "backstage/product/orderTypeMap",//获取初始化表单信息
+					    function(msg){
+					    	if(msg.code==code_success){		
+					    		$.each(msg.data,function(key,value){
+					        		//option  第一个参数是页面显示的值，第二个参数是传递到后台的值
+					        		$('select[name="orderType"]').append(new Option(value,key));//往下拉菜单里添加元素
+					      		});
+					    		form.render('select'); //刷新表单select选择框渲染
+					    	}else{
+								layer.msg(msg.msg);
+							}				    	
+					    }
+					)
+				}
+				
+			});	//layui.use结尾
+		</script>
 	</body>
 
 </html>

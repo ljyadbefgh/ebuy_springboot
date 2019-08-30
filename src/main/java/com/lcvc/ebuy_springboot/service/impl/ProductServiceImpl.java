@@ -4,7 +4,6 @@ import com.lcvc.ebuy_springboot.dao.ProductDao;
 import com.lcvc.ebuy_springboot.model.Admin;
 import com.lcvc.ebuy_springboot.model.Product;
 import com.lcvc.ebuy_springboot.model.base.PageObject;
-import com.lcvc.ebuy_springboot.model.exception.MyServiceException;
 import com.lcvc.ebuy_springboot.model.exception.MyWebException;
 import com.lcvc.ebuy_springboot.model.query.ProductQuery;
 import com.lcvc.ebuy_springboot.service.ProductService;
@@ -63,7 +62,7 @@ public class ProductServiceImpl implements ProductService {
             throw new MyWebException("产品保存失败：必须输入当前价格");
         }else if(product.getOriginalPrice()==null){
             throw new MyWebException("产品保存失败：必须输入原价");
-        }else if(product.getNumber()==null){
+        }else if(product.getRepository()==null){
             throw new MyWebException("产品保存失败：必须输入库存");
         }else if(product.getClick()==null){
             throw new MyWebException("产品保存失败：必须输入人气");
@@ -80,8 +79,9 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void deleteProducts(Integer[] ids) throws MyWebException, MyServiceException {
-
+    public void deleteProducts(Integer[] ids){
+        //如果商品有订单不允许删除
+        productDao.deletes(ids);
     }
 
 
@@ -92,7 +92,16 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void updateProduct(Product product) throws MyWebException {
-
+    public void updateProduct(Product product,Admin admin){
+        //前面必须经过spring验证框架的验证
+        if(product.getProductType()!=null){//如果有栏目信息（如前端有相应表单）过来，则必须进行验证；
+            if(product.getProductType().getId()==null){
+                throw new MyWebException("产品保存失败：必须选择产品所属栏目");
+            }
+        }
+        //如果都验证通过
+        product.setFinalEditor(admin);
+        product.setUpdateTime(Calendar.getInstance().getTime());
+        productDao.update(product);
     }
 }

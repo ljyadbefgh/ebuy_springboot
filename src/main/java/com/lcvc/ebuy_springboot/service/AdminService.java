@@ -3,8 +3,8 @@ package com.lcvc.ebuy_springboot.service;
 
 import com.lcvc.ebuy_springboot.model.Admin;
 import com.lcvc.ebuy_springboot.model.base.PageObject;
-import com.lcvc.ebuy_springboot.model.exception.MyWebException;
 
+import javax.validation.Valid;
 import java.util.List;
 
 public interface AdminService {
@@ -15,7 +15,7 @@ public interface AdminService {
      * @param password 密码，不能为空
      * @return null表示登录失败
      */
-    boolean login(String username, String password) throws MyWebException;
+    boolean login(String username, String password);
 
     /**
      * 获取所有账户集合
@@ -29,26 +29,31 @@ public interface AdminService {
 
     /**
      * 删除指定账户
-     * 说明：不能自己删除自己
+     * 1.不能自己删除自己
+     * 2.如果该账户参与过网站管理则不允许删除
+     * （1）发表、编辑过产品
      * @param admin 执行删除的管理员账户
      * @param id
      */
-    void deleteAdmin(Admin admin,Integer id)  throws MyWebException;
+    void deleteAdmin(Admin admin,Integer id);
 
     /**
      * 批量删除指定账户
-     * 说明：不能自己删除自己
+     * 说明：
+     * 1.不能自己删除自己
+     * 2.如果该账户参与过网站管理则不允许删除
+     * （1）发表、编辑过产品
      * @param admin 执行删除的管理员账户
      * @param ids 多个账户的主键集合
      */
-    void deleteAdmins(Admin admin,Integer[] ids)  throws MyWebException;
+    void deleteAdmins(Admin admin,Integer[] ids);
 
     /**
      * 添加管理员
      * 说明：账户名和姓名不能为空
      * @param admin
      */
-    void addAdmin(Admin admin) throws MyWebException;
+    void addAdmin(@Valid Admin admin);
 
 
     /**
@@ -68,7 +73,9 @@ public interface AdminService {
     /**
      * 编辑管理员
      * 说明：
+     * 1、本方法不修改密码字段
+     * 2、如果传入的非主键字段为null，则不更新更字段的值
      * @param admin
      */
-    boolean updateAdmin(Admin admin) throws MyWebException;
+    void updateAdmin(@Valid Admin admin);
 }

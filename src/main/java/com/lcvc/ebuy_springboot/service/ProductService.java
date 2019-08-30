@@ -4,7 +4,6 @@ package com.lcvc.ebuy_springboot.service;
 import com.lcvc.ebuy_springboot.model.Admin;
 import com.lcvc.ebuy_springboot.model.Product;
 import com.lcvc.ebuy_springboot.model.base.PageObject;
-import com.lcvc.ebuy_springboot.model.exception.MyServiceException;
 import com.lcvc.ebuy_springboot.model.exception.MyWebException;
 import com.lcvc.ebuy_springboot.model.query.ProductQuery;
 
@@ -32,7 +31,6 @@ public interface ProductService {
      * 添加产品信息
      * @param product
      * @param admin 执行的管理账户
-     * @throws MyWebException
      */
     void addProduct(@Valid Product product, Admin admin);
 
@@ -42,9 +40,8 @@ public interface ProductService {
      * 说明：
      * 1.如果产品存在订单则不允许删除
      * @param ids 多个产品的主键集合
-     * @throws MyWebException
      */
-    void deleteProducts(Integer[] ids) throws MyWebException, MyServiceException;
+    void deleteProducts(Integer[] ids);
 
 
 
@@ -61,6 +58,7 @@ public interface ProductService {
      * 编辑产品信息
      * 说明：
      * @param product
+     * @param admin 执行的管理账户
      */
-    void updateProduct(Product product) throws MyWebException;
+    void updateProduct(@Valid Product product, Admin admin) throws MyWebException;
 }

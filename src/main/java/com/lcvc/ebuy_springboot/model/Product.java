@@ -28,7 +28,7 @@ public class Product implements java.io.Serializable {
 	@Length(max = 200, message = "产品的图片地址不能超过{max}个字符")
 	private String picUrl;//产品图片路径
 	@Range(min=0,message="库存不能为负数")
-	private Integer number;//库存数量
+	private Integer repository;//库存数量
 	@Range(min=0,message="点击数不能为负数")
 	private Integer click;//点击数
 	private Boolean onSale;//是否上架（true表示上架，但是要考虑上架时间；false表示不上架）
@@ -129,12 +129,12 @@ public class Product implements java.io.Serializable {
 		this.picUrl = picUrl;
 	}
 
-	public Integer getNumber() {
-		return number;
+	public Integer getRepository() {
+		return repository;
 	}
 
-	public void setNumber(Integer number) {
-		this.number = number;
+	public void setRepository(Integer repository) {
+		this.repository = repository;
 	}
 
 	public Integer getClick() {

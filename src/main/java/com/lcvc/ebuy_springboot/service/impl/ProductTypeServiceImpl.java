@@ -1,10 +1,12 @@
 package com.lcvc.ebuy_springboot.service.impl;
 
+import com.lcvc.ebuy_springboot.dao.ProductDao;
 import com.lcvc.ebuy_springboot.dao.ProductTypeDao;
 import com.lcvc.ebuy_springboot.model.ProductType;
 import com.lcvc.ebuy_springboot.model.base.Constant;
-import com.lcvc.ebuy_springboot.model.exception.MyWebException;
 import com.lcvc.ebuy_springboot.model.exception.MyServiceException;
+import com.lcvc.ebuy_springboot.model.exception.MyWebException;
+import com.lcvc.ebuy_springboot.model.query.ProductQuery;
 import com.lcvc.ebuy_springboot.service.ProductTypeService;
 import com.lcvc.ebuy_springboot.util.file.MyFileOperator;
 import org.apache.commons.lang.StringUtils;
@@ -24,16 +26,22 @@ public class ProductTypeServiceImpl implements ProductTypeService {
 
     @Resource
     private ProductTypeDao productTypeDao;
+    @Resource
+    private ProductDao productDao;
 
     public List<ProductType> getProductTypes(String basePath){
         List<ProductType> productTypeList=productTypeDao.readAll();
+        ProductQuery productQuery=null;//预设产品查询条件
         for(ProductType productType:productTypeList){
             //将头像网址进行处理，变为完整的地址
             if(!StringUtils.isEmpty(productType.getImageUrl())){//只要有图片则加上绝对地址
                 productType.setImageUrl(basePath+ Constant.PRODUCTTYPE_PICTURE_URL+productType.getImageUrl());
             }
             //获取栏目下的产品数量
-            productType.setProductNumber(0);
+            productQuery=new ProductQuery();
+            productQuery.setProductType(productType);
+            int number=productDao.querySize(productQuery);
+            productType.setProductNumber(number);
         }
         return productTypeList;
     }
@@ -43,6 +51,15 @@ public class ProductTypeServiceImpl implements ProductTypeService {
             //删除账户对应的图片
             ProductType productType=productTypeDao.get(id);//读取相应的记录
             if(productType!=null){
+                //获取栏目下产品数量
+                ProductQuery productQuery=new ProductQuery();
+                productQuery.setProductType(productType);
+                int number=productDao.querySize(productQuery);
+                if(number>0){
+                    throw new MyServiceException("栏目批量删除失败：栏目（name)下有number个产品"
+                            .replace("name",productType.getName())
+                            .replace("number",String.valueOf(number)));
+                }
                 String imageUrl=productType.getImageUrl();//获取图片地址
                 if(!StringUtils.isEmpty(imageUrl)){//如果图片地址存在
                     MyFileOperator.deleteFile(basePath+ Constant.PRODUCTTYPE_PICTURE_UPLOAD_URL+imageUrl);//删除图片

@@ -82,7 +82,7 @@
 			<div class="layui-form-item">
 				<label class="layui-form-label">*库存</label>
 				<div class="layui-input-block">
-					<input type="text" id="number" name="number" lay-verify="required|number|myInteger" placeholder="请输入整数" autocomplete="off" class="layui-input">
+					<input type="text" id="repository" name="repository" lay-verify="required|number|repository" placeholder="请输入整数" autocomplete="off" class="layui-input">
 				</div>
 			</div>
 			<div class="layui-form-item">
@@ -128,24 +128,30 @@
 		</form>
 
 		<script>
-			//设置ueditor图片编辑器
-			var myEditorImage= new UE.ui.Editor();//新定义一个组件
-			myEditorImage.render('uploadPicButton');//绑定触发按钮
-			myEditorImage.ready(function(){
-				//myEditorImage.setDisabled();
-				myEditorImage.hide();//隐藏UE框体
-				myEditorImage.addListener('beforeInsertImage',function(t, arg){//监听插入图片动作，如果直接了图片插入
-					//alert(arg[0].src);//arg就是上传图片的返回值，是个数组，如果上传多张图片，请遍历该值。
-					//把图片地址赋值给页面input
-					$("#pirUrl").attr("value", arg[0].src);
-				});
-			});
+			
 			
 			
 				
 				
 			layui.use(['layedit','form'], function() { //表单插件初始化
 				var form = layui.form;//只有执行了这一步，部分表单元素才会自动修饰成功
+				
+				//设置ueditor图片编辑器
+				var myEditorImage= new UE.ui.Editor();//新定义一个组件
+				myEditorImage.render('uploadPicButton');//绑定触发按钮
+				myEditorImage.ready(function(){
+					//myEditorImage.setDisabled();
+					myEditorImage.hide();//隐藏UE框体
+					myEditorImage.addListener('beforeInsertImage',function(t, arg){//监听插入图片动作，如果直接了图片插入
+						//alert(arg[0].src);//arg就是上传图片的返回值，是个数组，如果上传多张图片，请遍历该值。
+						//把图片地址赋值给页面input
+						if(arg.length>1){
+							layer.msg("只能选一张图片上传");
+						}else{
+							$("#pirUrl").attr("value", arg[0].src);
+						}
+					});
+				});
 				
 				//当点击上传按钮时，打开图片组件
 				$("#uploadPicButton").click(function(){
@@ -245,7 +251,7 @@
 							return '原价必须是大于0的数值';
 						}
 					},
-					myInteger: function(value) {
+					repository: function(value) {
 						if(value<0){//正则表达式表示大于等于1的整数
 					      return '库存必须是大于0的整数';
 					   }

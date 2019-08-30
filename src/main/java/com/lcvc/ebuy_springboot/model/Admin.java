@@ -1,6 +1,6 @@
 package com.lcvc.ebuy_springboot.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.validator.constraints.Length;
 
 import java.util.Date;
 
@@ -11,12 +11,18 @@ import java.util.Date;
 public class Admin implements java.io.Serializable{
 
 	private Integer id;
+	@Length(min = 3, max = 10, message = "用户名长度必须在 {min} - {max} 之间")
 	private String username;//用户名
-	@JsonIgnore
+	//@JsonIgnore
+	@Length(min = 6, max = 12, message = "密码长度必须在 {min} - {max} 之间")
 	private String password;//用户密码
+	@Length(max = 8, message = "网名长度不能超过{max} 个字符")
 	private String name;//网名
 	private Integer sex;//性别
 	private Date createTime;//创建时间
+
+	//非数据库字段
+	private Integer saveProductNumber;//发布过的产品数量
 
 	public Admin() {
 	}
@@ -73,6 +79,14 @@ public class Admin implements java.io.Serializable{
 
 	public void setSex(Integer sex) {
 		this.sex = sex;
+	}
+
+	public Integer getSaveProductNumber() {
+		return saveProductNumber;
+	}
+
+	public void setSaveProductNumber(Integer saveProductNumber) {
+		this.saveProductNumber = saveProductNumber;
 	}
 
 	/*重写hashCode方法，当通过集合判断对象是否相等时，必须重写该方法*/

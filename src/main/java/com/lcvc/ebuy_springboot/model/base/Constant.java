@@ -38,11 +38,25 @@ public class Constant {
     //产品优先级
     public final static HashMap<Integer,String> orderNumMapOfProduct = new LinkedHashMap<Integer,String>(){//产品优先级别
         {
+            put(110,"不推荐");
             put(100,"普通");
             put(50,"精品");
             put(20,"vip2");
             put(10,"vip1");
             put(0,"置顶");
+        }
+    };
+    //产品排序规则
+    public final static HashMap<Integer,String> orderTypeMapOfProduct = new LinkedHashMap<Integer,String>(){//产品优先级别
+        {
+            put(1,"按优先级升序、时间降序排序");
+            put(2,"按优先级降序、时间降序排序");
+            put(3,"按人气降序排序");
+            put(4,"按人气升序排序");
+            put(5,"按发布时间降序排序");
+            put(6,"按发布时间升序排序");
+            put(7,"按当前价格升序排序");
+            put(8,"按当前价格降序排序");
         }
     };
 }

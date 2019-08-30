@@ -108,13 +108,9 @@ public class AdminManageController {
 	@PatchMapping
 	public Map<String, Object> updateAdmin(@RequestBody Admin admin){
 		Map<String, Object> map=new HashMap<String, Object>();
-		map.put(Constant.JSON_CODE, JsonCode.ERROR.getValue());
-		if(adminService.updateAdmin(admin)){
-			map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
-			map.put(Constant.JSON_MESSAGE, "账户信息修改成功");
-		}else{
-			map.put(Constant.JSON_MESSAGE, "账户信息修改失败");
-		}
+		adminService.updateAdmin(admin);
+		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
+		map.put(Constant.JSON_MESSAGE, "账户信息修改成功");
 		return map;
 	}
 
