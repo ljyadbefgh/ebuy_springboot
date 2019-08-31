@@ -4,8 +4,8 @@ import com.lcvc.ebuy_springboot.dao.CustomerDao;
 import com.lcvc.ebuy_springboot.model.Customer;
 import com.lcvc.ebuy_springboot.model.base.Constant;
 import com.lcvc.ebuy_springboot.model.base.PageObject;
-import com.lcvc.ebuy_springboot.model.exception.MyWebException;
 import com.lcvc.ebuy_springboot.model.exception.MyServiceException;
+import com.lcvc.ebuy_springboot.model.exception.MyWebException;
 import com.lcvc.ebuy_springboot.model.query.CustomerQuery;
 import com.lcvc.ebuy_springboot.service.CustomerService;
 import com.lcvc.ebuy_springboot.util.SHA;
@@ -15,11 +15,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
 import javax.annotation.Resource;
 import java.util.Calendar;
 import java.util.List;
 
+@Validated//表示开启sprint的校检框架，会自动扫描方法里的@Valid（@Valid注解一般写在接口即可）
 @Transactional(propagation = Propagation.REQUIRED,isolation = Isolation.DEFAULT,timeout=36000,rollbackFor=Exception.class)
 @Service
 public class CustomerServiceImpl implements CustomerService {
@@ -51,7 +53,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public void deleteCustomers(Integer[] ids) throws MyWebException, MyServiceException {
+    public void deleteCustomers(Integer[] ids){
         for(Integer id:ids){
             //删除账户对应的图片
             Customer customer=customerDao.get(id);//读取相应的记录
@@ -78,14 +80,15 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public void addCustomer(Customer customer) throws MyWebException {
+    public void addCustomer(Customer customer){
+        //前面已经经过spring验证框架的验证
         if(customer!=null){
-            if(customer.getUsername().equals("")){
+            if(customer.getUsername()==null){
                 throw new MyWebException("客户信息创建失败：账户名不能为空");
-            }else if(customer.getName().equals("")){
+            }else if(customer.getName()==null){
                 throw new MyWebException("客户信息创建失败：姓名不能为空");
             }else if(customerDao.countUsername(customer.getUsername())>0){//如果有重名的
-                throw new MyWebException("客户信息创建失败：账户名重名");
+                throw new MyServiceException("客户信息创建失败：账户名重名");
             }else{
                 customer.setPassword(SHA.getResult("123456"));
                 customer.setCreateTime(Calendar.getInstance().getTime());//获取当前时间为创建时间
@@ -106,7 +109,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public void updateCustomer(Customer customer) throws MyWebException {
+    public void updateCustomer(Customer customer){
         boolean status = false;// 默认编辑失败
         //进行账户名验证
         String username=customer.getUsername();

@@ -5,6 +5,7 @@ import com.lcvc.ebuy_springboot.model.exception.MyWebException;
 import org.springframework.stereotype.Service;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Service
@@ -32,7 +33,7 @@ public interface ProductTypeService {
      * 保存产品分类
      * @param productType
      */
-    void saveProductType(@Valid ProductType productType) throws MyWebException;
+    void saveProductType(@Valid @NotNull ProductType productType) throws MyWebException;
 
     /**
      * 根据id获取产品分类对象
@@ -46,5 +47,5 @@ public interface ProductTypeService {
      * 执行指定产品分类的编辑     *
      * @param productType
      */
-    void updateProductType(@Valid ProductType productType) throws MyWebException;
+    void updateProductType(@Valid @NotNull ProductType productType) throws MyWebException;
 }

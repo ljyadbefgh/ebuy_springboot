@@ -8,6 +8,7 @@
         select * from producttype where id=#{id}
     </select>
 
+
    <!-- useGeneratedKeys="true" 表示给主键设置自增长-->
     <!--keyProperty="id" 表示将自增长后的Id赋值给实体类中的id字段。-->
     <insert id="save" useGeneratedKeys="true" keyProperty="id">
@@ -48,6 +49,10 @@
        select count(1) from producttype
     </select>
 
+    <!--专为配合其他表的级联，如产品表关联查询-->
+    <select id="getForCascade" resultType="ProductType">
+        select id,name,orderNum from producttype where id=#{id}
+    </select>
 
 
 

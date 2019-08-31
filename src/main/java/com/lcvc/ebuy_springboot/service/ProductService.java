@@ -8,6 +8,7 @@ import com.lcvc.ebuy_springboot.model.exception.MyWebException;
 import com.lcvc.ebuy_springboot.model.query.ProductQuery;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 public interface ProductService {
 
@@ -32,7 +33,7 @@ public interface ProductService {
      * @param product
      * @param admin 执行的管理账户
      */
-    void addProduct(@Valid Product product, Admin admin);
+    void addProduct(@Valid @NotNull Product product, Admin admin);
 
 
     /**
@@ -60,5 +61,5 @@ public interface ProductService {
      * @param product
      * @param admin 执行的管理账户
      */
-    void updateProduct(@Valid Product product, Admin admin) throws MyWebException;
+    void updateProduct(@Valid @NotNull Product product, Admin admin) throws MyWebException;
 }

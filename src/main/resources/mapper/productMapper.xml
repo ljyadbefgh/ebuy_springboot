@@ -6,7 +6,7 @@
 <mapper namespace="com.lcvc.ebuy_springboot.dao.ProductDao">
     <!--自定义返回的类型-->
     <resultMap id="product" type="Product">
-        <association property="productType" javaType="ProductType" column="productTypeId" select="com.lcvc.ebuy_springboot.dao.ProductTypeDao.get">
+        <association property="productType" javaType="ProductType" column="productTypeId" select="com.lcvc.ebuy_springboot.dao.ProductTypeDao.getForCascade">
         </association>
         <association property="creator" javaType="Admin" column="creatorId" select="com.lcvc.ebuy_springboot.dao.AdminDao.get">
         </association>
@@ -92,7 +92,8 @@
     </select>
 
     <select id="query" resultMap="product">
-        select * from product
+       /* select * from product*/
+        select id,productTypeId,name,orderNum,price,originalPrice,picUrl,repository,click,onSale,createTime,creatorId,finalEditorId,updateTime from product
         <if test="objectQuery!=null">
             <where>
                 <if test="objectQuery.name!=null and objectQuery.name.length()>0">

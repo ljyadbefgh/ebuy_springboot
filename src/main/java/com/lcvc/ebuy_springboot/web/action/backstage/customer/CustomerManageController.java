@@ -158,6 +158,7 @@ public class CustomerManageController {
 						MyFileOperator.deleteFile(filePath+customer.getPicUrl());//删除原文件
 					}
 					customer.setPicUrl(fileName);
+					customer.setPassword(null);//应编辑方法要求修改为Null
 					customerService.updateCustomer(customer);//将新的图片信息存入数据库
 					map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
 					map.put(Constant.JSON_MESSAGE, "上传成功");

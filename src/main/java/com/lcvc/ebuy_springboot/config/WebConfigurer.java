@@ -7,6 +7,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.LinkedList;
 
+
 @Configuration
 public class WebConfigurer implements WebMvcConfigurer {
     @Override

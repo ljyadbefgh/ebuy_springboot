@@ -2,11 +2,14 @@ package com.lcvc.ebuy_springboot.web.interceptor;
 
 import com.lcvc.ebuy_springboot.model.base.Constant;
 import com.lcvc.ebuy_springboot.model.base.JsonCode;
-import com.lcvc.ebuy_springboot.model.exception.MyWebException;
 import com.lcvc.ebuy_springboot.model.exception.MyServiceException;
+import com.lcvc.ebuy_springboot.model.exception.MyWebException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -14,10 +17,7 @@ import org.springframework.web.multipart.MultipartException;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author ljy
@@ -29,6 +29,7 @@ import java.util.Set;
 @ResponseBody
 public class MyExceptionAdvice {
     public static final Log log= LogFactory.getLog(MyExceptionAdvice.class);
+    private ConstraintViolationException violationException;
 
     @ExceptionHandler
     public Map<String, Object> myFormException(MyWebException e) {
@@ -48,13 +49,15 @@ public class MyExceptionAdvice {
         return map;
     }
 
-    //处理spring 校验框架validation抛出的异常：ConstraintViolationException（官方定义）
+
+
+    //处理spring 校验框架validation抛出的异常(二种异常之一)：ConstraintViolationException（官方定义），在配置了业务层验证后（或者说使用了@Validated后），基本在此处捕获spring验证异常
     @ExceptionHandler(ConstraintViolationException.class)
-    public Map<String, Object> myFormException(ConstraintViolationException e) {
+    public Map<String, Object> constraintViolationException(ConstraintViolationException e) {
         Set<ConstraintViolation<?>> violations = new LinkedHashSet(e.getConstraintViolations());
         StringBuilder strBuilder = new StringBuilder();
         strBuilder.append("操作失败：");
-        for (ConstraintViolation<?> violation : violations) {
+        for (ConstraintViolation<?> violation : violations) {//在配置hibernate验证（fail_fast）后，这里就只会出现一个异常了，不过暂时保留此处
             //violation.getInvalidValue();表示出错的属性的值
             strBuilder.append(violation.getMessage());
             break;//因为所有验证在前端显示，格式需要假如html和css进行控制，如果前端包括android等不好控制，所以只显示一条
@@ -62,6 +65,21 @@ public class MyExceptionAdvice {
         String result = strBuilder.toString();
         Map<String, Object> map=new HashMap<String, Object>();
         map.put(Constant.JSON_MESSAGE, result);
+        map.put(Constant.JSON_CODE, JsonCode.ERROR.getValue());//返回错误信息
+        //log.error("前端提交异常", e.getMessage());
+        return map;
+    }
+
+    //处理spring 校验框架validation抛出的异常(二种异常之一)：MethodArgumentNotValidException（官方定义），该异常在控制器验证时出现
+    @ExceptionHandler(MethodArgumentNotValidException .class)
+    public Map<String, Object> methodArgumentNotValidException (MethodArgumentNotValidException e) {
+        // 同样是获取BindingResult对象，然后获取其中的错误信息
+        // //在配置hibernate验证（fail_fast）后，这里就只会出现一个异常了
+        //如果没有，则可能又多个
+        BindingResult bindingResult=e.getBindingResult();//如果配置在spring mvc的验证，会出现这个异常信息
+        List<ObjectError> errorList=bindingResult.getAllErrors();//获取异常集合
+        Map<String, Object> map=new HashMap<String, Object>();
+        map.put(Constant.JSON_MESSAGE, errorList.get(0).toString());//由于配置了只有一个异常，所以直接取第一个
         map.put(Constant.JSON_CODE, JsonCode.ERROR.getValue());//返回错误信息
         //log.error("前端提交异常", e.getMessage());
         return map;
@@ -81,7 +99,7 @@ public class MyExceptionAdvice {
     @ExceptionHandler
     public Map<String, Object> httpMessageNotReadableException(HttpMessageNotReadableException e) {
         Map<String, Object> map=new HashMap<String, Object>();
-        map.put(Constant.JSON_MESSAGE, "类型转换异常："+e.getMessage());
+        map.put(Constant.JSON_MESSAGE, "类型转换异常："+ e.getMessage());
         map.put(Constant.JSON_CODE, JsonCode.ERROR.getValue());//返回错误信息
         //未知异常一般是计划外的，需要重点处理，比如记录下日志，或是自动发送错误信息邮件给技术部
         //log.error("前端提交异常", e.getMessage());
@@ -104,7 +122,7 @@ public class MyExceptionAdvice {
     @ExceptionHandler
     public Map<String, Object> unknownException(Exception e) {
         Map<String, Object> map=new HashMap<String, Object>();
-        map.put(Constant.JSON_MESSAGE, "未知异常："+e.getMessage());
+        map.put(Constant.JSON_MESSAGE, "未知异常："+ e.getMessage());
         map.put(Constant.JSON_CODE, JsonCode.ERROR.getValue());//返回错误信息
         //未知异常一般是计划外的，需要重点处理，比如记录下日志，或是自动发送错误信息邮件给技术部
         //log.error("前端提交异常", e.getMessage());

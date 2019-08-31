@@ -5,6 +5,10 @@ import com.lcvc.ebuy_springboot.model.Admin;
 import com.lcvc.ebuy_springboot.model.base.Constant;
 import com.lcvc.ebuy_springboot.model.base.JsonCode;
 import com.lcvc.ebuy_springboot.service.AdminService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,6 +18,8 @@ import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.Map;
 
+
+@Api(tags = "后台管理账户登陆注销模块")
 @RestController
 @RequestMapping(value = "/api/backstage")
 public class LoginLogoutController {
@@ -22,9 +28,11 @@ public class LoginLogoutController {
 	private AdminService adminService;
 
 
-	/**
-	 * 后台登录处理
-	 */
+	@ApiOperation(value = "后台管理账户登陆", notes = "根据账户名和密码进行登陆")
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "username", value = "账户名", required = true, dataType = "String"),
+			@ApiImplicitParam(name = "password", value = "密码", required = true, dataType = "String")
+	})
 	@GetMapping("/login")
 	public Map<String, Object> login(String username, String password, HttpSession session){
 		Map<String, Object> map=new HashMap<String, Object>();
@@ -33,7 +41,7 @@ public class LoginLogoutController {
 			Admin admin=adminService.getAdmin(username);
 			session.setAttribute("admin",admin);
 			map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
-			map.put(Constant.JSON_DATA,admin.getUsername());//将账户名值传递到前端先存储，供后端交互
+			//map.put(Constant.JSON_DATA,admin.getUsername());//将账户名值传递到前端先存储，供后端交互
 		}else{
 			map.put(Constant.JSON_MESSAGE, "登录失败：用户名和密码错误");
 		}
@@ -59,13 +67,9 @@ public class LoginLogoutController {
 		} catch (MyFormException e) {
 			resultInfo.setMsg(e.getMessage());
 		}
-		return resultInfo;
-	}*/
+		return resultInfo;	}*/
 
-	/**
-     * 注销
-	 * @return
-     */
+	@ApiOperation(value = "后台管理账户注销", notes = "后台管理账户注销")
 	@GetMapping("/logout")
 	public Map<String, Object> logout(HttpSession session){
 		Map<String, Object> map=new HashMap<String, Object>();

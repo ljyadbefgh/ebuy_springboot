@@ -82,14 +82,14 @@
 					password: [
 						/^[\S]{6,12}$/, '密码必须6到12位，且不能出现空格'
 					],
-					name: function(value) {
+					/*name: function(value) {
 						if(value.length == 0) {
 							return '请填写网名';
 						}
 						if(value.length > 8) {
 							return '网名长度不能超过8个字符';
 						}
-					},
+					},*/
 					sex:function(value){
 						if(value==""){
 							return "请选择性别";

@@ -5,6 +5,7 @@ import com.lcvc.ebuy_springboot.model.Admin;
 import com.lcvc.ebuy_springboot.model.base.PageObject;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 public interface AdminService {
@@ -53,7 +54,7 @@ public interface AdminService {
      * 说明：账户名和姓名不能为空
      * @param admin
      */
-    void addAdmin(@Valid Admin admin);
+    void addAdmin(@Valid @NotNull Admin admin);
 
 
     /**
@@ -73,9 +74,9 @@ public interface AdminService {
     /**
      * 编辑管理员
      * 说明：
-     * 1、本方法不修改密码字段
+     * 1、本方法不修改密码字段（使用该方法时务必将密码字段设置为null）
      * 2、如果传入的非主键字段为null，则不更新更字段的值
      * @param admin
      */
-    void updateAdmin(@Valid Admin admin);
+    void updateAdmin(@Valid @NotNull Admin admin);
 }

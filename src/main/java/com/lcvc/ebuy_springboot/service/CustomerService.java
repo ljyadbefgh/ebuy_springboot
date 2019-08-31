@@ -4,8 +4,10 @@ package com.lcvc.ebuy_springboot.service;
 import com.lcvc.ebuy_springboot.model.Customer;
 import com.lcvc.ebuy_springboot.model.base.PageObject;
 import com.lcvc.ebuy_springboot.model.exception.MyWebException;
-import com.lcvc.ebuy_springboot.model.exception.MyServiceException;
 import com.lcvc.ebuy_springboot.model.query.CustomerQuery;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 public interface CustomerService {
     /**
@@ -35,7 +37,7 @@ public interface CustomerService {
      * @param ids 多个账户的主键集合
      * @throws MyWebException
      */
-    void deleteCustomers(Integer[] ids) throws MyWebException, MyServiceException;
+    void deleteCustomers(Integer[] ids);
 
 
     /**
@@ -52,7 +54,7 @@ public interface CustomerService {
      * @param customer
      * @throws MyWebException
      */
-    void addCustomer(Customer customer) throws MyWebException;
+    void addCustomer(@Valid @NotNull Customer customer);
 
 
     /**
@@ -66,9 +68,10 @@ public interface CustomerService {
     /**
      * 编辑客户信息
      * 说明：
-     * @param customer
+     * 1、本方法不修改密码字段（使用该方法时务必将密码字段设置为null）
+     * 2、如果传入的非主键字段为null，则不更新更字段的值
      */
-    void updateCustomer(Customer customer) throws MyWebException;
+    void updateCustomer(@Valid @NotNull Customer customer);
 
     /**
      * 重置指定账户为初始密码

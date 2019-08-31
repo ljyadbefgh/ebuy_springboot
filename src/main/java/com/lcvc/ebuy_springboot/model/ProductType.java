@@ -1,6 +1,7 @@
 package com.lcvc.ebuy_springboot.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotBlank;
@@ -24,6 +25,7 @@ public class ProductType implements java.io.Serializable {
 	@Length(max = 200, message = "产品的图片地址不能超过{max}个字符")
 	private String imageUrl;//栏目的标题图片地址
 	private String summary;//栏目简介（纯文本）,从intro提取纯文本内容作为摘要
+	@JsonIgnore
 	private String intro;//栏目简介（富文本）
 
 	@NotNull(message = "优先级不允许为空")

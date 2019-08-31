@@ -20,12 +20,13 @@ public class Product implements java.io.Serializable {
 	private String name;//产品名称
 	private Integer orderNum;//优先级
 	private String description;//产品描述
+	//@JsonIgnore
 	private String content;//产品详细描述
 	@Min(value = 0,message = "产品价格必须大于0")
 	private BigDecimal price;//产品现价。
 	@Range(min=0,message="产品原价不能为负数")
 	private BigDecimal originalPrice;//产品原价
-	@Length(max = 200, message = "产品的图片地址不能超过{max}个字符")
+	@Length(max = 255, message = "产品的图片地址不能超过{max}个字符")
 	private String picUrl;//产品图片路径
 	@Range(min=0,message="库存不能为负数")
 	private Integer repository;//库存数量

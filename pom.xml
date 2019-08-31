@@ -16,6 +16,8 @@
 
 	<properties>
 		<java.version>1.8</java.version>
+		<!--swagger在2.8-2.92版本之间都出现paramType = "path", required = true来设定restful路径参数时，文档直接测试会失败；退回该版本后一切正常。密切关注后续版本是否解决这个BUG-->
+		<swagger2.version>2.7.0</swagger2.version>
 		<!--mysal驱动包-->
 		<mysql.version>8.0.16</mysql.version>
 		<mybatis.version>3.4.2</mybatis.version>
@@ -37,6 +39,23 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
+		</dependency>
+		<!--需要使用切面编程aop则加入，否则不需要-->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-aop</artifactId>
+		</dependency>
+
+		<!--swagge可以用来生成RESTFUL接口的在线文档，也可以直接在文档中进行接口测试，代替Postman。-->
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger2</artifactId>
+			<version>${swagger2.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger-ui</artifactId>
+			<version>${swagger2.version}</version>
 		</dependency>
 
 		<!--添加thymeleaf支持的架构包，启用之后，默认跳转视图从static变为template-->

@@ -1,7 +1,10 @@
 package com.lcvc.ebuy_springboot.model;
 
 
-import javax.validation.constraints.Email;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.Range;
+
+import javax.validation.constraints.Pattern;
 
 /**
  * 客户
@@ -11,16 +14,23 @@ import javax.validation.constraints.Email;
 public class Customer implements java.io.Serializable {
 
 	private Integer id;
+	@Length(min = 3, max = 20, message = "账户名长度必须在 {min} - {max} 之间")
 	private String username;//账户名
+	@Length(min = 6, max = 12, message = "密码长度必须在 {min} - {max} 之间")
 	private String password;//账户密码
+	@Length(max = 10, message = "网名长度不能超过{max} 个字符")
 	private String name;//客户名称
+	@Range(min = 0, max = 2, message = "性别数值必须在 {min} - {max} 之间")
 	private Integer sex;//性别
+	@Length(max = 255, message = "产品的图片地址不能超过{max}个字符")
 	private String picUrl;//头像路径
-	//@Pattern(regexp = "^1(3|4|5|7|8)\\d{9}$",message = "手机号码格式错误")
+	@Pattern(regexp = "^$|^1(3|4|5|7|8)\\d{9}$",message = "手机号码格式错误")//正则表达式设定：可以为空，如果不为空则必须符合手机格式要求。^$表示空字符串，|表示或者
 	private String tel;//电话号码
+	@Length(max = 100, message = "客户地址信息不能超过{max}个字符")
 	private String address;//客户地址
+	//@Pattern(regexp = "[1-9]\\d{5}",message = "客户邮编格式错误")//限制必须符合指定的正则表达式
 	private String zip;//客户邮编
-	@Email(message ="电子邮箱格式错误")
+	//@Email(message ="电子邮箱格式错误")
 	private String email;//客户电子邮箱
 	private String intro;//客户简介，备注等
 	private java.util.Date createTime;//创建时间、注册时间
