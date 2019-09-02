@@ -1,5 +1,6 @@
 package com.lcvc.ebuy_springboot.web.interceptor;
 
+import com.lcvc.ebuy_springboot.model.Admin;
 import com.lcvc.ebuy_springboot.model.base.Constant;
 import com.lcvc.ebuy_springboot.model.base.JsonCode;
 import com.lcvc.ebuy_springboot.service.AdminService;
@@ -44,7 +45,8 @@ public class LoginForAdminInterceptor extends HandlerInterceptorAdapter {
         } else {
             //对账户是否登陆进行验证
             //返回错误信息
-           if(session.getAttribute("admin")==null){
+            Object adminObject=session.getAttribute("admin");
+           if(adminObject==null){
                 Map<String, Object> map = new HashMap<String, Object>();
                 map.put(Constant.JSON_CODE, JsonCode.ERROR.getValue());
                 map.put(Constant.JSON_MESSAGE, "请先登录");
@@ -58,6 +60,9 @@ public class LoginForAdminInterceptor extends HandlerInterceptorAdapter {
                 out.close();
                 flag=false;
             }else{//如果已经登录
+               //更新账户信息，后期要改为redis，减少数据库交互次数
+               Admin admin=adminService.getAdmin(((Admin)adminObject).getId());
+               session.setAttribute("admin",admin);//更新Admin的值
                flag=true;
            }
         }

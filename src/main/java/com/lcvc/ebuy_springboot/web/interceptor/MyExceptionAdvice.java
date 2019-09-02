@@ -10,9 +10,11 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.MultipartException;
 
 import javax.validation.ConstraintViolation;
@@ -30,6 +32,7 @@ import java.util.*;
 public class MyExceptionAdvice {
     public static final Log log= LogFactory.getLog(MyExceptionAdvice.class);
     private ConstraintViolationException violationException;
+    private ObjectError error;
 
     @ExceptionHandler
     public Map<String, Object> myFormException(MyWebException e) {
@@ -79,16 +82,42 @@ public class MyExceptionAdvice {
         BindingResult bindingResult=e.getBindingResult();//如果配置在spring mvc的验证，会出现这个异常信息
         List<ObjectError> errorList=bindingResult.getAllErrors();//获取异常集合
         Map<String, Object> map=new HashMap<String, Object>();
-        map.put(Constant.JSON_MESSAGE, errorList.get(0).toString());//由于配置了只有一个异常，所以直接取第一个
+        ObjectError error=errorList.get(0);//由于配置了只有一个异常，所以直接取第一个
+        System.out.println(error.shouldRenderDefaultMessage());
+        String message=error.getDefaultMessage();//验证失败的错误信息
+        map.put(Constant.JSON_MESSAGE, "验证失败：message"
+                .replace("message",message));
         map.put(Constant.JSON_CODE, JsonCode.ERROR.getValue());//返回错误信息
         //log.error("前端提交异常", e.getMessage());
         return map;
     }
 
+    //spring mvc在接收参数时，如果无法接收到值出现此异常（如该值是必须的，或是不符合传输要求，导致无法接收到值）
     @ExceptionHandler
-    public Map<String, Object> numberFormatException(NumberFormatException e) {
+    public Map<String, Object> missingServletRequestParameterException(MissingServletRequestParameterException e) {
         Map<String, Object> map=new HashMap<String, Object>();
-        map.put(Constant.JSON_MESSAGE, "数字转换异常：必须输入整数");
+        String fieldName=e.getParameterName();//出错的字段名
+        String type=e.getParameterType();//出错字段的类型
+       map.put(Constant.JSON_MESSAGE, "参数类型不匹配：参数fieldName类型应该为type"
+                .replace("fieldName",fieldName)
+                .replace("type",type));
+        map.put(Constant.JSON_CODE, JsonCode.ERROR.getValue());//返回错误信息
+        //未知异常一般是计划外的，需要重点处理，比如记录下日志，或是自动发送错误信息邮件给技术部
+        //log.error("前端提交异常", e.getMessage());
+        return map;
+    }
+
+    //spring mvc在接收参数时，如果类型转换错误则会弹出此异常
+    @ExceptionHandler
+    public Map<String, Object> methodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
+        Map<String, Object> map=new HashMap<String, Object>();
+        String fieldName=e.getName();//出错的字段名
+        Object fieldValue=e.getValue();//出错字段的值
+        Class type=e.getRequiredType();//出错字段的类型
+        map.put(Constant.JSON_MESSAGE, "类型转换错误：fieldName的值为fieldValue，无法转换为type类型"
+            .replace("fieldName",fieldName)
+            .replace("fieldValue",fieldValue.toString())
+            .replace("type",type.getName()));
         map.put(Constant.JSON_CODE, JsonCode.ERROR.getValue());//返回错误信息
         //未知异常一般是计划外的，需要重点处理，比如记录下日志，或是自动发送错误信息邮件给技术部
         //log.error("前端提交异常", e.getMessage());

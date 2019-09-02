@@ -34,8 +34,8 @@
                     <span id="username"></span>
                 </a>
                 <dl class="layui-nav-child">
-                    <dd><a href="">基本资料</a></dd>
-                    <dd><a href="">密码修改</a></dd>
+                    <dd><a name="openAtMainLayout" href="admin/adminupdate.html">基本资料编辑</a></dd>
+                    <dd><a name="openAtMainLayout" href="admin/passwordupdate.html">密码修改</a></dd>
                 </dl>
             </li>
             <li class="layui-nav-item"><a href="#" id="logout">注销</a></li>
@@ -49,23 +49,22 @@
                 <li class="layui-nav-item">
                     <a class="" href="javascript:;">管理账户管理</a>
                     <dl class="layui-nav-child">
-                        <dd><a href="admin/adminadd.html">创建管理账户</a></dd>
-                        <dd><a href="admin/adminmanage.html">管理账户列表</a></dd>
+                        <dd><a name="openAtMainLayout" href="adminmanage/adminadd.html">创建管理账户</a></dd>
+                        <dd><a name="openAtMainLayout" href="adminmanage/adminmanage.html">管理账户列表</a></dd>
                     </dl>
                 </li>
                 <li class="layui-nav-item">
                     <a class="" href="javascript:;">客户管理</a>
                     <dl class="layui-nav-child">
-                    	<dd><a href="customer/customeradd.html">创建客户</a></dd>
-                        <dd><a href="customer/customermanage.html">客户列表</a></dd>
+                    	<dd><a name="openAtMainLayout" href="customer/customeradd.html">创建客户</a></dd>
+                        <dd><a name="openAtMainLayout" href="customer/customermanage.html">客户列表</a></dd>
                     </dl>
                 </li>
                 <li class="layui-nav-item layui-nav-itemed">
                     <a href="javascript:;">产品管理</a>
                     <dl class="layui-nav-child">
-                    	<dd><a href="producttype/producttypemanage.html">产品类别管理</a></dd>                       
-                        <dd><a href="product/productmanage.html">管理产品列表</a></dd>
-                        <dd><a href="">超链接</a></dd>
+                    	<dd><a name="openAtMainLayout" href="producttype/producttypemanage.html">产品类别管理</a></dd>                       
+                        <dd><a name="openAtMainLayout" href="product/productmanage.html">管理产品列表</a></dd>
                     </dl>
                 </li>
                 <li class="layui-nav-item"><a href="">购物车</a></li>
@@ -89,6 +88,7 @@
 <script>
     layui.use('layer', function(){
         var layer = layui.layer;
+        var timestamp = Date.parse(new Date());//获得时间戳配合地址传给服务器，这样可以不缓存随时刷新
         
         //读取当前用户信息
 		$.getJSON(
@@ -139,7 +139,7 @@
                 id : '111'
             });
         });    */
-        $('.layui-nav-child a').click(function () {
+        $('a[name="openAtMainLayout"]').click(function () {
             var url = $(this).attr("href");//获取链接地址
             $("#mainFrame").attr("src",url);
             return false;

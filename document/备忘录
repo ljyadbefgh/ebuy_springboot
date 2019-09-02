@@ -2,3 +2,7 @@
 1、利用 Spring Boot 设计风格良好的Restful API及错误响应
 https://www.jianshu.com/p/d6424d98b02e
 说明：写的非常好好全面的文章
+
+2、Swagger2文档生成插件：
+下面的整个比较全面，也是最新版
+https://cloud.tencent.com/developer/article/1332445

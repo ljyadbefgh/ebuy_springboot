@@ -7,7 +7,7 @@
 		select * from customer where id=#{id}
 	</select>
 	
-	<insert id="save">
+	<insert id="save"  useGeneratedKeys="true" keyProperty="id">
 	    insert into 
 	    customer(id,username,password,name,sex,picUrl,tel,address,zip,email,intro,createTime)
 	    values(null,#{username},#{password},#{name},#{sex},#{picUrl},#{tel},#{address},#{zip},#{email},#{intro},#{createTime})

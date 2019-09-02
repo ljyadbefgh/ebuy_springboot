@@ -10,6 +10,7 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
+ * 整站的跨域配置
  * 对跨域进行处理，但是该跨域方式对spring mvc的拦截器无效（即在spring mvc拦截器中如果用outprint返回Json等类型信息时会出现跨域异常，当然如果不返回信息到客户端就不会出错）
  * 因此如果配置拦截器，还需要增加filter过滤器进行处理
  */

@@ -74,9 +74,21 @@ public interface AdminService {
     /**
      * 编辑管理员
      * 说明：
-     * 1、本方法不修改密码字段（使用该方法时务必将密码字段设置为null）
+     * 1、必须传入Admin实体的id值
+     * 2、本方法不修改密码字段（使用该方法时务必将密码字段设置为null，否则可能无法通过spring框架验证）
      * 2、如果传入的非主键字段为null，则不更新更字段的值
      * @param admin
      */
     void updateAdmin(@Valid @NotNull Admin admin);
+
+    /**
+     * 修改密码
+     * 说明：
+     * 1.本方法不对原密码、新密码和确认密码的规则进行验证，请在web层验证后再传入
+     * @param username 必填
+     * @param password 必填
+     * @param newPass 必填
+     * @param rePass 必填
+     */
+    void updatePassword(String username,String password,String newPass,String rePass);
 }

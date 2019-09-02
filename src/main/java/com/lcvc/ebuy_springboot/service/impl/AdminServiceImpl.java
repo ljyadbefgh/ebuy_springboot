@@ -60,6 +60,8 @@ public class AdminServiceImpl implements AdminService {
             ProductQuery productQuery=new ProductQuery();
             productQuery.setCreator(admin);
             admin.setSaveProductNumber(productDao.querySize(productQuery));
+            //将密码清空，不返回给前端
+
         }
         return pageObject;
     }
@@ -123,19 +125,20 @@ public class AdminServiceImpl implements AdminService {
     public void addAdmin(Admin admin){
         //前面必须经过spring验证框架的验证
         if(admin!=null){
-            if(StringUtils.isEmpty(admin.getUsername())){
+            if(admin.getUsername()==null){
                 throw new MyWebException("账户添加失败：账户名不能为空");
             }
-            if(StringUtils.isEmpty(admin.getPassword())){
+            if(admin.getPassword()==null){
                 throw new MyWebException("账户添加失败：密码不能为空");
             }
-            if(StringUtils.isEmpty(admin.getName())){
+            if(admin.getName()==null){
                 throw new MyWebException("账户添加失败：网名不能为空");
             }
             if(admin.getSex()==null){
                 throw new MyWebException("账户添加失败：请选择性别");
             }
             if(adminDao.countUsername(admin.getUsername())==0){
+                admin.setId(null);//主键自增
                 admin.setPassword(SHA.getResult("123456"));
                 admin.setCreateTime(Calendar.getInstance().getTime());//获取当前时间为创建时间
                 adminDao.save(admin);
@@ -167,6 +170,9 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public void updateAdmin(Admin admin){
+        if(admin.getId()==null){
+            throw new MyWebException("账户编辑失败：id不能为空");
+        }
         if(admin.getUsername()!=null){
             if(admin.getUsername().length()==0){
                 throw new MyWebException("账户编辑失败：账户名不能为空");
@@ -181,6 +187,22 @@ public class AdminServiceImpl implements AdminService {
                 }
             }
         }
+        admin.setPassword(null);
         adminDao.update(admin);
+    }
+
+    @Override
+    public void updatePassword(String username, String password, String newPass, String rePass) {
+        //在web层已对密码字段进行验证
+        if(!newPass.equals(rePass)){
+            throw new MyWebException("密码修改失败：确认密码与新密码必须相同");
+        }
+        if(this.login(username, password)){//说明原密码正确
+            Admin admin=adminDao.getAdminByUsername(username);
+            admin.setPassword(SHA.getResult(newPass));
+            adminDao.update(admin);
+        }else{
+            throw new MyServiceException("密码修改失败：原密码错误");
+        }
     }
 }

@@ -19,7 +19,7 @@ import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.Map;
 
-@Api(tags = "后台管理员管理模块")
+@Api(tags = "后台管理所有管理员账户模块")
 @RestController
 @RequestMapping(value = "/api/backstage/adminmanage")
 public class AdminManageController {
@@ -30,7 +30,7 @@ public class AdminManageController {
 	private AdminService adminService;
 
 
-	@ApiOperation(value = "分页读取所有管理账户信息", notes = "如果page为空则默认是第一页;如果limit则采用服务器的默认数值")
+	@ApiOperation(value = "分页读取所有管理账户信息", notes = "如果page为空则默认是第一页;如果limit为空则采用服务器的默认数值")
 	@ApiImplicitParams({
 			@ApiImplicitParam(name = "page", value = "当前页码", required = false, dataType = "Integer"),
 			@ApiImplicitParam(name = "limit", value = "每页最多展示的记录数", required = false, dataType = "String")
@@ -51,7 +51,7 @@ public class AdminManageController {
 	 * @return
 	 */
 	@ApiOperation(value = "删除指定账户", notes = "根据id的值删除指定账户")
-	@ApiImplicitParam(name = "id", value = "要删除的账户id", required = true, dataType = "Integer",paramType = "path")
+	@ApiImplicitParam(name = "id", value = "要删除的账户id", required = true,paramType = "path")
 	@DeleteMapping("/{id}")
 	public Map<String, Object> deleteAdmin(@PathVariable Integer id, HttpSession session){
 		Map<String, Object> map=new HashMap<String, Object>();
@@ -61,11 +61,8 @@ public class AdminManageController {
 		return map;
 	}
 
-	/**
-	 * 批量删除指定的多个账户
-	 * @param ids 账户id集合，前端必须以“15,25,74”这样的方式传回
-	 * @return
-	 */
+	@ApiOperation(value = "批量删除账户", notes = "根据id的值删除指定账户")
+	@ApiImplicitParam(name = "ids", value = "要删除的账户id集合", required = true,paramType = "path",example ="15,25,74" )
 	@DeleteMapping("/deletes/{ids}")
 	public Map<String, Object> deleteAdmins(@PathVariable("ids")Integer[] ids, HttpSession session){
 		Map<String, Object> map=new HashMap<String, Object>();
@@ -75,12 +72,8 @@ public class AdminManageController {
 		return map;
 	}
 
-
-	/**
-	 * 添加账户
-	 * @param admin
-	 * @return
-	 */
+	@ApiOperation(value = "添加账户", notes = "id、createTime不传值，由服务端赋值")
+	//@ApiImplicitParam(name = "admin", value = "要添加的管理账户对象", required = true, dataType = "Admin")
 	@PostMapping
 	public Map<String, Object> doAddAdmin(@RequestBody Admin admin){
 		Map<String, Object> map=new HashMap<String, Object>();
@@ -91,7 +84,7 @@ public class AdminManageController {
 	}
 
 	@ApiOperation(value = "读取指定账户", notes = "根据id的值读取指定账户")
-	@ApiImplicitParam(name = "id", value = "要读取的账户id", paramType = "path", required = true, dataType = "Integer")
+	@ApiImplicitParam(name = "id", value = "要读取的账户id", paramType = "path", required = true)
 	@GetMapping("/{id}")
 	public Map<String, Object>  getAdmin(@PathVariable Integer id){
 		Map<String, Object> map=new HashMap<String, Object>();
@@ -100,18 +93,16 @@ public class AdminManageController {
 		return map;
 	}
 
-	/**
-	 * 编辑账户信息
-	 * @param admin
-	 * @return
-	 */
-	@PatchMapping
+	@ApiOperation(value = "编辑账户", notes = "根据传入的值（必须要有id）进行修改（没有传入的字段则保持原值）-不包括password字段")
+	@PutMapping
 	public Map<String, Object> updateAdmin(@RequestBody Admin admin){
 		Map<String, Object> map=new HashMap<String, Object>();
+		admin.setPassword(null);//根据业务层说明，不接收密码字段的值
 		adminService.updateAdmin(admin);
 		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
 		map.put(Constant.JSON_MESSAGE, "账户信息修改成功");
 		return map;
 	}
+
 
 }

@@ -21,7 +21,8 @@ public interface IBaseDao<T>{
 	
 	/**
 	 * 编辑指定记录
-	 * @
+	 * @param t 主键不能为空
+	 *@return 1表示成功，0表示失败，>1表示数据库存在异常
 	 */
 	int update(T t);
 

@@ -1,6 +1,11 @@
 package com.lcvc.ebuy_springboot.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.Range;
 
 import java.util.Date;
 
@@ -8,21 +13,30 @@ import java.util.Date;
  * 管理账户
  */
 
+@ApiModel(value="管理账户类")
 public class Admin implements java.io.Serializable{
 
 	private Integer id;
+
 	@Length(min = 3, max = 10, message = "用户名长度必须在 {min} - {max} 之间")
 	private String username;//用户名
-	//@JsonIgnore
+
+	//@JsonIgnore//如本字段：如果只向在传值到前端的时候忽略JSON,则在在相应的getter方法上加上@JsonIgnore，但是需要接收前端传递过来的值，则在相应的setter方法上加上@JsonProperty注解即可
 	@Length(min = 6, max = 12, message = "密码长度必须在 {min} - {max} 之间")
 	private String password;//用户密码
-	@Length(max = 8, message = "网名长度不能超过{max} 个字符")
+
+	@Length(min = 1,max = 8, message = "网名长度不能超过{min} - {max}个字符")
 	private String name;//网名
+
+	@Range(min = 0, max = 2, message = "性别数值必须在 {min} - {max} 之间")
 	private Integer sex;//性别
-	private Date createTime;//创建时间
+
+	//@JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+	private Date createTime;//创建时间，由系统自动生成
 
 	//非数据库字段
-	private Integer saveProductNumber;//发布过的产品数量
+	@ApiModelProperty(hidden = true)
+	private Integer saveProductNumber;//发布过的产品数量，用于传递给业务层其他对象或web层
 
 	public Admin() {
 	}
@@ -49,10 +63,12 @@ public class Admin implements java.io.Serializable{
 		this.username = username;
 	}
 
+	@JsonIgnore
 	public String getPassword() {
 		return password;
 	}
 
+	@JsonProperty
 	public void setPassword(String password) {
 		this.password = password;
 	}

@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8">
-		<title>创建管理账户</title>
+		<title>编辑管理账户</title>
 		<meta name="renderer" content="webkit">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -59,7 +59,7 @@
 				
 				//读取当前记录
 				$.getJSON(
-					WEBURL_API + "backstage/adminmanage/"+parent.rowId,//parent.rowId,获取父窗口的变量
+					WEBURL_API + "backstage/admin/",//parent.rowId,获取父窗口的变量
 				    function(msg){
 				    	if(msg.code==code_success){
 				    		var admin=msg.data;
@@ -110,7 +110,7 @@
 
 				//监听提交
 				form.on('submit(updateAdmin)', function(data) {
-					$.patchResful(WEBURL_API + "backstage/adminmanage", 
+					$.putResful(WEBURL_API + "backstage/admin", 
 					    JSON.stringify(data.field), 
 					    function(msg) {
 							if(msg.code == code_success) {

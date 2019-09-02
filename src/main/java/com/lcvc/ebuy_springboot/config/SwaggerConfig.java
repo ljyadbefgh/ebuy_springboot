@@ -9,6 +9,7 @@ import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
+import springfox.documentation.service.Contact;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
@@ -18,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
+ * Swagger配置
  * 配置后，可以通过诸如下述方式访问：http://127.0.0.1:8088/ebuy_springboot/swagger-ui.html
  */
 @Configuration
@@ -40,6 +42,7 @@ public class SwaggerConfig {
                 .title("订餐系统RESTful API")
                 .version("1.0")
                 .description("订餐系统的RESTful API")
+                .contact(new Contact("ljy", "无", "89287689@qq.com"))//作者信息
                 .build();
     }
 }
