@@ -11,7 +11,7 @@
  Target Server Version : 80016
  File Encoding         : 65001
 
- Date: 30/08/2019 23:32:21
+ Date: 03/09/2019 01:18:07
 */
 
 SET NAMES utf8mb4;
@@ -29,21 +29,21 @@ CREATE TABLE `admin`  (
   `sex` int(11) NULL DEFAULT NULL COMMENT '性别（1表示男，2表示女）',
   `createTime` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 89 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 95 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of admin
 -- ----------------------------
 INSERT INTO `admin` VALUES (-99, 'liandian1', 'e10adc3949ba59abbe56e057f20f883e', '管理员1', 1, '2013-08-23 15:33:01');
-INSERT INTO `admin` VALUES (1, 'user', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '我是默认管理员', 1, '2013-08-23 15:33:01');
+INSERT INTO `admin` VALUES (1, 'user', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '我是默认管理员1', 1, '2013-08-23 15:33:01');
 INSERT INTO `admin` VALUES (18, '77676', 'e10adc3949ba59abbe56e057f20f883e', '密码是', 1, '2013-10-15 17:30:01');
 INSERT INTO `admin` VALUES (19, 'a75565', 'c605e6e35ed4c1c955a081a2980a7fa5', 'aaa', 1, '2013-10-15 17:30:27');
 INSERT INTO `admin` VALUES (23, 'a554523', 'e10adc3949ba59abbe56e057f20f883e', 'kkk1', 1, '2013-10-15 17:38:10');
 INSERT INTO `admin` VALUES (25, 'dfdsfsdf', 'e10adc3949ba59abbe56e057f20f883e', '665656', 1, '2013-10-15 17:38:34');
 INSERT INTO `admin` VALUES (31, '67457464', 'e10adc3949ba59abbe56e057f20f883e', '6464565', 1, '2013-10-15 17:39:50');
 INSERT INTO `admin` VALUES (42, '1213df', 'e10adc3949ba59abbe56e057f20f883e', '85445', 1, '2013-10-16 09:14:26');
-INSERT INTO `admin` VALUES (43, '243434', 'e10adc3949ba59abbe56e057f20f883e', '56656', 1, '2013-10-16 09:14:34');
-INSERT INTO `admin` VALUES (44, '5454we', 'e10adc3949ba59abbe56e057f20f883e', '5465434', 1, '2013-10-16 09:14:43');
+INSERT INTO `admin` VALUES (43, '243434a', 'e10adc3949ba59abbe56e057f20f883e', '56656', 2, '2013-10-16 09:14:34');
+INSERT INTO `admin` VALUES (44, '5454we', 'e10adc3949ba59abbe56e057f20f883e', '5465434', 2, '2013-10-16 09:14:43');
 INSERT INTO `admin` VALUES (46, '4343asdf', 'e10adc3949ba59abbe56e057f20f883e', '3434', 2, '2013-10-16 11:55:55');
 INSERT INTO `admin` VALUES (49, '888er12', 'e10adc3949ba59abbe56e057f20f883e', '999', 1, '2013-10-16 17:50:51');
 INSERT INTO `admin` VALUES (51, 'asdfed', 'e10adc3949ba59abbe56e057f20f883e', '123123', 1, '2013-10-17 09:46:24');
@@ -73,7 +73,8 @@ INSERT INTO `admin` VALUES (79, 'test4', '123456', '撒旦法', 1, '2017-08-25 2
 INSERT INTO `admin` VALUES (80, 'adfadfadf', '123456', '第三方', 1, NULL);
 INSERT INTO `admin` VALUES (81, 'adfadfadf1', '123456', '第三方', 2, NULL);
 INSERT INTO `admin` VALUES (82, 'ljyadbefgh1', '123456', '洪洪', 2, NULL);
-INSERT INTO `admin` VALUES (86, 'useraaaa', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '123', 1, '2019-08-05 23:24:04');
+INSERT INTO `admin` VALUES (86, 'ljy', 'string', 'string', 0, '2019-08-05 23:24:04');
+INSERT INTO `admin` VALUES (89, 'ljy3', '111111', '张三', 1, '2019-09-01 16:13:43');
 
 -- ----------------------------
 -- Table structure for customer
@@ -93,7 +94,7 @@ CREATE TABLE `customer`  (
   `intro` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '客户信息备注，简介',
   `createTime` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 25 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 28 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of customer
@@ -112,6 +113,9 @@ INSERT INTO `customer` VALUES (20, 'abc4', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '
 INSERT INTO `customer` VALUES (21, 'abc5', 'fh58q2ea6thauof5ikg98fe2ciafh50r', 'ABC客户5', 1, '15377892222', '', '', '', NULL, '', '2019-08-06 15:09:12');
 INSERT INTO `customer` VALUES (22, 'abc6', 'fh58q2ea6thauof5ikg98fe2ciafh50r', 'ABC客户6', 1, '15377892222', '', '', '', '22.png', '', '2019-08-06 15:09:12');
 INSERT INTO `customer` VALUES (23, 'abc11', '123141421', 'abc客户11', 1, '13357024777', '', '', '', '23.jpg', '', '2019-08-06 16:25:07');
+INSERT INTO `customer` VALUES (25, 'user1', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '张三', 1, '17376108213', '', '', '', '25.jpg', '', '2019-08-31 15:11:15');
+INSERT INTO `customer` VALUES (26, 'sdf', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '123', 1, '', '', '', '', NULL, '', '2019-08-31 18:30:05');
+INSERT INTO `customer` VALUES (27, '123a', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '12', 2, '', '', '', '', NULL, '', '2019-08-31 18:30:19');
 
 -- ----------------------------
 -- Table structure for order_detail
