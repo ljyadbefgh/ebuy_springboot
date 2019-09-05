@@ -10,11 +10,11 @@ import org.junit.Test;
 import java.lang.reflect.InvocationTargetException;
 
 public class TestMain {
-    @Test
+/*    @Test
     public void test1(){
         String s="3.5";
         Integer.parseInt(s);
-    }
+    }*/
 
     @Test
     public void test2(){
