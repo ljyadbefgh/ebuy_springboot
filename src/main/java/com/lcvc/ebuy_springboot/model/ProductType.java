@@ -4,9 +4,6 @@ package com.lcvc.ebuy_springboot.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.validator.constraints.Length;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-
 /**
  * 产品类别
  * 
@@ -15,7 +12,6 @@ import javax.validation.constraints.NotNull;
 public class ProductType implements java.io.Serializable {
 	private Integer id;
 
-	@NotBlank(message = "产品类别的名称不允许为空")
 	@Length(min = 2, max = 20, message = "产品类别的名称长度必须在 {min} - {max} 之间")
 	private String name;//产品类别名称
 
@@ -28,7 +24,6 @@ public class ProductType implements java.io.Serializable {
 	@JsonIgnore
 	private String intro;//栏目简介（富文本）
 
-	@NotNull(message = "优先级不允许为空")
 	private Integer orderNum;//排序（默认0，规则由前台决定，一般排序为最大）
 	
 	//非数据库字段

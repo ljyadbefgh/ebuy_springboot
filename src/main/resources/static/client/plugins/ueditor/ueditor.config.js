@@ -20,9 +20,8 @@
      * window.UEDITOR_HOME_URL = "/xxxx/xxxx/";
      */
     var URL = window.UEDITOR_HOME_URL || getUEBasePath();
-    //var server="http://127.0.0.1:8088/ebuy_springboot/";//服务端的地址
-    var server="http://120.76.118.101:8080/ebuy_springboot/";//服务端的地址
-    
+    var server="http://127.0.0.1:8088/ebuy_springboot/";//服务端的地址
+    //var server="http://120.76.118.101:8080/ebuy_springboot/";//服务端的地址
     /**
      * 配置项主体。注意，此处所有涉及到路径的配置别遗漏URL变量。
      */

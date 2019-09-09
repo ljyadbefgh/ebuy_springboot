@@ -148,6 +148,18 @@ public class MyExceptionAdvice {
     }
 
 
+    //数字转换异常
+    @ExceptionHandler(NumberFormatException.class)
+    public Map<String, Object> numberFormatException(NumberFormatException e) {
+        Map<String, Object> map=new HashMap<String, Object>();
+        map.put(Constant.JSON_MESSAGE, "类型转换错误：无法将指定字符串转化为数字");
+        map.put(Constant.JSON_CODE, JsonCode.ERROR.getValue());//返回错误信息
+        //未知异常一般是计划外的，需要重点处理，比如记录下日志，或是自动发送错误信息邮件给技术部
+        //log.error("前端提交异常", e.getMessage());
+        return map;
+    }
+
+
     @ExceptionHandler
     public Map<String, Object> unknownException(Exception e) {
         Map<String, Object> map=new HashMap<String, Object>();

@@ -29,6 +29,19 @@ public class AdminServiceImpl implements AdminService {
     @Resource
     private ProductDao productDao;
 
+    /**
+     * 是否是超级管理员
+     * @param admin
+     * @return true表示是超级管理员
+     */
+    private boolean isSuperAdmin(Admin admin){
+        boolean result=false;
+        if(admin.getId()<0){
+            result=true;
+        }
+        return result;
+    }
+
 
     @Override
     public boolean login(String username, String password){
@@ -69,12 +82,16 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public void deleteAdmin(Admin admin,Integer id){
+        Admin adminDelete=new Admin(id);
+        if(this.isSuperAdmin(adminDelete)){
+            throw new MyServiceException("超级用户不允许删除");
+        }
         if(admin.getId()==id.intValue()) {//如果登录账户的id与被删除账户的id一致
             throw new MyServiceException("删除失败：不允许删除自己的账户");
         }
         //检查有没有发布过产品
         ProductQuery productQuery=new ProductQuery();
-        productQuery.setCreator(new Admin(id));
+        productQuery.setCreator(adminDelete);
         int saveProductNumber=productDao.querySize(productQuery);//该账户已经发布的产品数量
         if(saveProductNumber>0){
             throw new MyServiceException("删除失败：该账户发布过number个产品"
@@ -82,7 +99,7 @@ public class AdminServiceImpl implements AdminService {
         }
         //检查有没有编辑过产品（本项目中应该是有没有是最后编辑者）
         productQuery=new ProductQuery();
-        productQuery.setFinalEditor(new Admin(id));
+        productQuery.setFinalEditor(adminDelete);
         int updateProductNumber=productDao.querySize(productQuery);//该账户已经发布的产品数量
         if(updateProductNumber>0){
             throw new MyServiceException("删除失败：该账户编辑（最后编辑者）过number个产品"
@@ -95,13 +112,17 @@ public class AdminServiceImpl implements AdminService {
     public void deleteAdmins(Admin admin,Integer[] ids) {
         //先进行验证
         for(Integer id:ids){
+            Admin adminDelete=new Admin(id);
+            if(this.isSuperAdmin(adminDelete)){
+                throw new MyServiceException("超级用户不允许删除");
+            }
             if(admin.getId()==id.intValue()) {//如果登录账户的id与被删除账户的id一致
                 throw new MyServiceException("删除失败：不允许删除自己的账户");
             }
-            Admin adminDelete=adminDao.get(id);//被删除账户的数据
+            adminDelete=adminDao.get(id);//被删除账户的数据
             //检查有没有发布过产品
             ProductQuery productQuery=new ProductQuery();
-            productQuery.setCreator(new Admin(id));
+            productQuery.setCreator(adminDelete);
             int saveProductNumber=productDao.querySize(productQuery);//该账户已经发布的产品数量
             if(saveProductNumber>0){
                 throw new MyServiceException("删除失败：该账户（username）发布过number个产品"
@@ -110,11 +131,11 @@ public class AdminServiceImpl implements AdminService {
             }
             //检查有没有编辑过产品（本项目中应该是有没有是最后编辑者）
             productQuery=new ProductQuery();
-            productQuery.setFinalEditor(new Admin(id));
+            productQuery.setFinalEditor(adminDelete);
             int updateProductNumber=productDao.querySize(productQuery);//该账户已经发布的产品数量
             if(updateProductNumber>0){
                 throw new MyServiceException("删除失败：该账户(username)编辑（最后编辑者）过number个产品"
-                        .replace("username",admin.getUsername())
+                        .replace("username",adminDelete.getUsername())
                         .replace("number",String.valueOf(updateProductNumber)));
             }
         }

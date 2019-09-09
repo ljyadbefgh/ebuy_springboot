@@ -2,7 +2,6 @@ package com.lcvc.ebuy_springboot.config.host;
 
 import org.springframework.boot.web.context.WebServerInitializedEvent;
 import org.springframework.context.ApplicationListener;
-import org.springframework.stereotype.Component;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -14,7 +13,7 @@ import java.net.UnknownHostException;
  */
 
 
-@Component
+//@Component
 public class ServerConfig implements ApplicationListener<WebServerInitializedEvent> {
     private int serverPort;//端口号
 

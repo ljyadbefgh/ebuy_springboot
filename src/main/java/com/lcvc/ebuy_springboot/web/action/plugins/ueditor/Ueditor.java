@@ -1,5 +1,9 @@
 package com.lcvc.ebuy_springboot.web.action.plugins.ueditor;
 
+import springfox.documentation.annotations.ApiIgnore;
+
+@ApiIgnore
+//该类暂时废弃不用
 public class Ueditor {
     private  String state;//ueditor的操作状态信息，SUCCESS表示成功，其他信息表示失败
     private  String url;//图片回显路径，上传后的图片地址

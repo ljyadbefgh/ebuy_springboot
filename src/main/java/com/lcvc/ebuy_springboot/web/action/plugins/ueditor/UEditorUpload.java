@@ -3,18 +3,20 @@ package com.lcvc.ebuy_springboot.web.action.plugins.ueditor;
 import com.lcvc.ebuy_springboot.model.base.Constant;
 import com.lcvc.ebuy_springboot.model.base.JsonCode;
 import com.lcvc.ebuy_springboot.util.file.MyFileOperator;
-import org.springframework.stereotype.Controller;
 import org.springframework.util.ClassUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.multipart.MultipartFile;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-@Controller
-@RequestMapping(value="/api")
+@ApiIgnore
+//该类暂时废弃不用
+//@Controller
+//@RequestMapping(value="/api")
 public class UEditorUpload {
     @RequestMapping(value="/uploadFile")
     public Map<String, Object> uploadFile(MultipartFile upFile) {

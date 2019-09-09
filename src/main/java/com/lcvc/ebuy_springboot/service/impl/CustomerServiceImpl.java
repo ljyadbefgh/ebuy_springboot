@@ -122,6 +122,7 @@ public class CustomerServiceImpl implements CustomerService {
         }else if(customer.getName()!=null&&customer.getName().equals("")){//姓名验证
             throw new MyWebException("客户信息编辑失败：姓名不能为空");
         }
+        customer.setPassword(null);//不修改密码字段
         customerDao.update(customer);
     }
 

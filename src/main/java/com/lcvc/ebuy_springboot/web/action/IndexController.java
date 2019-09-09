@@ -3,7 +3,9 @@ package com.lcvc.ebuy_springboot.web.action;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import springfox.documentation.annotations.ApiIgnore;
 
+@ApiIgnore
 @Controller
 public class IndexController {
 
@@ -23,7 +25,7 @@ public class IndexController {
 	@RequestMapping(value = "/")
 	public String index(){
 		//默认跳转页面是是templates路径下；如果要跳转到static目录，则需要用redirect
-		return "redirect:/index.html";
+		return "redirect:/swagger-ui.html";
 	}
 
 }

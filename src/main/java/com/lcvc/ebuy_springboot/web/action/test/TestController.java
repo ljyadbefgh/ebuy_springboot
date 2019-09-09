@@ -8,10 +8,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
+import springfox.documentation.annotations.ApiIgnore;
 
 /**
  * 网上代码，用于测试redis是否配置成功
  */
+@ApiIgnore
 @Controller
 @RequestMapping("/redis")
 public class TestController {

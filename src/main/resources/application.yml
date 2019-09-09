@@ -42,3 +42,9 @@ logging:
   file: target/ebuy.log
   level:
     com.lcvc.ebuy_springboot: debug
+myFile:
+  #文件上传目录（注意Linux和Windows上的目录结构不同）
+  uploadFolder: c:/ebuy_springboot/upload/
+  #file.uploadFolder=/home/upload/#linux
+  #静态资源对外暴露的访问路径
+  staticAccessPath: /upload/**

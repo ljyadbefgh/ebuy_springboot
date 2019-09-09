@@ -71,6 +71,7 @@ public class ProductTypeServiceImpl implements ProductTypeService {
 
     public void saveProductType(ProductType productType){
         if(productType!=null){
+            productType.setId(null);//清空产品分类的id值，防止前端赋值
             productTypeDao.save(productType);
         }
     }

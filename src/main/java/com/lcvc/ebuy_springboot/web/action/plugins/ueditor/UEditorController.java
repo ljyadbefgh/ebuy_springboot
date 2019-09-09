@@ -1,8 +1,10 @@
 package com.lcvc.ebuy_springboot.web.action.plugins.ueditor;
 
 import com.baidu.ueditor.ActionEnter;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.ClassUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,6 +20,7 @@ import java.io.PrintWriter;
  * 必须要后台管理员才可以操作，因此设定在backstage目录下
  * ueditor原生客户端只有一个服务端接口（原controller.jsp），这个接口会根据客户端的动作（上传图片、文件或是显示文件列表）来决定调用剩余的类。
  * @author ljy
+ * 一、20190821改进
  * 说明：经过三天的不间断尝试，最终决定采用ueditor的源码略加修改（建立与config.json的链接，修改上传方式以适应spring boot）
  * 1.删除controller.jsp页面，重写UEditorController类
  * 2.修改ConfigManager类的getConfigPath方法，重新指向config.json
@@ -27,10 +30,32 @@ import java.io.PrintWriter;
  * （1）图片上传后的回显路径会包括spring boot的static，但是spring boot中直接访问是不需要static的，故在最后的回显地址中将static/替换掉
  * （2）在ueditor查看文件或图片目录时，图片会按照物理路径显示，导致图片无法显示。故将物理路径替换掉，改为相对路径
  *
+ * 二、20190903改进
+ * 说明：
+ * 1.将项目打包为war上传服务器后，如果将文件上传项目中会出现tomcat%208.5的路径（实际应为tomcat），经过调试仍无法找到原因，初步猜想应该是
+ * spring boot的内置tomcat没有处理干净。但是鉴于将文件上传到项目路径中本就不合适，因此将文件统一上传到C盘（非项目路径），并在config.json做
+ * 相应修改，同时针对上述一步骤的4问题，根据实际情况，重新处理了回显路径
+ * 2.在config.json中配置图片访问路径前缀，需要连续配置多个，比较麻烦；为了方便处理，统一在项目中用代码进行处理
+ * 原理：
+ * （1）文件上传成功后的返回路径为：
+ * {"state": "SUCCESS","original": "20170907203401_181.jpg","size": "26486","title": "1568039752848055527.jpg","type": ".jpg","url": "/website/image/20190909/1568039752848055527.jpg"}
+ * 为返回的图片地址加上项目地址，通过对"url": "进行替换为"url": "http://127.0.0.1:8088/ebuy_springboot/upload/即可完成操作。
+ * 替换后的字符串为
+ * {"state": "SUCCESS","original": "20170907203401_181.jpg","size": "26486","title": "1568039752848055527.jpg","type": ".jpg","url": "http://127.0.0.1:8088/ebuy_springboot/upload/website/image/20190909/1568039752848055527.jpg"}
+ *（2）通过在线管理访问的图片默认返回路径为（比文件上传要多处理一步）：
+ * bd__editor__y8hbec({"state": "SUCCESS","total": 10,"start": 0, list: [{"state": "SUCCESS","url": "c:/ebuy_springboot/upload/website/image/20190905/1567664587253073312.jpg"},{"state": "SUCCESS","url": "c:/ebuy_springboot/upload/website/image/20190905/1567666750056017461.png"},{"state": "SUCCESS","url": "c:/ebuy_springboot/upload/website/image/20190905/1567666889912086346.jpg"},{"state": "SUCCESS","url": "c:/ebuy_springboot/upload/website/image/20190905/1567667076502008493.jpg"},{"state": "SUCCESS","url": "c:/ebuy_springboot/upload/website/image/20190905/1567667695175015075.png"},{"state": "SUCCESS","url": "c:/ebuy_springboot/upload/website/image/20190905/1567673268751024763.jpg"},{"state": "SUCCESS","url": "c:/ebuy_springboot/upload/website/image/20190905/1567673268751099129.jpg"},{"state": "SUCCESS","url": "c:/ebuy_springboot/upload/website/image/20190909/1568039752848055527.jpg"},{"state": "SUCCESS","url": "c:/ebuy_springboot/upload/website/image/20190909/1568040001608045013.jpg"},{"state": "SUCCESS","url": "c:/ebuy_springboot/upload/website/image/20190909/1568040077000074215.jpg"} ]});
+ *首先将物理路径改为逻辑路径，即将路径的c:/ebuy_springboot/upload/删除，第一次处理后的返回路径为：
+ *bd__editor__aay75n({"state": "SUCCESS","total": 10,"start": 0, list: [{"state": "SUCCESS","url": "/website/image/20190905/1567664587253073312.jpg"},{"state": "SUCCESS","url": "/website/image/20190905/1567666750056017461.png"},{"state": "SUCCESS","url": "/website/image/20190905/1567666889912086346.jpg"},{"state": "SUCCESS","url": "/website/image/20190905/1567667076502008493.jpg"},{"state": "SUCCESS","url": "/website/image/20190905/1567667695175015075.png"},{"state": "SUCCESS","url": "/website/image/20190905/1567673268751024763.jpg"},{"state": "SUCCESS","url": "/website/image/20190905/1567673268751099129.jpg"},{"state": "SUCCESS","url": "/website/image/20190909/1568039752848055527.jpg"},{"state": "SUCCESS","url": "/website/image/20190909/1568040001608045013.jpg"},{"state": "SUCCESS","url": "/website/image/20190909/1568040077000074215.jpg"} ]});
+ *其次为返回的图片地址加上项目地址，通过对List集合中的每个"url": "进行替换为"url": "http://127.0.0.1:8088/ebuy_springboot/upload/即可完成操作。
+ *替换后的字符串为
+ * bd__editor__jpm9v4({"state": "SUCCESS","total": 10,"start": 0, list: [{"state": "SUCCESS","url": "http://127.0.0.1:8088/ebuy_springboot/upload/website/image/20190905/1567664587253073312.jpg"},{"state": "SUCCESS","url": "http://127.0.0.1:8088/ebuy_springboot/upload/website/image/20190905/1567666750056017461.png"},{"state": "SUCCESS","url": "http://127.0.0.1:8088/ebuy_springboot/upload/website/image/20190905/1567666889912086346.jpg"},{"state": "SUCCESS","url": "http://127.0.0.1:8088/ebuy_springboot/upload/website/image/20190905/1567667076502008493.jpg"},{"state": "SUCCESS","url": "http://127.0.0.1:8088/ebuy_springboot/upload/website/image/20190905/1567667695175015075.png"},{"state": "SUCCESS","url": "http://127.0.0.1:8088/ebuy_springboot/upload/website/image/20190905/1567673268751024763.jpg"},{"state": "SUCCESS","url": "http://127.0.0.1:8088/ebuy_springboot/upload/website/image/20190905/1567673268751099129.jpg"},{"state": "SUCCESS","url": "http://127.0.0.1:8088/ebuy_springboot/upload/website/image/20190909/1568039752848055527.jpg"},{"state": "SUCCESS","url": "http://127.0.0.1:8088/ebuy_springboot/upload/website/image/20190909/1568040001608045013.jpg"},{"state": "SUCCESS","url": "http://127.0.0.1:8088/ebuy_springboot/upload/website/image/20190909/1568040077000074215.jpg"} ]});
  */
+@Api(tags = "百度编辑器ueditor服务端")
 @Controller
 @RequestMapping(value="/api/backstage")
 public class UEditorController {
+    @Value("${myFile.uploadFolder}")
+    private String uploadFolder;//上传路径（物理路径）
 
     /**
      *
@@ -39,20 +64,25 @@ public class UEditorController {
      * @param request
      * @param response
      */
+    @ApiOperation(value = "ueditor默认访问接口", notes = "未更改名字")
     @RequestMapping(value="/ueditor")
     public void config(@RequestParam("action") String action, MultipartFile upfile, HttpServletRequest request, HttpServletResponse response) {
         response.setContentType("application/json");
-        String rootPath = ClassUtils.getDefaultClassLoader().getResource("").getPath();//获取项目的根目录，注意不能用JSP那套获取根目录，因为spring boot的tomcat为内置，每次都变
-        //String rootPath = request.getSession().getServletContext().getRealPath("/");
+        String rootPath=uploadFolder;
         try {
             String exec = new ActionEnter(request, rootPath).exec();
             if(action!= null) {
+                String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+request.getContextPath()+"/";//获取项目根目录网址
+                basePath=basePath+"upload";//访问上传文件路径，专门替换config.json中图片前缀网址的步骤
                 if(action.startsWith("list")){
+                    String root=new String(rootPath);
                     //如果请求的方法是listfile和listimage，就把文件路径替换一下，绝对路径替换成相对路径，否则返回的图片和文件地址是错误的，将无法访问。
-                    rootPath=rootPath.substring(1,rootPath.length()-1)+"/static";//去掉roootpath的第一个斜杠"/"
-                    exec= exec.replaceAll(rootPath,"");
+                    root=root.substring(0,root.length()-1);//c:/ebuy_springboot/upload/，最后的“/”不要
+                    exec= exec.replaceAll(root,"");
+                    exec= exec.replaceAll("\"url\": \"","\"url\": \""+basePath);//专门替换config.json中图片前缀网址的步骤
                 }else{
-                    exec= exec.replace("/static","");
+                    //exec= exec.replace("/static","");
+                    exec= exec.replaceAll("\"url\": \"","\"url\": \""+basePath);//专门替换config.json中图片前缀网址的步骤
                 }
             }
             //

@@ -24,8 +24,6 @@
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 
-		<!--swagger在2.8-2.92版本之间都出现paramType = "path", required = true来设定restful路径参数时，文档直接测试会失败；退回该版本后一切正常。密切关注后续版本是否解决这个BUG-->
-		<!--虽然swagger在2.7版本及以下可以使用 dataType = "Integer", required = true，但是在文档处的dataType描述确实未定义，故暂时又永辉2.9.2-->
 		<swagger2.version>2.9.2</swagger2.version>
 		<!--mysal驱动包-->
 		<mysql.version>8.0.16</mysql.version>
@@ -174,6 +172,8 @@
 	</dependencies>
 
 	<build>
+		<!-- 应与application.properties(或application.yml)中context-path保持一致 -->
+		<finalName>ebuy_springboot</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
