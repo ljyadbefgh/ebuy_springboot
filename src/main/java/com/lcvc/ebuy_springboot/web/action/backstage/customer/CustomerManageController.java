@@ -57,6 +57,7 @@ public class CustomerManageController {
 	}
 
 	@ApiOperation(value = "添加客户信息", notes = "id、createTime不传值，由服务端赋值")
+	@ApiImplicitParam(name = "customer", value = "客户信息，id、createTime不传值，由服务端赋值", paramType = "body", dataType="Customer",required = true)
 	@PostMapping
 	public Map<String, Object> doAddCustomer(@RequestBody Customer customer){
 		Map<String, Object> map=new HashMap<String, Object>();
@@ -77,6 +78,7 @@ public class CustomerManageController {
 	}
 
 	@ApiOperation(value = "编辑客户信息", notes = "根据传入的值（必须要有id）进行修改（没有传入的字段则保持原值）-password、createTime不传值")
+	@ApiImplicitParam(name = "customer", value = "客户信息，id不能为空（没有传入的字段则保持原值）-password、createTime不传值", paramType = "body", dataType="Customer",required = true)
 	@PutMapping
 	public Map<String, Object> updateCustomer(@RequestBody Customer customer){
 		Map<String, Object> map=new HashMap<String, Object>();

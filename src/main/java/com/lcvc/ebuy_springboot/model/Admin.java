@@ -2,7 +2,6 @@ package com.lcvc.ebuy_springboot.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.Range;
@@ -12,8 +11,6 @@ import java.util.Date;
 /**
  * 管理账户
  */
-
-@ApiModel(value="管理账户类")
 public class Admin implements java.io.Serializable{
 
 	private Integer id;

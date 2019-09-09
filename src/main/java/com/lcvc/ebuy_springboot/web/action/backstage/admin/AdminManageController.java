@@ -68,6 +68,7 @@ public class AdminManageController {
 	}
 
 	@ApiOperation(value = "添加账户", notes = "添加账户，要添加的管理账户对象，id、createTime不传值")
+	@ApiImplicitParam(name = "admin", value = "管理账户信息，id、createTime不传值", paramType = "body", dataType="Admin",required = true)
 	@PostMapping
 	public Map<String, Object> doAddAdmin(@RequestBody Admin admin){
 		Map<String, Object> map=new HashMap<String, Object>();
@@ -88,6 +89,7 @@ public class AdminManageController {
 	}
 
 	@ApiOperation(value = "编辑账户", notes = "根据传入的值（必须要有id）进行修改（没有传入的字段则保持原值）-不包括password、createTime字段")
+	@ApiImplicitParam(name = "admin", value = "管理账户信息，根据传入的值（必须要有id）进行修改（没有传入的字段则保持原值）-不包括password、createTime字段", paramType = "body", dataType="Admin",required = true)
 	@PutMapping
 	public Map<String, Object> updateAdmin(@RequestBody Admin admin){
 		Map<String, Object> map=new HashMap<String, Object>();
