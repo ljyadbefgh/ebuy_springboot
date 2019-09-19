@@ -159,6 +159,10 @@
         limit #{offset},#{length}
     </select>
 
+    <select id="getSimple" resultType="Product">
+        select * from product where id=#{id}
+    </select>
+
     <!--<select id="getNewTopProductList" resultType="Product">-->
         <!--select * from product order by createTime desc limit 0,#{pageSize}-->
     <!--</select>-->

@@ -20,6 +20,13 @@ public interface CustomerService {
     boolean login(String username, String password);
 
     /**
+     * 根据账户名读取指定标识符
+     * @param username
+     * @return
+     */
+    Customer getCustomer(String username);
+
+    /**
      * 分页查询账户
      * @param page 当前页面
      * @param limit  每页最多显示的记录数

@@ -17,7 +17,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.Map;
@@ -40,7 +39,7 @@ public class ProductController {
 			@ApiImplicitParam(name = "customerQuery", value = "查询条件，以对象方式上传，如果为Null表示没有条件", required = false, dataType = "CustomerQuery")
 	})
 	@GetMapping
-	public Map<String, Object> toManageProduct(Integer page, Integer limit, ProductQuery productQuery, HttpServletRequest request){
+	public Map<String, Object> toManageProduct(Integer page, Integer limit, ProductQuery productQuery){
         Map<String, Object> map=new HashMap<String, Object>();
 		PageObject pageObject =productService.searchProducts(page,limit,productQuery);
 		map.put(Constant.JSON_TOTAL,pageObject.getTotalRecords());

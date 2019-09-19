@@ -49,7 +49,7 @@ public class Constant {
     //产品排序规则
     public final static HashMap<Integer,String> orderTypeMapOfProduct = new LinkedHashMap<Integer,String>(){//产品优先级别
         {
-            put(1,"按优先级升序、时间降序排序");
+            put(1,"默认：按优先级升序、时间降序排序");
             put(2,"按优先级降序、时间降序排序");
             put(3,"按人气降序排序");
             put(4,"按人气升序排序");

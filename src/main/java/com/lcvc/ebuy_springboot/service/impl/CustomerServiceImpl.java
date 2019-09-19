@@ -30,7 +30,26 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public boolean login(String username, String password) {
-        return false;
+        boolean judge=false;
+        if(StringUtils.isEmpty(username)){
+            throw new MyWebException("登陆失败：账户名不能为空");
+        }else  if(StringUtils.isEmpty(password)){
+            throw new MyWebException("登陆失败：密码不能为空");
+        }else{
+            if(customerDao.login(username, SHA.getResult(password))==1){
+                judge=true;
+            }
+        }
+        return judge;
+    }
+
+    @Override
+    public Customer getCustomer(String username) {
+        Customer customer=null;
+        if(username!=null){
+            customer=customerDao.getCustomerByUsername(username);
+        }
+        return customer;
     }
 
     @Override

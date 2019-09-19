@@ -6,6 +6,13 @@ import java.util.List;
 
 public interface IBaseDao<T>{
 	/**
+	 * 根据该对象的关键字，读取指定记录,不包含关联属性
+	 * @param id 关键字
+	 * @return null表示读取失败
+	 */
+	T getSimple(java.io.Serializable id);
+
+	/**
 	 * 根据该对象的关键字，读取指定记录
 	 * @param id 关键字
 	 * @return null表示读取失败
