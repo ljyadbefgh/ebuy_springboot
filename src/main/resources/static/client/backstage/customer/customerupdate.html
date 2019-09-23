@@ -163,7 +163,7 @@
 
 				//监听提交
 				form.on('submit(editCustomer)', function(data) {
-					$.putResful(WEBURL_API+"backstage/customermanage"
+					$.putRestful(WEBURL_API+"backstage/customermanage"
 						,JSON.stringify(data.field)
 						,function(msg){
 							if(msg.code==code_success){

@@ -110,7 +110,7 @@
 
 				//监听提交
 				form.on('submit(updateAdmin)', function(data) {
-					$.putResful(WEBURL_API + "backstage/adminmanage", 
+					$.putRestful(WEBURL_API + "backstage/adminmanage", 
 					    JSON.stringify(data.field), 
 					    function(msg) {
 							if(msg.code == code_success) {

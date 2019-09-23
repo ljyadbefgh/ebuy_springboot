@@ -2,15 +2,25 @@ package com.lcvc.ebuy_springboot.config.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter;
 
-//@EnableGlobalMethodSecurity(prePostEnabled = true)//这是开启全局的安全认证在方法请求之前
+//@EnableWebSecurity //如果不希望启用spring security，这里也不应该加上
+@EnableGlobalMethodSecurity(prePostEnabled = true)//开启security注解
 @Configuration
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Bean
+    @Override
+    protected AuthenticationManager authenticationManager() throws Exception {
+        return super.authenticationManager();
+    }
 
     //密码加密方式
     @Bean
@@ -37,12 +47,43 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         //auth.userDetailsService(userService).passwordEncoder();
     }
 
+   /* public XFrameOptionsHeaderWriter(XFrameOptionsHeaderWriter.XFrameOptionsMode frameOptionsMode) {
+        Assert.notNull(frameOptionsMode, "frameOptionsMode cannot be null");
+        *//*如果设置为允许，spring抛出异常，要使用FrameOptionsHeaderWriter*//*
+        if (XFrameOptionsHeaderWriter.XFrameOptionsMode.ALLOW_FROM.equals(frameOptionsMode)) {
+            throw new IllegalArgumentException(
+                    "ALLOW_FROM requires an AllowFromStrategy. Please use FrameOptionsHeaderWriter(AllowFromStrategy allowFromStrategy) instead");
+        }
+        this.frameOptionsMode = frameOptionsMode;
+        this.allowFromStrategy = null;
+    }
+*/
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
-                .antMatchers("/").permitAll();
+//        http
+//                .cors()
+//                .and()
+//                .csrf().disable()
+//                .authorizeRequests()
+//                .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
+//                .authorizeRequests()
+//                .antMatchers("/**").permitAll()
+//                .anyRequest().authenticated()
+//                .and()
+//                .headers()
+//                //表示该页面可以在相同域名页面的 frame 中展示,因为Ueditor兼容性问题，所以必须加上
+//                .addHeaderWriter(new XFrameOptionsHeaderWriter(XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN ))
+               // ;
+        http.headers()
+                .addHeaderWriter(new XFrameOptionsHeaderWriter(XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN))
+                .frameOptions().disable();
         http.csrf().disable();
+        http.authorizeRequests()
+                .anyRequest().permitAll().and().logout().permitAll();//配置不需要登录验证
+
+
+
                 /*.antMatchers("/api/backstage/**")
                 .hasRole("ADMIN")
                 .antMatchers("/api/**")

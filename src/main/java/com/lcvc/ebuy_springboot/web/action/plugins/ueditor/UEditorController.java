@@ -67,14 +67,16 @@ public class UEditorController {
     @ApiOperation(value = "ueditor默认访问接口", notes = "未更改名字")
     @RequestMapping(value="/ueditor")
     public void config(@RequestParam("action") String action, MultipartFile upfile, HttpServletRequest request, HttpServletResponse response) {
-        response.setContentType("application/json");
+        response.setContentType("application/json;charset=utf-8");
         String rootPath=uploadFolder;
         try {
             String exec = new ActionEnter(request, rootPath).exec();
             if(action!= null) {
                 String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+request.getContextPath()+"/";//获取项目根目录网址
                 basePath=basePath+"upload";//访问上传文件路径，专门替换config.json中图片前缀网址的步骤
-                if(action.startsWith("list")){
+                if(action.equals("config")){//如果是第一次访问，则不作任何改变
+
+                }else if(action.startsWith("list")){
                     String root=new String(rootPath);
                     //如果请求的方法是listfile和listimage，就把文件路径替换一下，绝对路径替换成相对路径，否则返回的图片和文件地址是错误的，将无法访问。
                     root=root.substring(0,root.length()-1);//c:/ebuy_springboot/upload/，最后的“/”不要

@@ -140,7 +140,7 @@
 
 				//监听提交
 				form.on('submit(addCustomer)', function(data) {
-					$.postResful(WEBURL_API+"backstage/customermanage"
+					$.postRestful(WEBURL_API+"backstage/customermanage"
 						,JSON.stringify(data.field)
 						,function(msg){
 							if(msg.code==code_success){

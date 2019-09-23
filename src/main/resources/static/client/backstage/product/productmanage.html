@@ -129,7 +129,7 @@
 								    }
 								}
 								layer.confirm('确定要批量删除这些产品(' + names + ')吗？删除后所有数据都将无法恢复！', function(index) {
-									$.deleteResful(WEBURL_API + "/backstage/product/" + ids, 
+									$.deleteRestful(WEBURL_API + "/backstage/product/" + ids, 
 										function(msg) {
 											if(msg.code == 0) {
 												layer.msg("删除成功");
@@ -158,7 +158,7 @@
 					if(obj.event === 'resetPassword') {
 						layer.confirm('确定重置账户（' + data.username + '）的密码吗？', function(index) {
 							//$.deleteResful，自定义的删除插件，针对resful风格设计
-							$.patchResful(WEBURL_API + "backstage/Productmanage/resetPassword/" + data.id, function(msg) {
+							$.patchRestful(WEBURL_API + "backstage/Productmanage/resetPassword/" + data.id, function(msg) {
 								if(msg.code == code_success) {
 									layer.msg("密码重置成功");
 									table.reload('productmanage_table');//重新刷新表格数据

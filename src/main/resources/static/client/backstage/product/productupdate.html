@@ -280,7 +280,7 @@
 				    if(data.field.description==''){//如果产品的描述内容为空
 				    	data.field.description=ueditor.getContentTxt();//将编辑器的纯文本内容赋给它
 				    }
-					$.putResful(WEBURL_API+"backstage/product"
+					$.putRestful(WEBURL_API+"backstage/product"
 						,JSON.stringify(data.field)
 						,function(msg){
 							if(msg.code==code_success){								

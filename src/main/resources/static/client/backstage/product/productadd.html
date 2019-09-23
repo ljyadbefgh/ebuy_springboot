@@ -272,13 +272,13 @@
 				form.on('submit(addProduct)', function(data) {
 					var productType ={//创建所属产品类别对象
 				        id: $("#productTypeId").val()
-				  }; 
+				   }; 
 				    data.field.productType=productType;//将产品类别对象组装到表单中
 				    data.field.content=ueditor.getContent();//获得编辑器的富文本内容 
 				    if(data.field.description==''){//如果产品的描述内容为空
 				    	data.field.description=ueditor.getContentTxt();//将编辑器的纯文本内容赋给它
 				    }
-					$.postResful(WEBURL_API+"backstage/product"
+					$.postRestful(WEBURL_API+"backstage/product"
 						,JSON.stringify(data.field)
 						,function(msg){
 							if(msg.code==code_success){								

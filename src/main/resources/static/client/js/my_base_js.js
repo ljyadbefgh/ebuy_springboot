@@ -12,7 +12,7 @@ var storage = window.localStorage;
 $(function() {
     //设置ajax默认的设置，即每次访问时都会为header设置token
     $.ajaxSetup({
-        timeout: 10000, //超时时间设置，单位毫秒。要后端调试的时候，这里可以设置长些
+        timeout: 500000, //超时时间设置，单位毫秒。要后端调试的时候，这里可以设置长些
         cache:false, //是否进行数据缓存
         //contentType:"application/json",这里不能随意加，否则会导致表单（$myForm.serialize()方式）传值时，服务端可能接收不到
         xhrFields: {
@@ -34,17 +34,17 @@ $(function() {
  * 根据jquery源码重写的get、put、post、delete请求，针对resful风格
  * 作者：Ljy
  */
-jQuery.each( [ "getResful", "postResful","putResful","patchResful","deleteResful"], function( i, method ) {
+jQuery.each( [ "getRestful", "postRestful","putRestful","patchRestful","deleteRestful"], function( i, method ) {
     jQuery[ method ] = function( url, data, callback, type ) {
-    	if(method=="getResful"){
+    	if(method=="getRestful"){
     		method="get";
-    	}else if(method=="postResful"){
+    	}else if(method=="postRestful"){
     		method="post";
-    	}else if(method=="putResful"){
+    	}else if(method=="putRestful"){
     		method="put";
-    	}else if(method=="patchResful"){
+    	}else if(method=="patchRestful"){
     		method="patch";
-    	}else if(method=="deleteResful"){
+    	}else if(method=="deleteRestful"){
     		method="delete";
     	}
         // Shift arguments if data argument was omitted

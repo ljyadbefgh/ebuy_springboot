@@ -173,7 +173,7 @@
 				    var value = obj.value; //得到修改后的值，如果没有修改这里不会触发
 				    field = obj.field; //得到字段名
 				    data = obj.data; //得到所在行所有键值
-				    $.patchResful(WEBURL_API+"backstage/producttype"
+				    $.patchRestful(WEBURL_API+"backstage/producttype"
 						,JSON.stringify(obj.data)
 						,function(msg){
 							if(msg.code==code_success){

@@ -1,11 +1,5 @@
 package com.lcvc.ebuy_springboot.config.security;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.web.firewall.DefaultHttpFirewall;
-import org.springframework.security.web.firewall.HttpFirewall;
-
 /**
  * 说明：
  * 1。触发原因：
@@ -21,6 +15,13 @@ import org.springframework.security.web.firewall.HttpFirewall;
  *
  */
 //@EnableAutoConfiguration
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.web.firewall.DefaultHttpFirewall;
+import org.springframework.security.web.firewall.HttpFirewall;
+
 @Configuration
 @ComponentScan(basePackageClasses = ApolloMetaServiceConfig.class)//basePackageClasses可以指定多个类或接口的class,扫描时会 在这些指定的类和接口所属的包进行扫面
 public class ApolloMetaServiceConfig {
@@ -28,7 +29,7 @@ public class ApolloMetaServiceConfig {
      *  用于支持url中带// 这种请求
      * @return
      */
-    @Bean
+   @Bean
     public HttpFirewall allowUrlEncodedSlashHttpFirewall() {
         return new DefaultHttpFirewall();
     }

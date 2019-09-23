@@ -165,7 +165,7 @@
 								    }
 								}
 								layer.confirm('确定要批量移除这些账户(' + usernames + ')的头像吗？移除后相关照片都将无法恢复！', function(index) {
-									$.patchResful(WEBURL_API + "backstage/customermanage/removeCustomersProfilePicture/" + ids, 
+									$.patchRestful(WEBURL_API + "backstage/customermanage/removeCustomersProfilePicture/" + ids, 
 										function(msg) {
 											if(msg.code == 0) {
 												layer.msg("移除成功");

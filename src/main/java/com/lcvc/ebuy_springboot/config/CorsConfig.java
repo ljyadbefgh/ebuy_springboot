@@ -9,6 +9,8 @@ import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import java.util.Arrays;
+
 /**
  * 整站的跨域配置
  * 对跨域进行处理，但是该跨域方式对spring mvc的拦截器无效（即在spring mvc拦截器中如果用outprint返回Json等类型信息时会出现跨域异常，当然如果不返回信息到客户端就不会出错）
@@ -32,6 +34,7 @@ public class CorsConfig implements WebMvcConfigurer {
                 //放行哪些原始域(头部信息)
                 //.allowedHeaders("accept","content-type","application/json")
                 .allowedHeaders("*")
+                .exposedHeaders("access-control-allow-headers","access-control-allow-methods","access-control-allow-origin", "access-control-max-age","X-Frame-Options")
                 //放行哪些原始域(请求方式)，resful风格
                 //.allowedMethods("OPTIONS","GET", "POST", "PUT", "PATCH","DELETE")
                 .allowedMethods("*")
@@ -49,17 +52,19 @@ public class CorsConfig implements WebMvcConfigurer {
         CorsConfiguration config = new CorsConfiguration ();
         config.setAllowCredentials(true); // 允许cookies跨域
         config.addAllowedOrigin("*");//用于提供给学生访问测试，如果是正式应用中这里尽量限制来源域，如http://127.0.0.1:8020，降低安全风险
-        //addAllowedHeader,允许访问的头信息,*表示全部
-        config.addAllowedHeader("accept");
-        config.addAllowedHeader("content-type");
-        config.addAllowedHeader("application/json");
         config.addAllowedHeader("*");
+        config.setExposedHeaders(Arrays.asList("access-control-allow-headers","access-control-allow-methods","access-control-allow-origin", "access-control-max-age","X-Frame-Options"));
+        //addAllowedHeader,允许访问的头信息,*表示全部
+        //config.addAllowedHeader("accept");
+        //config.addAllowedHeader("content-type");
+       //config.addAllowedHeader("application/json");
+
         // 允许的方法 例如GET POST PUT DELETE，只要放行用过的
-        config.addAllowedMethod("GET");
-        config.addAllowedMethod("PUT");
-        config.addAllowedMethod("POST");
-        config.addAllowedMethod("DELETE");
-        config.addAllowedMethod("PATCH");
+//        config.addAllowedMethod("GET");
+//        config.addAllowedMethod("PUT");
+//        config.addAllowedMethod("POST");
+//        config.addAllowedMethod("DELETE");
+//        config.addAllowedMethod("PATCH");
         config.addAllowedMethod("*");
         config.setMaxAge(3600L);
         source.registerCorsConfiguration("/api/**", config);
