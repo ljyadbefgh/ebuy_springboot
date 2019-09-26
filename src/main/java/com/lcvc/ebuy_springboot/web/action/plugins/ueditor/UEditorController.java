@@ -67,16 +67,27 @@ public class UEditorController {
     @ApiOperation(value = "ueditor默认访问接口", notes = "未更改名字")
     @RequestMapping(value="/ueditor")
     public void config(@RequestParam("action") String action, MultipartFile upfile, HttpServletRequest request, HttpServletResponse response) {
-        response.setContentType("application/json;charset=utf-8");
+        //response.addHeader("X-Content-Type-Options", "nosniff");
+
+
+        //response.setHeader("Content-Type", "text/javascript");
+
+        response.setContentType("application/json;charset=UTF-8");//上传文件用这个
         String rootPath=uploadFolder;
         try {
             String exec = new ActionEnter(request, rootPath).exec();
             if(action!= null) {
                 String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+request.getContextPath()+"/";//获取项目根目录网址
                 basePath=basePath+"upload";//访问上传文件路径，专门替换config.json中图片前缀网址的步骤
-                if(action.equals("config")){//如果是第一次访问，则不作任何改变
-
+                if(action.equals("config")){//如果是第一次访问，则不作任何改变、
+                    /**
+                     *  特别说明：由于假如spring security后，使用response.setContentType("application/json;charset=UTF-8");会出现nosniff，即无法识别服务端类型-这点很奇怪，无法处理
+                     *  故手动指定Content-Type为Javascript类型（"application/ecmascript"，"application/javascript"，"application/x-javascript"，"text/ecmascript"，"text/javascript"，"text/jscript"，"text/x-javascript"，"text/vbs"，"text/vbscript"）的一种即可
+                     *  建议后期：跨域的数据请求转到本站服务器（用Node.js），由本站服务器去做跨域请求，即跳过浏览器同源策略的限制
+                     */
+                    response.setContentType("text/javascript;charset=UTF-8");//必须用
                 }else if(action.startsWith("list")){
+                    response.setContentType("text/javascript;charset=UTF-8");//加载图片列表用这个
                     String root=new String(rootPath);
                     //如果请求的方法是listfile和listimage，就把文件路径替换一下，绝对路径替换成相对路径，否则返回的图片和文件地址是错误的，将无法访问。
                     root=root.substring(0,root.length()-1);//c:/ebuy_springboot/upload/，最后的“/”不要

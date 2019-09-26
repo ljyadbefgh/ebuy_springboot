@@ -6,12 +6,13 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter;
 
-//@EnableWebSecurity //如果不希望启用spring security，这里也不应该加上
+@EnableWebSecurity //如果不希望启用spring security，这里也不应该加上
 @EnableGlobalMethodSecurity(prePostEnabled = true)//开启security注解
 @Configuration
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
@@ -80,7 +81,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .frameOptions().disable();
         http.csrf().disable();
         http.authorizeRequests()
-                .anyRequest().permitAll().and().logout().permitAll();//配置不需要登录验证
+                .antMatchers("/**").permitAll();//配置不需要登录验证
+        http.headers().frameOptions().sameOrigin();//设置可以iframe访问
 
 
 

@@ -50,7 +50,7 @@ public class LoginForAdminInterceptor extends HandlerInterceptorAdapter {
                 Map<String, Object> map = new HashMap<String, Object>();
                 map.put(Constant.JSON_CODE, JsonCode.ERROR.getValue());
                 map.put(Constant.JSON_MESSAGE, "请先登录");
-               map.put("state", "请先登录");//专门为ueditor写的返回信息，如果不需要可以去掉该行
+                map.put("state", "请先登录");//专门为ueditor写的返回信息，如果不需要可以去掉该行
                 JSONObject jsonObject= JSONObject.fromObject(map);
                 //注意，必须加上这个，才能让前端JS认为是JSON格式来进行相应处理
                 response.setContentType("application/json;charset=UTF-8");

@@ -5,13 +5,17 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.Range;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Collection;
 import java.util.Date;
 
 /**
  * 管理账户
+ * 说明：UserDetails为spring security的专属方法
  */
-public class Admin implements java.io.Serializable{
+public class Admin implements UserDetails{
 
 	private Integer id;
 
@@ -52,23 +56,8 @@ public class Admin implements java.io.Serializable{
 		this.id = id;
 	}
 
-	public String getUsername() {
-		return username;
-	}
 
-	public void setUsername(String username) {
-		this.username = username;
-	}
 
-	@JsonIgnore
-	public String getPassword() {
-		return password;
-	}
-
-	@JsonProperty
-	public void setPassword(String password) {
-		this.password = password;
-	}
 
 	public String getName() {
 		return name;
@@ -101,6 +90,64 @@ public class Admin implements java.io.Serializable{
 	public void setSaveProductNumber(Integer saveProductNumber) {
 		this.saveProductNumber = saveProductNumber;
 	}
+
+
+
+
+	@JsonProperty
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	//获取当前用户对象的用户名
+	@Override
+	public String getUsername() {
+		return username;
+	}
+
+	//获取当前账户的密码
+	@JsonIgnore
+	@Override
+	public String getPassword() {
+		return password;
+	}
+
+	//当前账户是否过期
+	@Override
+	public boolean isAccountNonExpired() {
+		return false;
+	}
+
+	//当前账户是否未锁定
+	@Override
+	public boolean isAccountNonLocked() {
+		return false;
+	}
+
+	//当前账户密码是否过期
+	@Override
+	public boolean isCredentialsNonExpired() {
+		return false;
+	}
+
+	//当前账户是否可用
+	@Override
+	public boolean isEnabled() {
+		return false;
+	}
+
+	//获取当前用户对象所具有的角色信息
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		return null;
+	}
+
+
+
 
 	/*重写hashCode方法，当通过集合判断对象是否相等时，必须重写该方法*/
 	@Override
