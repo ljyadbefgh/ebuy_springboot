@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>临时停车</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="description" content="" />
+        <meta http-equiv="Cache-Control" content="no-transform" />
+        <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+        <meta content="telephone=no" name="format-detection" />
+        <script type="text/javascript" src="http://cdn.bootcss.com/jquery/3.0.0-beta1/jquery.js"></script>
+        <style type="text/css">
+        body{margin:0;padding: 0;}
+        .main{width:100%;margin:0 auto;}
+        .pro{width:90%;margin:10px 5%;height: 20px;background: #ccc;border-radius: 10px;overflow: hidden;}
+        .pro_bg{background: red;height: 20px;width:0;}
+        </style>
+    </head>
+    <body>
+        <div class="main">
+            <div class="pro">
+                <div class="pro_bg"></div>
+            </div>
+        </div>
+    <script type="text/javascript">
+    $(function(){
+        var width="100%";
+        $(".pro_bg").animate({
+                width:"100%"
+        },2000,function(){
+            $(".pro_bg").animate({
+                width:"0"
+            },2000);
+        });          
+       
+    });
+    </script>
+    </body> 
+</html>
