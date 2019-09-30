@@ -1,33 +1,47 @@
 package com.lcvc.ebuy_springboot.config.security;
 
+import com.lcvc.ebuy_springboot.config.security.admin.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter;
+
+import java.util.Collections;
 
 @EnableWebSecurity //如果不希望启用spring security，这里也不应该加上
 @EnableGlobalMethodSecurity(prePostEnabled = true)//开启security注解
 @Configuration
+@Order(-1)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Bean
-    @Override
-    protected AuthenticationManager authenticationManager() throws Exception {
-        return super.authenticationManager();
-    }
 
-    //密码加密方式
-    @Bean
-    PasswordEncoder passwordEncoder() {
-        return NoOpPasswordEncoder.getInstance();
-    }
+    @Autowired
+    private AdminAuthenticationProvider adminAuthenticationProvider;//自定义认证方式
+
+    @Autowired
+    private AdminAuthenticationSuccessHandler adminAuthenticationSuccessHandler;//自定义成功验证
+
+    @Autowired
+    private AdminAuthenticationFailureHandler adminAuthenticationFailureHandler;//自定义失败验证
+
+    @Autowired
+    private AdminLogoutHandler adminLogoutHandler;//自定义注销成功验证
+
+    @Autowired
+    private AdminAuthenticationEntryPoint adminAuthenticationEntryPoint;//自定义后台匿名用户访问无权限资源时的异常
+
+    @Autowired
+    private AdminAccessDeniedHandler adminAccessDeniedHandler;//自定义权限不足异常
+
 
     /**
      * 该方法是用基于内存的方式，来保存本地的用户信息
@@ -37,58 +51,79 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        //这是直接从内存中取用户信息
-        auth.inMemoryAuthentication()
+        //这是直接从内存中设置用户信息，可以测试用
+       /* auth.inMemoryAuthentication()
                 .withUser("admin").password("123456").roles("ADMIN")
                 .and()
-                .withUser("user").password("123").roles("USER");
-        /**
-         * 这是直接从数据库中查询用户数据
-         */
-        //auth.userDetailsService(userService).passwordEncoder();
+                .withUser("user").password("123").roles("USER");*/
+        //配置认证方式,从数据库查找
+        //auth.userDetailsService(adminService);
+        //auth.authenticationProvider(adminAuthenticationProvider);//自定义验证方式
     }
 
-   /* public XFrameOptionsHeaderWriter(XFrameOptionsHeaderWriter.XFrameOptionsMode frameOptionsMode) {
-        Assert.notNull(frameOptionsMode, "frameOptionsMode cannot be null");
-        *//*如果设置为允许，spring抛出异常，要使用FrameOptionsHeaderWriter*//*
-        if (XFrameOptionsHeaderWriter.XFrameOptionsMode.ALLOW_FROM.equals(frameOptionsMode)) {
-            throw new IllegalArgumentException(
-                    "ALLOW_FROM requires an AllowFromStrategy. Please use FrameOptionsHeaderWriter(AllowFromStrategy allowFromStrategy) instead");
-        }
-        this.frameOptionsMode = frameOptionsMode;
-        this.allowFromStrategy = null;
+    //用于配置类似防火墙，放行某些URL。
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        web.ignoring()
+                //因为ueditor每次调用上传组件前会先访问服务端配置，如果访问不了服务端配置无法调用相关组件，所以这里只要拦截了服务端配置就可以（暂行办法）
+                .antMatchers(HttpMethod.POST, "/api/backstage/ueditor")//表示不拦截ueditor的图片上传请求，因为ueditor在测试中发现在上传的时候无法传递cookie
+                .antMatchers("/swagger-ui.html");//swagger文档不拦截
     }
-*/
 
+
+    ///HttpSecurity：一般用它来具体控制权限，角色，url等安全的东西。
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-//        http
-//                .cors()
-//                .and()
-//                .csrf().disable()
-//                .authorizeRequests()
-//                .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-//                .authorizeRequests()
-//                .antMatchers("/**").permitAll()
-//                .anyRequest().authenticated()
-//                .and()
-//                .headers()
-//                //表示该页面可以在相同域名页面的 frame 中展示,因为Ueditor兼容性问题，所以必须加上
-//                .addHeaderWriter(new XFrameOptionsHeaderWriter(XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN ))
-               // ;
-        http.headers()
-                .addHeaderWriter(new XFrameOptionsHeaderWriter(XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN))
-                .frameOptions().disable();
-        http.csrf().disable();
-        http.authorizeRequests()
-                .antMatchers("/**").permitAll();//配置不需要登录验证
-        http.headers().frameOptions().sameOrigin();//设置可以iframe访问
+        //http.requestMatchers().antMatchers(HttpMethod.OPTIONS, "/**");//不拦截OPTIONS请求，目前已知用Ueditor上传时，因为用OPTIONS导致403跨域异常
+
+        http
+            .csrf()
+                .disable()
+                .cors()//允许跨域，注意必须配置相应的跨域过滤器
+            .and().headers()
+                .addHeaderWriter(new XFrameOptionsHeaderWriter(XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN))//表示该页面可以在相同域名页面的 frame 中展示,因为Ueditor兼容性问题，所以必须加上
+                .frameOptions().disable()
+                .frameOptions().sameOrigin()//设置可以iframe访问;
+            .and().authorizeRequests()//URL权限配置
+                .antMatchers("/upload/**").permitAll()//不拦截上传文件的信息
+                .antMatchers("/shop/**").permitAll()//不拦截前端请求
+                .antMatchers("/api/backstage/login").permitAll() //不拦截后端的登陆请求
+                .antMatchers("/api/backstage/**").hasRole("admin")//要访问后端管理页面，必须要admin角色
+                //.requestMatchers(CorsUtils::isPreFlightRequest).permitAll()//对PreflightRequest不做拦截。因为Preflight不携带Cookie，即不携带JSESSIONID，因此Spring Security拦截器会认为你没有登录。
+                .anyRequest().authenticated()  //anyRequest()表示其余请求，都需要进行认证（登陆）才能访问
+            .and().formLogin()//登陆认证设定
+                //.loginPage("/api/backstage/login")//服务端的登陆页面地址。因为已经前后端分离，故这里不进行设置
+                //.loginProcessingUrl("/api/backstage/login")//服务端执行登陆验证的地址（如果配置了相应的控制器地址可以采用）。因为已经前后端分离，故这里不进行设置
+                //.usernameParameter("username").passwordParameter("password")//自定义服务端认证器中接收前台的账户名参数名称和密码参数名称。因为已经自定义过滤器处理，故这里不进行设置
+                //.loginProcessingUrl("/api/backstage/login").permitAll()
+                //.successHandler(adminAuthenticationSuccessHandler)//验证成功后进行调用的处理器。因为已经自定义过滤器处理，故这里不进行设置
+                //.failureHandler(adminAuthenticationFailureHandler)//验证失败后进行调用的处理器。因为已经自定义过滤器处理，故这里不进行设置
+            .and().logout()//注销操作设置-初始化
+                .logoutUrl("/api/backstage/logout")//设置服务器端执行注销请求的地址（非controller地址），设定后前端可以直接以该地址执行注销请求
+                .addLogoutHandler(adminLogoutHandler)//设定注销时的执行动作
+                .logoutSuccessHandler(adminLogoutHandler)//设置注销成功后的执行动作
+                .invalidateHttpSession(true)//清空session,如果是false表示不清空
+            .and().exceptionHandling()//自定义异常处理设置-初始化。因为采用前后端分离，故全部重新定义返回json
+                .authenticationEntryPoint(adminAuthenticationEntryPoint)//自定义匿名用户访问无权限资源时的异常处理
+                .accessDeniedHandler(adminAccessDeniedHandler);//自定义权限不足异常处理
+        // 在 UsernamePasswordAuthenticationFilter 前添加 adminAuthenticationFilter
+        //.and().addFilterAt(adminAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class).authorizeRequests()
+        //.antMatchers("/**").permitAll();//配置不需要登录验证
+        ;
 
 
+    }
 
-                /*.antMatchers("/api/backstage/**")
-                .hasRole("ADMIN")
-                .antMatchers("/api/**")
-                .hasRole("USER");*/
+    /**
+     * 自定义处理登陆请求的Filter.
+     */
+    @Bean
+    AdminAuthenticationProcessingFilter adminAuthenticationFilter() {
+        AdminAuthenticationProcessingFilter adminAuthenticationProcessingFilter = new AdminAuthenticationProcessingFilter();
+        ProviderManager providerManager = new ProviderManager(Collections.singletonList(adminAuthenticationProvider));//自定义认证方式
+        adminAuthenticationProcessingFilter.setAuthenticationManager(providerManager);//自定义认证方式
+        adminAuthenticationProcessingFilter.setAuthenticationSuccessHandler(adminAuthenticationSuccessHandler);//自定义认证成功后的处理方式
+        adminAuthenticationProcessingFilter.setAuthenticationFailureHandler(adminAuthenticationFailureHandler);//自定义认证失败后的处理方式
+        return adminAuthenticationProcessingFilter;
     }
 }

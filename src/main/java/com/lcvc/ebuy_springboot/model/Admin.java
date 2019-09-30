@@ -6,10 +6,13 @@ import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.Range;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 管理账户
@@ -38,6 +41,17 @@ public class Admin implements UserDetails{
 	//非数据库字段
 	@ApiModelProperty(hidden = true)
 	private Integer saveProductNumber;//发布过的产品数量，用于传递给业务层其他对象或web层
+	@ApiModelProperty(hidden = true)
+	private List<Role> roles;//账户拥有的角色集合
+
+
+	public List<Role> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(List<Role> roles) {
+		this.roles = roles;
+	}
 
 	public Admin() {
 	}
@@ -141,9 +155,14 @@ public class Admin implements UserDetails{
 	}
 
 	//获取当前用户对象所具有的角色信息
+	@JsonIgnore
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return null;
+		List<SimpleGrantedAuthority> authorities=new ArrayList<SimpleGrantedAuthority>();
+		for(Role role:roles){
+			authorities.add(new SimpleGrantedAuthority(role.getName()));
+		}
+		return authorities;
 	}
 
 

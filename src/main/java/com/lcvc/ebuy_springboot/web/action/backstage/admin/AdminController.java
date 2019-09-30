@@ -10,6 +10,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,7 +39,9 @@ public class AdminController {
 	public Map<String, Object>  getAdmin(HttpSession session){
 		Map<String, Object> map=new HashMap<String, Object>();
 		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
-		map.put(Constant.JSON_DATA,session.getAttribute("admin"));
+		//map.put(Constant.JSON_DATA,session.getAttribute("admin"));
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		map.put(Constant.JSON_DATA,authentication.getPrincipal());
 		return map;
 	}
 

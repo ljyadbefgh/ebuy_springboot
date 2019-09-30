@@ -5,8 +5,7 @@ import com.lcvc.ebuy_springboot.model.Admin;
 import com.lcvc.ebuy_springboot.model.base.Constant;
 import com.lcvc.ebuy_springboot.model.base.JsonCode;
 import com.lcvc.ebuy_springboot.service.AdminService;
-import io.swagger.annotations.*;
-import org.springframework.web.bind.annotation.GetMapping;
+import io.swagger.annotations.Api;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,12 +24,12 @@ public class AdminLoginLogoutController {
 	private AdminService adminService;
 
 
-	@ApiOperation(value = "后台管理账户登陆", notes = "根据账户名和密码进行登陆")
+	/*@ApiOperation(value = "后台管理账户登陆", notes = "根据账户名和密码进行登陆")
 	@ApiImplicitParams({
 			@ApiImplicitParam(name = "username", value = "账户名", required = true, dataType = "string",example="user"),
 			@ApiImplicitParam(name = "password", value = "密码", required = true, dataType = "string",example="111111")
 	})
-	@GetMapping("/login")
+	@GetMapping("/login")*/
 	public Map<String, Object> login(String username, String password, HttpSession session){
 		Map<String, Object> map=new HashMap<String, Object>();
 		map.put(Constant.JSON_CODE, JsonCode.ERROR.getValue());
@@ -66,8 +65,8 @@ public class AdminLoginLogoutController {
 		}
 		return resultInfo;	}*/
 
-	@ApiOperation(value = "后台管理账户注销")
-	@GetMapping("/logout")
+	//@ApiOperation(value = "后台管理账户注销")
+	//@GetMapping("/logout")
 	public Map<String, Object> logout(HttpSession session){
 		Map<String, Object> map=new HashMap<String, Object>();
 		session.removeAttribute("admin");

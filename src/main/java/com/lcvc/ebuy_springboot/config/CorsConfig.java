@@ -1,7 +1,6 @@
 package com.lcvc.ebuy_springboot.config;
 
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -46,7 +45,8 @@ public class CorsConfig implements WebMvcConfigurer {
     }
 
     //此处解决上面addCorsMappings无法覆盖拦截器跨域的问题
-    @Bean
+    //由于spring security的跨域与这个过滤器冲突，故专门针对跨域写了一个过滤器并配置，该过滤器取消
+    //@Bean
     public FilterRegistrationBean corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration ();

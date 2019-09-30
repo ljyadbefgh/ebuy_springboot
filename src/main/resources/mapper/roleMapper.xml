@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 为这个mapper指定一个唯一的namespace，namespace的值习惯上设置成包名+sql映射文件名，这样就能够保证namespace的值是唯一的
+例如namespace="com.cn.mybatis.test1.dao.userMapper"就是com.cn.mybatis.test1.dao(包名)+userMapper(userMapper.xml文件去除后缀)
+ -->
+<mapper namespace="com.lcvc.ebuy_springboot.dao.RoleDao">
+    <select id="get" resultType="ProductType">
+        select * from producttype where id=#{id}
+    </select>
+
+
+   <!-- useGeneratedKeys="true" 表示给主键设置自增长-->
+    <!--keyProperty="id" 表示将自增长后的Id赋值给实体类中的id字段。-->
+    <insert id="save" useGeneratedKeys="true" keyProperty="id">
+        insert into role(id,name,nameZH,level) values(null,#{name},#{nameZH},#{level})
+    </insert>
+
+    <update id="update" parameterType="ProductType">
+        update role
+        <!--set标签可以剔除末尾的,-->
+        <set>
+            <if test="name!=null and name.length()>0">name=#{name},</if>
+            <if test="nameZH!=null and nameZH.length()>0">nameZH=#{nameZH},</if>
+            <if test="level!=null">level=#{level},</if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <delete id="delete">
+        delete from role where id=#{id}
+    </delete>
+
+    <delete id="deletes" >
+        delete from role where id in
+        <foreach item="item" collection="array" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+
+
+    <select id="readAll" resultType="ProductType">
+        select * from role order by level asc
+    </select>
+
+    <select id="total" resultType="int">
+       select count(1) from role
+    </select>
+
+    <select id="getRolesByAdminId" resultType="Role">
+       select * from Role r,admin_role ar where r.id=ar.roleId and ar.adminId=#{id}
+    </select>
+
+
+
+
+
+</mapper>

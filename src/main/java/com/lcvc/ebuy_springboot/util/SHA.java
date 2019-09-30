@@ -1,5 +1,7 @@
 package com.lcvc.ebuy_springboot.util;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 import java.math.BigInteger;
 import java.security.MessageDigest;
 
@@ -30,10 +32,13 @@ public class SHA {
     }
 
     public static void main(String args[]) {
-        try {
+       /* try {
             System.out.println("SHA加密后:" + getResult("123456"));
         } catch (Exception e) {
             e.printStackTrace();
-        }
+        }*/
+        BCryptPasswordEncoder encoder=new BCryptPasswordEncoder();
+        System.out.println("加密后:" + encoder.encode("123456"));
+
     }
 }

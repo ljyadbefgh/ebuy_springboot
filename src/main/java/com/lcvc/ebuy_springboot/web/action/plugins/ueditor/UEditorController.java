@@ -71,7 +71,7 @@ public class UEditorController {
 
 
         //response.setHeader("Content-Type", "text/javascript");
-
+        //response.setContentType("text/html; charset=UTF-8");
         response.setContentType("application/json;charset=UTF-8");//上传文件用这个
         String rootPath=uploadFolder;
         try {

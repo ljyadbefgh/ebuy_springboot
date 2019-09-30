@@ -2,6 +2,7 @@ package com.lcvc.ebuy_springboot.service.impl;
 
 import com.lcvc.ebuy_springboot.dao.AdminDao;
 import com.lcvc.ebuy_springboot.dao.ProductDao;
+import com.lcvc.ebuy_springboot.dao.RoleDao;
 import com.lcvc.ebuy_springboot.model.Admin;
 import com.lcvc.ebuy_springboot.model.base.PageObject;
 import com.lcvc.ebuy_springboot.model.exception.MyServiceException;
@@ -10,6 +11,8 @@ import com.lcvc.ebuy_springboot.model.query.ProductQuery;
 import com.lcvc.ebuy_springboot.service.AdminService;
 import com.lcvc.ebuy_springboot.util.SHA;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -23,9 +26,11 @@ import java.util.List;
 @Transactional(propagation = Propagation.REQUIRED,isolation = Isolation.DEFAULT,timeout=36000,rollbackFor=Exception.class)
 @Validated//表示开启sprint的校检框架，会自动扫描方法里的@Valid（@Valid注解一般写在接口即可）
 @Service
-public class AdminServiceImpl implements AdminService {
+public class AdminServiceImpl implements  AdminService,UserDetailsService{
     @Resource
     private AdminDao adminDao;
+    @Resource
+    private RoleDao roleDao;
     @Resource
     private ProductDao productDao;
 
@@ -225,5 +230,18 @@ public class AdminServiceImpl implements AdminService {
         }else{
             throw new MyServiceException("密码修改失败：原密码错误");
         }
+    }
+
+
+    //spring security接口UserDetailsService必须要实现的方法
+    @Override
+    public Admin loadUserByUsername(String username) throws UsernameNotFoundException {
+        Admin admin=adminDao.getAdminByUsername(username);//根据账户名查找指定账户信息
+        if(admin!=null){
+            admin.setRoles(roleDao.getRolesByAdminId(admin.getId()));//获取该账户的角色集合
+        }else{
+            throw new UsernameNotFoundException("该账户不存在");
+        }
+        return admin;
     }
 }
