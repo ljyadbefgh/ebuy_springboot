@@ -28,8 +28,8 @@ public class AdminLoginLogoutController {
 	@ApiImplicitParams({
 			@ApiImplicitParam(name = "username", value = "账户名", required = true, dataType = "string",example="user"),
 			@ApiImplicitParam(name = "password", value = "密码", required = true, dataType = "string",example="111111")
-	})
-	@GetMapping("/login")*/
+	})*/
+	//@GetMapping("/login")
 	public Map<String, Object> login(String username, String password, HttpSession session){
 		Map<String, Object> map=new HashMap<String, Object>();
 		map.put(Constant.JSON_CODE, JsonCode.ERROR.getValue());

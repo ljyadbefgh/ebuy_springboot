@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 指明这个映射文件adminMapper.xml的逻辑路径,如果与接口建立映射，那么逻辑路径应该与接口的物理路径一致-->
+<mapper namespace="com.lcvc.ebuy_springboot.dao.AdminRoleDao">
+    <!-- parameterType表示要传入的参数的类型 ，resultType表示要返回的数据的类型-->
+    <!--自定义返回的类型-->
+   <!-- <resultMap id="adminSearch" type="Admin">
+        <collection property="roles" javaType="List" ofType="Admin" >
+            <collection property="roles" javaType="List" ofType="Student">
+                <result property="name" column="role.name"/>
+            </collection>
+        </collection>
+    </resultMap>-->
+
+    <!--自定义返回的类型-->
+    <resultMap id="adminRole" type="AdminRole">
+        <association property="admin" javaType="Admin" column="adminId" select="com.lcvc.ebuy_springboot.dao.AdminDao.get">
+        </association>
+        <association property="role" javaType="Role" column="roleId" select="com.lcvc.ebuy_springboot.dao.RoleDao.get">
+        </association>
+    </resultMap>
+
+
+    <select id="get"  resultMap="adminRole">
+        select * from admin_role where id=#{id}
+    </select>
+
+    <select id="getAdminNumberByRoleId" resultType="int">
+       select count(admin.id) from admin,admin_role ar where admin.id=ar.adminId and ar.roleId=#{id}
+    </select>
+
+    <insert id="save"  useGeneratedKeys="true" keyProperty="id">
+          insert into admin_role(id,adminId,roleId,createTime)
+          values(null,#{admin.id},#{role.id},#{createTime})
+    </insert>
+
+    <insert id="saves"  useGeneratedKeys="true" keyProperty="id">
+        <choose>
+            <when test="list.size()>0">
+                insert into admin_role(id,adminId,roleId,createTime) values
+                <foreach collection="list" item="item" index="index" separator=",">
+                    (null,#{item.admin.id},#{item.role.id},#{item.createTime})
+                </foreach>
+            </when>
+            <otherwise>
+                <!--执行一个空的begin语句，否则如果是空的代码会报错-->
+                begin
+            </otherwise>
+        </choose>
+    </insert>
+
+    <!--再返回id的时候，要用Integer而不是int，以免找不到对象无法返回空记录信息-->
+    <select id="getId" resultType="Integer">
+        select id from admin_role where roleId=#{roleId} and adminId=#{adminId}
+    </select>
+
+    <select id="getAdminAndRoleRelationNumber"  resultType="int">
+        select count(id) from admin_role where roleId=#{roleId} and adminId=#{adminId}
+    </select>
+
+    <select id="getAdminRoleByAdminId"  resultMap="adminRole">
+        select * from admin_role where adminId=#{adminId}
+    </select>
+
+    <delete id="deleteByAdminIdAndRoleId">
+        delete from admin_role where roleId=#{roleId} and adminId=#{adminId}
+    </delete>
+
+    <delete id="deleteAllAdminRoleByAdminId">
+        delete from admin_role where adminId=#{adminId}
+    </delete>
+
+    <delete id="deletes" >
+        delete from admin_role where id in
+        <foreach item="item" collection="array" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+
+</mapper>

@@ -3,6 +3,14 @@
 <!-- 指明这个映射文件adminMapper.xml的逻辑路径,如果与接口建立映射，那么逻辑路径应该与接口的物理路径一致-->
 <mapper namespace="com.lcvc.ebuy_springboot.dao.AdminDao">
     <!-- parameterType表示要传入的参数的类型 ，resultType表示要返回的数据的类型-->
+    <!--自定义返回的类型-->
+   <!-- <resultMap id="adminSearch" type="Admin">
+        <collection property="roles" javaType="List" ofType="Admin" >
+            <collection property="roles" javaType="List" ofType="Student">
+                <result property="name" column="role.name"/>
+            </collection>
+        </collection>
+    </resultMap>-->
 
     <!-- 处理登录操作 -->
     <select id="login" resultType="int">
@@ -38,12 +46,85 @@
         select * from admin order by id asc
     </select>
 
-    <select id="query" resultType="Admin">
+    <!--<select id="query" resultType="Admin">
         select * from admin order by id asc limit #{offset},#{length}
     </select>
 
+
     <select id="querySize" resultType="int">
         select count(1) from admin
+    </select>
+    -->
+
+    <select id="query" resultType="Admin">
+        select admin.* from admin
+        <if test="objectQuery!=null">
+            <if test="objectQuery.roleId!=null or objectQuery.roleIds!=null">
+                left join admin_role on admin_role.adminId =admin.id
+            </if>
+            <where>
+                <if test="objectQuery.username!=null and objectQuery.username.length()>0">
+                    <!-- bind，重新定义一个变量，可用于模糊查询等，并且可以直接覆盖原变量 -->
+                    <bind name="username" value="'%' + _parameter.objectQuery.username + '%'" />
+                    and admin.username like #{username}
+                </if>
+                <if test="objectQuery.name!=null and objectQuery.name.length()>0">
+                    <!-- bind，重新定义一个变量，可用于模糊查询等，并且可以直接覆盖原变量 -->
+                    <bind name="name" value="'%' + _parameter.objectQuery.name + '%'" />
+                    and admin.name like #{name}
+                </if>
+                <if test="objectQuery.roleId!=null">
+                    and admin_role.roleId=#{objectQuery.roleId}
+                </if>
+                <if test="objectQuery.roleIds!=null">
+                    <if test="objectQuery.roleIds.length>0">
+                        and
+                        <foreach collection="objectQuery.roleIds" index="index" item="item"
+                                 open="(" separator=" or " close=")">
+                            admin_role.roleId=#{item}
+                        </foreach>
+                    </if>
+                </if>
+            </where>
+            group by admin.id
+        </if>
+        order by admin.id asc limit #{offset},#{length}
+    </select>
+
+    <select id="querySize" resultType="Integer">
+        select count(1) from (
+        select admin.id from admin
+        <if test="objectQuery!=null">
+            <if test="objectQuery.roleId!=null or objectQuery.roleIds!=null">
+                left join admin_role on admin_role.adminId =admin.id
+            </if>
+            <where>
+                <if test="objectQuery.username!=null and objectQuery.username.length()>0">
+                    <!-- bind，重新定义一个变量，可用于模糊查询等，并且可以直接覆盖原变量 -->
+                    <bind name="username" value="'%' + _parameter.objectQuery.username + '%'"/>
+                    and admin.username like #{username}
+                </if>
+                <if test="objectQuery.name!=null and objectQuery.name.length()>0">
+                    <!-- bind，重新定义一个变量，可用于模糊查询等，并且可以直接覆盖原变量 -->
+                    <bind name="name" value="'%' + _parameter.objectQuery.name + '%'"/>
+                    and admin.name like #{name}
+                </if>
+                <if test="objectQuery.roleId!=null">
+                    and admin_role.roleId=#{objectQuery.roleId}
+                </if>
+                <if test="objectQuery.roleIds!=null">
+                    <if test="objectQuery.roleIds.length>0">
+                        and
+                        <foreach collection="objectQuery.roleIds" index="index" item="item"
+                                 open="(" separator=" or " close=")">
+                            admin_role.roleId=#{item}
+                        </foreach>
+                    </if>
+                </if>
+            </where>
+            group by admin.id
+        </if>
+        ) u
     </select>
 
     <select id="countUsername"  resultType="int">
@@ -65,4 +146,6 @@
         </set>
         where id=#{id}
     </update>
+
+
 </mapper>

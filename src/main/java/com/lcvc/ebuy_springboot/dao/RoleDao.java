@@ -1,9 +1,11 @@
 package com.lcvc.ebuy_springboot.dao;
 
 import com.lcvc.ebuy_springboot.model.Role;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository//为了不让idea报错加上
 public interface RoleDao extends IBaseDao<Role>{
 
     /**
@@ -12,5 +14,12 @@ public interface RoleDao extends IBaseDao<Role>{
      * @return
      */
     List<Role> getRolesByAdminId(Integer adminId);
+
+    /**
+     * 获取指定管理员拥有的角色数量
+     * @param adminId
+     * @return
+     */
+    int getRoleNumberByAdminId(Integer adminId);
 
 }

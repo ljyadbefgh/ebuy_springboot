@@ -3,6 +3,8 @@ server:
   port: 8088   #端口号
   servlet:
     context-path: /ebuy_springboot  #在项目路径上加项目名，注意，spring boot2和spring boot1不同
+    session:
+      timeout: 60m #设置过期时间为60分钟
 
 
 mybatis:
@@ -46,7 +48,7 @@ logging:
   file: target/ebuy.log
   level:
     com.lcvc.ebuy_springboot: debug
-myFile:
+myFile: #自定义变量
   #文件上传目录（注意Linux和Windows上的目录结构不同）
   uploadFolder: c:/ebuy_springboot/upload/
   #file.uploadFolder=/home/upload/#linux

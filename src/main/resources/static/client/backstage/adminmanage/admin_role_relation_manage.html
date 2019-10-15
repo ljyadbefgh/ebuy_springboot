@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>角色列表</title>
+		<meta name="renderer" content="webkit">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<!--导入layui插件-->
+		<link rel="stylesheet" href="../../plugins/layui/css/layui.css">
+		<script src="../../plugins/layui/layui.js"></script>
+		<!--导入jquery插件-->
+		<script src="../../plugins/jquery.js"></script>
+		<!--导入自己插件：前端基础设置-->
+		<script src="../../js/my_base_js.js"></script>
+
+		<script>
+			var rowId;//获取行的信息，此处设置的目的是为了在打开账户编辑窗口时，将账户id传递给子窗口（注：如果不是前后端分离，可以直接通过url将参数传递过去,不需要单独处理）
+			layui.use('table', function() {
+				var table = layui.table;
+				var form = layui.form;//只有执行了这一步，部分表单元素才会自动修饰成功
+
+				table.render({
+					id:'admin_role_relation_table',
+					elem: '#admin_role_relation_table',
+					title: '该账户的角色列表',
+					url: WEBURL_API + 'backstage/adminmanage/'+parent.rowId+'/adminRoleRelationManage',
+					method: 'get',
+					cellMinWidth: 80, //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+					height: 'full',
+					page: { //支持传入 laypage 组件的所有参数（某些参数除外，如：jump/elem） - 详见文档
+				      	layout: ['count'] //自定义分页布局
+				  	 },
+					cols: [[
+						{type: 'checkbox'} //假如复选框，用于批量操作
+						, {
+							field: 'admin_username'
+							,title: '账户名'
+							,templet:function(d){
+								return d.admin.username					   	
+						  	}
+						}
+						, {
+							field: 'role_nameZH'
+							,title: '角色中文名'
+							,templet:function(d){
+								return d.role.nameZH					   	
+							}
+						}
+						, {
+							field: 'role_name'
+							,title: '角色英文名'
+							,templet:function(d){
+								return d.role.name					   	
+							}
+						}					
+						, {
+							field: 'role_level'
+							,title: '级别'
+							,templet:function(d){
+								return d.role.level					   	
+							}
+						}
+						, {
+							field: 'createTime'
+							,sort: true
+							,title: '创建时间'
+						}
+						// , {field: 'level',title: '级别',sort: true,edit: 'text'}
+						// , {field: 'description',title: '角色描述',sort: true,edit: 'text'}
+						//, {field: 'password',width: 300,title: '密码'}
+					]]
+					,parseData: function(res){ //re 即为原始返回的数据 包含总数据等,调用该方法时表格还没有渲染完成，可以对数据进行修改
+						//在done: function(res, page, count)中添加没用的，done中是加载完table之后的操作，已经渲染完成
+						if(res.code==0){//如果调用成功
+							//可以自行添加判断的条件是否选中
+							var adminRoles=res.data;
+							for(i=0;i<adminRoles.length;i++){
+								adminRole=adminRoles[i];//获取相应的关系对象
+								if(adminRole.id!=null){//如果有id，则表示有这个关系，即复选框默认选中
+									res.data[i].LAY_CHECKED=true;//这句才是真正选中，通过设置关键字LAY_CHECKED为true选中
+									//下面三句是通过更改css来实现选中的效果（只有在done渲染结束后需要手动渲染才调用），此处不需要加。
+									//var index= res.data[i]['LAY_TABLE_INDEX'];
+									//$('tr[data-index=' + index + '] input[type="checkbox"]').prop('checked', true);
+									//$('tr[data-index=' + index + '] input[type="checkbox"]').next().addClass('layui-form-checked');
+								}								
+							}
+						}
+					}
+				});
+
+				table.on('checkbox(admin_role_relation_filter)', function(obj){//监听表格的复选框事件,obj表示触发事件的行
+					//console.log(obj.data);
+					var tableObject = table.checkStatus('admin_role_relation_table');//根据表格的id名称获取表格对象
+					var data = tableObject.data;//获取表格的所有数据对象
+					if(obj.type=="all"){//如果是点击的全选按钮
+						if(obj.checked){//如果是选中状态，则为账户添加所有角色
+							$.postRestful(WEBURL_API + "backstage/adminmanage/" + parent.rowId+"/adminRoleRelationManage", function(msg) {
+									if(msg.code == code_success) {			
+										layer.msg("成功赋予所有角色");							
+									}else{//如果关系添加失败
+										layer.msg(msg.msg);
+									} 
+									table.reload('admin_role_relation_table');//重新刷新表格数据
+							});
+						}else{//如果是点击的全部取消状态
+							$.deleteRestful(WEBURL_API + "backstage/adminmanage/" + parent.rowId+"/adminRoleRelationManage", function(msg) {
+									if(msg.code == code_success) {			
+										layer.msg("成功移除所有角色关系");							
+									}else{//如果关系添加失败
+										layer.msg(msg.msg);
+									} 
+									table.reload('admin_role_relation_table');//重新刷新表格数据
+							});
+						}
+					}else{//如果点击的是每一行的按钮
+						if(obj.checked){//如果是选中状态，则添加该关系
+							$.postRestful(WEBURL_API + "backstage/adminmanage/" + obj.data.admin.id+"/adminRoleRelationManage/"+obj.data.role.id, function(msg) {
+									if(msg.code == code_success) {
+										//更新表格数据，缓存对应的值
+										var adminRole=msg.data;
+										obj.update({
+											createTime: adminRole.createTime
+										});
+									}else{//如果关系添加失败
+										//取消选中的checkbox
+										$(obj.tr.selector).find('input[name="layTableCheckbox"]').prop("checked", false);
+										form.render('checkbox');
+										layer.msg(msg.msg);
+									} 
+							});
+						}else{//如果是未选中状态，则移除该关系
+							$.deleteRestful(WEBURL_API + "backstage/adminmanage/" + obj.data.admin.id+"/adminRoleRelationManage/"+obj.data.role.id, function(msg) {
+									if(msg.code == code_success) {
+										//更新表格数据，缓存对应的值
+										var adminRole=msg.data;
+										obj.update({
+											createTime: ""
+										});
+									}else{//如果关系移除失败
+										//保持checkbox为选中状态
+										$(obj.tr.selector).find('input[name="layTableCheckbox"]').prop("checked", true);
+										form.render('checkbox');
+										layer.msg(msg.msg);
+									} 
+							});
+						}
+					}
+       		   });
+			});
+		</script>
+	</head>
+
+	<body>
+		<table class="layui-hide" id="admin_role_relation_table" lay-filter="admin_role_relation_filter"></table>
+	</body>
+
+</html>

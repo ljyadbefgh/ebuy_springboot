@@ -4,24 +4,27 @@
 例如namespace="com.cn.mybatis.test1.dao.userMapper"就是com.cn.mybatis.test1.dao(包名)+userMapper(userMapper.xml文件去除后缀)
  -->
 <mapper namespace="com.lcvc.ebuy_springboot.dao.RoleDao">
-    <select id="get" resultType="ProductType">
-        select * from producttype where id=#{id}
+    <select id="get" resultType="Role">
+        select * from role where id=#{id}
     </select>
 
 
    <!-- useGeneratedKeys="true" 表示给主键设置自增长-->
     <!--keyProperty="id" 表示将自增长后的Id赋值给实体类中的id字段。-->
     <insert id="save" useGeneratedKeys="true" keyProperty="id">
-        insert into role(id,name,nameZH,level) values(null,#{name},#{nameZH},#{level})
+        insert into role(id,name,nameZH,level,defaultRole,description)
+        values(null,#{name},#{nameZH},#{level},#{defaultRole},#{description})
     </insert>
 
-    <update id="update" parameterType="ProductType">
+    <update id="update" parameterType="Role">
         update role
         <!--set标签可以剔除末尾的,-->
         <set>
             <if test="name!=null and name.length()>0">name=#{name},</if>
             <if test="nameZH!=null and nameZH.length()>0">nameZH=#{nameZH},</if>
             <if test="level!=null">level=#{level},</if>
+            <if test="defaultRole!=null">defaultRole=#{defaultRole},</if>
+            <if test="description!=null">description=#{description},</if>
         </set>
         where id=#{id}
     </update>
@@ -38,7 +41,7 @@
     </delete>
 
 
-    <select id="readAll" resultType="ProductType">
+    <select id="readAll" resultType="Role">
         select * from role order by level asc
     </select>
 
@@ -46,8 +49,20 @@
        select count(1) from role
     </select>
 
+    <select id="query" resultType="Role">
+        select * from role order by level asc limit #{offset},#{length}
+    </select>
+
+    <select id="querySize" resultType="int">
+        select count(1) from role order by level asc
+    </select>
+
     <select id="getRolesByAdminId" resultType="Role">
-       select * from Role r,admin_role ar where r.id=ar.roleId and ar.adminId=#{id}
+       select Role.* from Role role,admin_role ar where role.id=ar.roleId and ar.adminId=#{id}
+    </select>
+
+    <select id="getRoleNumberByAdminId" resultType="int">
+       select count(1) from Role role,admin_role ar where role.id=ar.roleId and ar.adminId=#{id}
     </select>
 
 

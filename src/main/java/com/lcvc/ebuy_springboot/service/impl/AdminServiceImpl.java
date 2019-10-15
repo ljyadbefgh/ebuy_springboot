@@ -1,16 +1,21 @@
 package com.lcvc.ebuy_springboot.service.impl;
 
 import com.lcvc.ebuy_springboot.dao.AdminDao;
+import com.lcvc.ebuy_springboot.dao.AdminRoleDao;
 import com.lcvc.ebuy_springboot.dao.ProductDao;
 import com.lcvc.ebuy_springboot.dao.RoleDao;
 import com.lcvc.ebuy_springboot.model.Admin;
+import com.lcvc.ebuy_springboot.model.AdminRole;
+import com.lcvc.ebuy_springboot.model.Role;
 import com.lcvc.ebuy_springboot.model.base.PageObject;
 import com.lcvc.ebuy_springboot.model.exception.MyServiceException;
 import com.lcvc.ebuy_springboot.model.exception.MyWebException;
+import com.lcvc.ebuy_springboot.model.query.AdminQuery;
 import com.lcvc.ebuy_springboot.model.query.ProductQuery;
 import com.lcvc.ebuy_springboot.service.AdminService;
 import com.lcvc.ebuy_springboot.util.SHA;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -19,7 +24,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
-import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -27,19 +32,21 @@ import java.util.List;
 @Validated//表示开启sprint的校检框架，会自动扫描方法里的@Valid（@Valid注解一般写在接口即可）
 @Service
 public class AdminServiceImpl implements  AdminService,UserDetailsService{
-    @Resource
+    @Autowired
     private AdminDao adminDao;
-    @Resource
+    @Autowired
     private RoleDao roleDao;
-    @Resource
+    @Autowired
     private ProductDao productDao;
+    @Autowired
+    private AdminRoleDao adminRoleDao;
 
     /**
      * 是否是超级管理员
      * @param admin
      * @return true表示是超级管理员
      */
-    private boolean isSuperAdmin(Admin admin){
+    private boolean isSystemAdmin(Admin admin){
         boolean result=false;
         if(admin.getId()<0){
             result=true;
@@ -70,10 +77,12 @@ public class AdminServiceImpl implements  AdminService,UserDetailsService{
     }
 
     @Override
-    public PageObject searchAdmins(Integer page, Integer limit) {
-        PageObject pageObject = new PageObject(limit,page,adminDao.querySize(null));
-        pageObject.setList(adminDao.query(pageObject.getOffset(),pageObject.getLimit(),null));
+    public PageObject searchAdmins(Integer page, Integer limit, AdminQuery adminQuery) {
+        PageObject pageObject = new PageObject(limit,page,adminDao.querySize(adminQuery));
+        pageObject.setList(adminDao.query(pageObject.getOffset(),pageObject.getLimit(),adminQuery));
         for(Admin admin:(List<Admin>)pageObject.getList()){//遍历对象
+            //角色数量
+            admin.setRoleNumber(roleDao.getRoleNumberByAdminId(admin.getId()));
             //发布过产品的数量
             ProductQuery productQuery=new ProductQuery();
             productQuery.setCreator(admin);
@@ -87,9 +96,12 @@ public class AdminServiceImpl implements  AdminService,UserDetailsService{
 
     @Override
     public void deleteAdmin(Admin admin,Integer id){
+        if(admin==null){
+            throw new MyServiceException("操作失败：没有登陆（请检查程序错误）");
+        }
         Admin adminDelete=new Admin(id);
-        if(this.isSuperAdmin(adminDelete)){
-            throw new MyServiceException("超级用户不允许删除");
+        if(this.isSystemAdmin(adminDelete)){
+            throw new MyServiceException("操作失败：超级用户不允许删除");
         }
         if(admin.getId()==id.intValue()) {//如果登录账户的id与被删除账户的id一致
             throw new MyServiceException("删除失败：不允许删除自己的账户");
@@ -110,41 +122,45 @@ public class AdminServiceImpl implements  AdminService,UserDetailsService{
             throw new MyServiceException("删除失败：该账户编辑（最后编辑者）过number个产品"
                     .replace("number",String.valueOf(updateProductNumber)));
         }
+        adminRoleDao.deleteAllAdminRoleByAdminId(id);//移除所有该账户的关系
         adminDao.delete(id);
     }
 
     @Override
     public void deleteAdmins(Admin admin,Integer[] ids) {
         //先进行验证
-        for(Integer id:ids){
-            Admin adminDelete=new Admin(id);
-            if(this.isSuperAdmin(adminDelete)){
-                throw new MyServiceException("超级用户不允许删除");
+        if(ids.length>0){//只有集合大于0才执行删除，否则容易执行空SQL语句
+            for(Integer id:ids){
+                Admin adminDelete=new Admin(id);
+                if(this.isSystemAdmin(adminDelete)){
+                    throw new MyServiceException("超级用户不允许删除");
+                }
+                if(admin.getId()==id.intValue()) {//如果登录账户的id与被删除账户的id一致
+                    throw new MyServiceException("删除失败：不允许删除自己的账户");
+                }
+                adminDelete=adminDao.get(id);//被删除账户的数据
+                //检查有没有发布过产品
+                ProductQuery productQuery=new ProductQuery();
+                productQuery.setCreator(adminDelete);
+                int saveProductNumber=productDao.querySize(productQuery);//该账户已经发布的产品数量
+                if(saveProductNumber>0){
+                    throw new MyServiceException("删除失败：该账户（username）发布过number个产品"
+                            .replace("username",admin.getUsername())
+                            .replace("number",String.valueOf(saveProductNumber)));
+                }
+                //检查有没有编辑过产品（本项目中应该是有没有是最后编辑者）
+                productQuery=new ProductQuery();
+                productQuery.setFinalEditor(adminDelete);
+                int updateProductNumber=productDao.querySize(productQuery);//该账户已经发布的产品数量
+                if(updateProductNumber>0){
+                    throw new MyServiceException("删除失败：该账户(username)编辑（最后编辑者）过number个产品"
+                            .replace("username",adminDelete.getUsername())
+                            .replace("number",String.valueOf(updateProductNumber)));
+                }
+                adminRoleDao.deleteAllAdminRoleByAdminId(id);//移除所有该账户的关系
             }
-            if(admin.getId()==id.intValue()) {//如果登录账户的id与被删除账户的id一致
-                throw new MyServiceException("删除失败：不允许删除自己的账户");
-            }
-            adminDelete=adminDao.get(id);//被删除账户的数据
-            //检查有没有发布过产品
-            ProductQuery productQuery=new ProductQuery();
-            productQuery.setCreator(adminDelete);
-            int saveProductNumber=productDao.querySize(productQuery);//该账户已经发布的产品数量
-            if(saveProductNumber>0){
-                throw new MyServiceException("删除失败：该账户（username）发布过number个产品"
-                        .replace("username",admin.getUsername())
-                        .replace("number",String.valueOf(saveProductNumber)));
-            }
-            //检查有没有编辑过产品（本项目中应该是有没有是最后编辑者）
-            productQuery=new ProductQuery();
-            productQuery.setFinalEditor(adminDelete);
-            int updateProductNumber=productDao.querySize(productQuery);//该账户已经发布的产品数量
-            if(updateProductNumber>0){
-                throw new MyServiceException("删除失败：该账户(username)编辑（最后编辑者）过number个产品"
-                        .replace("username",adminDelete.getUsername())
-                        .replace("number",String.valueOf(updateProductNumber)));
-            }
+            adminDao.deletes(ids);
         }
-        adminDao.deletes(ids);
     }
 
     @Override
@@ -168,6 +184,24 @@ public class AdminServiceImpl implements  AdminService,UserDetailsService{
                 admin.setPassword(SHA.getResult("123456"));
                 admin.setCreateTime(Calendar.getInstance().getTime());//获取当前时间为创建时间
                 adminDao.save(admin);
+                //添加账户和角色的关系
+                if(admin.getRoleIds()!=null&&admin.getRoleIds().length>0){//如果有角色关系传递过来
+                    List<AdminRole> adminRoles=new ArrayList<AdminRole>();//定义账户和角色关系集合
+                    AdminRole adminRole=null;
+                    for(Integer roleId:admin.getRoleIds()){
+                        Role role=roleDao.get(roleId);
+                        if(role!=null){
+                            adminRole=new AdminRole();
+                            adminRole.setRole(role);
+                            adminRole.setAdmin(admin);
+                            adminRole.setCreateTime(Calendar.getInstance().getTime());
+                            adminRoles.add(adminRole);
+                        }else{
+                            throw new MyWebException("操作失败：相关角色不存在，请刷新表单");
+                        }
+                    }
+                    adminRoleDao.saves(adminRoles);//将账户和角色的关系存入数据库
+                }
             }else{
                 throw new MyServiceException("账户添加失败：账户名重名");
             }
@@ -181,6 +215,7 @@ public class AdminServiceImpl implements  AdminService,UserDetailsService{
         Admin admin=null;
         if(id!=null){
             admin=adminDao.get(id);
+            admin.setRoles(roleDao.getRolesByAdminId(id));//获取该账户拥有的角色集合
         }
         return admin;
     }
@@ -212,6 +247,38 @@ public class AdminServiceImpl implements  AdminService,UserDetailsService{
                     throw new MyServiceException("账户编辑失败：和其他管理账户的账户名重名");
                 }
             }
+        }
+        //对修改的角色进行处理。注：这里没有简单的对角色进行删除再重新添加，仅对变更的关系进行数据库的处理
+        if(admin.getRoleIds()!=null){//如果前端传有角色信息进来才进行处理，否则不对角色关系进行维护
+            List<Role> rolesAll=roleDao.readAll();//获取所有角色信息
+            List<Role> rolesSelect=new ArrayList<Role>();//定义前端选择的角色集合
+            for(Integer roleId:admin.getRoleIds()) {//获取账户表当前选择的值
+                int index=rolesAll.indexOf(new Role(roleId));//直接从集合中获取角色元素，避免读取数据库
+                if(index!=-1){//如果角色存在
+                    rolesSelect.add(rolesAll.get(index));
+                }else{
+                    throw new MyWebException("操作失败：相关角色不存在，请刷新表单");
+                }
+            }
+            List<AdminRole> adminRoles=new ArrayList<AdminRole>();//定义账户和所有角色联系集合,用于在数据库添加
+            AdminRole adminRole=null;
+            for(Role roleEach:rolesAll){
+                int adminRoleNumber=adminRoleDao.getAdminAndRoleRelationNumber(admin.getId(),roleEach.getId());//获取选择的角色关系原来在数据库中存在的数量
+                if(rolesSelect.contains(roleEach)){//如果该角色已经选择
+                    if(adminRoleNumber==0){//如果选择的角色关系原来在数据库不存在
+                        adminRole=new AdminRole();//创建关系
+                        adminRole.setRole(roleEach);
+                        adminRole.setAdmin(admin);
+                        adminRole.setCreateTime(Calendar.getInstance().getTime());
+                        adminRoles.add(adminRole);//将关系存入集合中
+                    }
+                }else{//如果该角色没有选择
+                    if(adminRoleNumber>0){//如果该角色关系已经在数据库存在
+                        adminRoleDao.deleteByAdminIdAndRoleId(admin.getId(),roleEach.getId());//删除该关系
+                    }
+                }
+            }
+            adminRoleDao.saves(adminRoles);//将新添加的关系插入数据库
         }
         admin.setPassword(null);
         adminDao.update(admin);

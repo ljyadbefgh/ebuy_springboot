@@ -15,7 +15,7 @@ public class AdminServiceImplTest extends EbuySpringbootApplicationTests {
 
     @Test
     public void testSearchAdmins() {
-        List<Admin> admins=adminService.searchAdmins(3,10).getList();
+        List<Admin> admins=adminService.searchAdmins(3,10,null).getList();
         for(Admin admin:admins){
             System.out.println(admin.getName());
         }

@@ -4,9 +4,11 @@ package com.lcvc.ebuy_springboot.junit.dao;
 import com.lcvc.ebuy_springboot.EbuySpringbootApplicationTests;
 import com.lcvc.ebuy_springboot.dao.AdminDao;
 import com.lcvc.ebuy_springboot.model.Admin;
+import com.lcvc.ebuy_springboot.model.query.AdminQuery;
 import org.junit.Test;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 public class AdminDaoTest  extends EbuySpringbootApplicationTests {
     @Resource
@@ -53,7 +55,22 @@ public class AdminDaoTest  extends EbuySpringbootApplicationTests {
 
     @Test
     public void testQuerySize(){
+        AdminQuery adminQuery=new AdminQuery();
+        adminQuery.setRoleId(1);
         System.out.println("账户总数："+adminDao.querySize(null));
+    }
+
+    @Test
+    public void testQuery(){
+        AdminQuery adminQuery=new AdminQuery();
+        adminQuery.setRoleId(1);
+        List<Admin> list=adminDao.query(0,10,adminQuery);
+        System.out.println("账户总数："+list.size());
+        for(Admin admin:list){
+            System.out.println(admin.getId());
+
+        }
+
     }
 
     @Test

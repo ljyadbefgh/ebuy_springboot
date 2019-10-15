@@ -50,6 +50,12 @@
 					</select>
 				</div>
 			</div>
+			<div class="layui-form-item" pane="">
+					<label class="layui-form-label">角色</label>
+					<div class="layui-input-block" id="roleCheckBoxDiv">
+					
+					</div>
+			</div>
 			<div class="layui-form-item">
 				<div class="layui-input-block">
 					<!--注意：lay-submit=""不能省略，否则按钮提交事件无法监听-->
@@ -62,6 +68,29 @@
 		<script>
 			layui.use('form', function() { //表单插件初始化
 				var form = layui.form;//只有执行了这一步，部分表单元素才会自动修饰成功
+
+				//读取角色的复选框列表
+				$.getJSON(//先读取产品栏目列表初始化下拉框，作为第一读取顺序
+					WEBURL_API + "backstage/rolemanage/all",
+				    function(data){
+				    	if(data.code==code_success){
+							var roles=data.data;//获取服务端的角色集合
+							$.each(roles,function(index,item){//对于java的list集合转换为的json格式的遍历
+								if(item.defaultRole==true){//如果该角色是账户拥有的默认角色
+									//option  第一个参数是页面显示的值，第二个参数是传递到后台的值
+									$('#roleCheckBoxDiv').append("<input type='checkbox' lay-skin='primary'  name='roleId' value='"+item.id+"' checked='true'   title='"+item.nameZH+"'>");
+								}else{//如果该角色是账户拥有的角色
+									//option  第一个参数是页面显示的值，第二个参数是传递到后台的值
+									$('#roleCheckBoxDiv').append("<input type='checkbox' lay-skin='primary' name='roleId' value='"+item.id+"' title='"+item.nameZH+"'>");
+								}
+					        })
+				    		form.render('checkbox'); //刷新表单checkbox渲染
+				    		//form.render(); //更新全部表单内容				    		
+				    	}else{
+				    		layer.msg(data.msg);
+				    	}
+				    }
+				)
 
 				//自定义表单验证规则
 				form.verify({
@@ -99,6 +128,20 @@
 
 				//监听提交
 				form.on('submit(addAdmin)', function(data) {
+					// var json = {};
+					// for (var i = 0; i < roleArray.length; i++) {
+					// 	json[i] = roleArray[i];
+					// }
+					// console.log(json);
+					// let roleId_json = JSON.stringify(json);
+					// console.log(roleId_json);
+					// data.field.roleIds = roleId_json ;
+					// console.log(JSON.stringify(data.field));
+					var roleArray = new Array();//定义一个数组，用来存储勾选了的角色复选框的信息
+					$("input:checkbox[name='roleId']:checked").each(function(){
+						roleArray.push($(this).val());
+					});
+					data.field.roleIds = roleArray ;
 					$.postRestful(WEBURL_API+"backstage/adminmanage"
 						,JSON.stringify(data.field)
 						,function(msg){
@@ -111,7 +154,6 @@
 							}
 						}
 					);
-					//layer.msg(JSON.stringify(data.field));
 					return false;//阻止表单跳转。如果需要表单跳转，去掉这段即可。
 				});
 			});

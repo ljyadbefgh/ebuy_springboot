@@ -30,11 +30,8 @@ public class AdminController {
 	@Resource
 	private AdminService adminService;
 
-	/**
-	 * 读取指定账户
-	 * @return
-	 */
-	@ApiOperation(value = "读取自己在当前登陆后台系统的管理账户信息", notes = "无需传入参数")
+
+	@ApiOperation(value = "读取自己在当前后台系统登陆的管理账户信息", notes = "无需传入参数")
 	@GetMapping
 	public Map<String, Object>  getAdmin(HttpSession session){
 		Map<String, Object> map=new HashMap<String, Object>();

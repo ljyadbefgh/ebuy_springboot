@@ -43,7 +43,19 @@ public class Admin implements UserDetails{
 	private Integer saveProductNumber;//发布过的产品数量，用于传递给业务层其他对象或web层
 	@ApiModelProperty(hidden = true)
 	private List<Role> roles;//账户拥有的角色集合
+	@ApiModelProperty(hidden = true)
+	private Integer roleNumber;//角色数量
 
+	private Integer[] roleIds;//用于接收前端传递过来的角色集合id。说明：接收“1,3,5”这样的类型（如果是js数组可以用tostring转换为这个类型），否则spring mvc数组参数无法接受
+
+
+	public Integer[] getRoleIds() {
+		return roleIds;
+	}
+
+	public void setRoleIds(Integer[] roleIds) {
+		this.roleIds = roleIds;
+	}
 
 	public List<Role> getRoles() {
 		return roles;
@@ -105,8 +117,13 @@ public class Admin implements UserDetails{
 		this.saveProductNumber = saveProductNumber;
 	}
 
+	public Integer getRoleNumber() {
+		return roleNumber;
+	}
 
-
+	public void setRoleNumber(Integer roleNumber) {
+		this.roleNumber = roleNumber;
+	}
 
 	@JsonProperty
 	public void setPassword(String password) {

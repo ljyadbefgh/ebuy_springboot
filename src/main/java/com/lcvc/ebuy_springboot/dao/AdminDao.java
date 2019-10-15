@@ -2,13 +2,13 @@ package com.lcvc.ebuy_springboot.dao;
 
 import com.lcvc.ebuy_springboot.model.Admin;
 import org.apache.ibatis.annotations.Param;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 
 
 /*
  * 该接口用来与mybatis的对应映射文件对接
  */
-@Service//为了不让idea报错加上
+@Repository//为了不让idea报错加上
 public interface AdminDao extends IBaseDao<Admin>{
 	/**
 	 * 处理数据库的登录方法
@@ -41,5 +41,7 @@ public interface AdminDao extends IBaseDao<Admin>{
 	 * @return 返回相同用户名的个数，0表示不重名
 	 */
 	int countOtherUsername(@Param(value = "username")String username,@Param(value = "id")Integer id);
+
+
 }
 

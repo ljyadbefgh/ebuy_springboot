@@ -18,7 +18,7 @@
 		<script type="text/html" id="toolbar">
 			<div class="layui-btn-container">
 				<button class="layui-btn layui-btn-sm" lay-event="createProductType">创建产品类别</button>
-				<button class="layui-btn layui-btn-sm" lay-event="deleteProductTypes">批量删除产品类别</button>
+				<button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="deleteProductTypes">批量删除产品类别</button>
 			</div>
 		</script>
 		<!--定义表格邮编的行工具栏-->
@@ -117,7 +117,7 @@
 								    }
 								}
 								layer.confirm('确定要批量删除这些产品类别(' + names + ')吗？', function(index) {
-									$.deleteResful(WEBURL_API + "backstage/producttype/" + ids, 
+									$.deleteRestful(WEBURL_API + "backstage/producttype/" + ids, 
 										function(msg) {
 											if(msg.code == code_success) {
 												layer.msg("删除成功");

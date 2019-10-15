@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>管理员管理模块</title>
+		<meta name="renderer" content="webkit">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<!--导入layui插件-->
+		<link rel="stylesheet" href="../../plugins/layui/css/layui.css">
+		<script src="../../plugins/layui/layui.js"></script>
+		 <!--导入基于layui的第三方插件：formSelects样式-->
+		 <link rel="stylesheet" type="text/css" href="../../plugins/layui-formSelects-master/dist/formSelects-v4.css" />
+		<!--导入jquery插件-->
+		<script src="../../plugins/jquery.js"></script>       
+		<!--导入自己插件：layui基础设置-->
+		<script src="../../js/my_layui_config_js.js"></script>
+		<!--导入自己插件：前端基础设置-->
+		<script src="../../js/my_base_js.js"></script>
+		<!--定义表格的头部工具栏-->
+		<script type="text/html" id="toolbar">
+			<div class="layui-btn-container">
+				<button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="deleteAdmins">批量移除该角色与管理账户的关系</button>
+			</div>
+		</script>
+
+		<script>
+			var rowId;//获取行的信息，此处设置的目的是为了在打开账户编辑窗口时，将账户id传递给子窗口（注：如果不是前后端分离，可以直接通过url将参数传递过去,不需要单独处理）
+			layui.use(['table','jquery','formSelects'], function() {
+				var table = layui.table;
+				var formSelects = layui.formSelects;
+				var form = layui.form;
+
+				var roleIds=new Array();//自定义数组，存储选择的角色id集合
+
+				table.render({
+					id:'adminmanage_table',
+					elem: '#admins',
+					title: '管理账户数据表',
+					url: WEBURL_API + 'backstage/rolemanage/'+parent.rowId+'/adminRoleRelationManage',
+					method: 'get',
+					toolbar: '#toolbar', //定义表格的头部工具栏
+					cellMinWidth: 80, //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+					height: 'full',
+					page: true, //开启分页
+					cols: [[
+						{type: 'checkbox'} //假如复选框，用于批量操作
+						, {field: 'username',width: 200,title: '用户名',sore: true,edit: 'text'}
+						//, {field: 'password',width: 300,title: '密码'}
+						, {field: 'name',width: 200,title: '网名',sort: true}
+						, {
+							field: 'sex',
+							width: 200,
+							title: '性别',
+							sort: true,
+							templet:function(d){
+								if(d.sex==1){
+									return '男';
+						   	 	}else{
+						   	 		return '女';
+						   		}						   	
+						   }}
+						, {field: 'roleNumber',title: '角色数量',sort: true}
+						, {field: 'saveProductNumber',title: '发布产品数',sort: true}
+						, {field: 'createTime',title: '注册时间',sort: true}
+					]]
+				});
+
+				//头工具栏事件
+				table.on('toolbar(admins_event)', function(obj) {
+					var checkStatus = table.checkStatus(obj.config.id);
+					switch(obj.event) {
+						case 'deleteAdmins':
+							var datas = checkStatus.data;//获取选中的数据
+							if(datas.length==0){
+								layer.msg('请先选择记录');
+							}else{								
+								var ids = "";//定义要批量删除的主键id
+								var usernames="";//定义账户名集合
+								for(var i=0;i<datas.length;i++){//遍历数组，将id用","相隔									
+								    if(i==datas.length-1){//如果是最后一条记录，则不添加","
+								    	ids += checkStatus.data[i].id;
+										usernames+=checkStatus.data[i].username;
+								    }else{
+								    	ids += checkStatus.data[i].id+",";
+										usernames+=checkStatus.data[i].username+",";
+								    }
+								}
+								layer.confirm('确定要将这些账户(' + usernames + ')从本角色移除吗？', function(index) {
+									$.deleteRestful(WEBURL_API + "backstage/rolemanage/"+parent.rowId+"/adminRoleRelationManage/" + ids, 
+										function(msg) {
+											if(msg.code == code_success) {
+												layer.msg("删除成功");
+												table.reload('adminmanage_table');//重新刷新表格数据
+												 //location.reload(true);刷新整个页面											
+											} else{
+												layer.msg(msg.msg);
+											}
+										}
+									)
+									layer.close(index);//关闭窗口
+								});								
+							}
+							break;
+						case 'getCheckLength':
+							var data = checkStatus.data;
+							layer.msg('选中了：' + data.length + ' 个');
+							break;
+					};
+				});
+		
+
+				
+				//初始化角色下拉框
+				formSelects.config('selectRoles', {
+					searchUrl: WEBURL_API + "backstage/rolemanage/all"
+					,keyName: 'nameZH'//自定义返回数据中name的key, 默认 name
+					,keyVal:'id' //自定义返回数据中value的key, 默认 value
+					,success: function(id, url, searchVal, result){
+						roleIds.push(parent.rowId);
+						formSelects.value('selectRoles',roleIds);
+					}
+				});
+				// formSelects.data('selectRoles', 'server', {
+				// 	url: WEBURL_API + "backstage/rolemanage/all"
+				// 	,keyName: 'nameZH'//自定义返回数据中name的key, 默认 name
+				// 	,keyVal:'id' //自定义返回数据中value的key, 默认 value
+				// 	//,initValue:[-1]
+				// });
+
+
+				
+
+
+				 // 执行搜索，表格重载
+				 $('#search_button').on('click', function() {
+	    			// 搜索条件
+					var name = $('input[name="name"]').val();
+					var username = $('input[name="username"]').val();					
+					console.log(roleIds.toString());//toString可以转换为“1,3,5”这样的类型，否则spring mvc数组参数无法接受	
+	    			table.reload('adminmanage_table', {
+	    				page: {
+	    					curr: 1
+	    				},
+	    				where: {
+							'username': username
+							,'name': name
+	    					// ,'productType.id': productTypeId
+	    					// ,'orderNum': orderNum
+	    					// ,'onSale': onSale
+	    					// ,'orderType': orderType
+	    				}	    				
+    				});
+				});	
+				
+				
+			});
+		</script>
+	</head>
+
+	<body>
+			<form lay-filter="adminSearchForm"  class="layui-form layui-form-pane">
+					<div class="layui-inline" style="margin-top:5px;">
+							<label class="layui-form-label">账户名</label>
+							<div class="layui-inline">
+								<input type="text" name="username" autocomplete="off" placeholder="请输入要查询的账户名" class="layui-input">
+							</div>	
+						</div>
+					<div class="layui-inline" style="margin-top:5px;">
+						<label class="layui-form-label">网名</label>
+						<div class="layui-inline">
+							<input type="text" name="name" autocomplete="off" placeholder="请输入要查询的账户网名" class="layui-input">
+						</div>	
+					</div>
+					<div class="layui-inline" style="margin-top:5px;">
+							<label class="layui-form-label">角色</label>
+							<div class="layui-inline">
+								<select id="roleIds" xm-select="selectRoles" disabled="disabled">
+									
+								</select>
+							</div>	
+					</div>
+					<button class="layui-btn" data-type="reload" id="search_button" type="button">搜索</button>
+			</form>
+		<table class="layui-hide" id="admins" lay-filter="admins_event"></table>
+	</body>
+
+</html>

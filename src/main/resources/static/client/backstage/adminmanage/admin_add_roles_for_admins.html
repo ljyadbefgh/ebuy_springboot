@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>创建管理账户</title>
+		<meta name="renderer" content="webkit">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<!--导入layui插件-->
+		<link rel="stylesheet" href="../../plugins/layui/css/layui.css">
+		<script src="../../plugins/layui/layui.js"></script>
+		<!--导入jquery插件-->
+		<script src="../../plugins/jquery.js"></script>
+		<!--导入自己插件：前端基础设置-->
+		<script src="../../js/my_base_js.js"></script>
+	</head>
+
+	<body>
+		<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+			<legend>为选择的账户赋予相应的角色</legend>
+		</fieldset>
+
+		<form id="myForm" lay-filter="myForm" class="layui-form layui-form-pane" action="" style="padding:10px 20px">
+			<div class="layui-form-item" pane="">
+				<label class="layui-form-label">选择账户</label>
+				<div class="layui-input-block" id="adminCheckBoxDiv">
+				
+				</div>
+		</div>
+			<div class="layui-form-item" pane="">
+					<label class="layui-form-label">角色</label>
+					<div class="layui-input-block" id="roleCheckBoxDiv">
+					
+					</div>
+			</div>
+			<div class="layui-form-item">
+				<div class="layui-input-block">
+					<!--注意：lay-submit=""不能省略，否则按钮提交事件无法监听-->
+					<button class="layui-btn" lay-submit="" lay-filter="addAdmin">提交</button>
+				</div>
+			</div>
+		</form>
+
+		<script>
+			layui.use('form', function() { //表单插件初始化
+				var form = layui.form;//只有执行了这一步，部分表单元素才会自动修饰成功
+
+				function initAdminCheckBox(){//初始化账户选择列表
+					$.each(parent.adminArray,function(index,item){//对于java的list集合转换为的json格式的遍历
+							$('#adminCheckBoxDiv').append("<input type='checkbox' lay-skin='primary' checked='true' name='adminId' value='"+item.id+"' title='"+item.username+"'>");
+					})
+				}
+
+				//读取角色的复选框列表
+				$.getJSON(//先读取产品栏目列表初始化下拉框，作为第一读取顺序
+					WEBURL_API + "backstage/rolemanage/all",
+				    function(data){
+				    	if(data.code==code_success){
+							var roles=data.data;//获取服务端的角色集合
+							$.each(roles,function(index,item){//对于java的list集合转换为的json格式的遍历
+								$('#roleCheckBoxDiv').append("<input type='checkbox' lay-skin='primary' name='roleId' value='"+item.id+"' title='"+item.nameZH+"'>");
+					        })
+							initAdminCheckBox();//初始化账户选择列表
+				    		form.render('checkbox'); //刷新表单checkbox渲染			    		
+				    	}else{
+				    		layer.msg(data.msg);
+				    	}
+				    }
+				)
+
+				//自定义表单验证规则
+				form.verify({
+					sex:function(value){
+						if(value==""){
+							return "请选择性别";
+						}
+					}
+				});
+
+				//监听提交
+				form.on('submit(addAdmin)', function(data) {
+					var roleArray = new Array();//定义一个数组，用来存储勾选了的角色复选框的信息
+					$("input:checkbox[name='roleId']:checked").each(function(){
+						roleArray.push($(this).val());
+					});
+					data.field.roleIds = roleArray;
+					var adminArray = new Array();//定义一个数组，用来存储勾选了的账户复选框的信息
+					$("input:checkbox[name='adminId']:checked").each(function(){
+						adminArray.push($(this).val());
+					});
+					data.field.adminIds=adminArray;
+					if(adminArray.length==0){
+						layer.msg("操作失败：请选择账户");
+					}else if(roleArray.length==0){
+						layer.msg("操作失败：请选择角色");
+					}else{//如果验证通过
+						$.postRestful(WEBURL_API+"backstage/adminmanage/adminRoleRelationManage/addRolesForAdmins"
+							,JSON.stringify(data.field)
+							,function(msg){
+								if(msg.code==code_success){
+									layer.msg("操作成功");
+								}else{
+									layer.msg(msg.msg);
+								}
+							}
+						);
+					}					
+					return false;//阻止表单跳转。如果需要表单跳转，去掉这段即可。
+				});
+			});
+		</script>
+	</body>
+
+</html>

@@ -3,9 +3,9 @@ package com.lcvc.ebuy_springboot.dao;
 
 import com.lcvc.ebuy_springboot.model.Customer;
 import org.apache.ibatis.annotations.Param;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 
-@Service
+@Repository//为了不让idea报错加上
 public interface CustomerDao extends IBaseDao<Customer>{
 
 	/**

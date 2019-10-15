@@ -22,7 +22,7 @@ public interface IBaseDao<T>{
 	/**
 	 * 保存指定记录(并返回主键值，主键值自动存储在t对象里)
 	 * @param t 注意表中的非空字段不能为空
-	 * @return 1表示成功，0表示失败，>1表示数据库存在异常
+	 * @return 1表示成功，0表示失败，>1表示数据库存在异常。并且会将插入后的主键值赋给对象t返回
 	 */
 	int save(T t);
 	
@@ -41,7 +41,7 @@ public interface IBaseDao<T>{
 	int delete(java.io.Serializable id);
 
 	/**
-	 * 根据标志符集合删除对应的记录信息集合
+	 * 根据标志符集合删除对应的记录信息集合。注意：长度不能为0
 	 * @param ids id集合
 	 * @return  删除的记录数，>=1表示删除成功，0表示删除失败
 	 */
@@ -52,7 +52,6 @@ public interface IBaseDao<T>{
 	 * @return
 	 */
 	List<T> readAll();
-	
 	
 	/**
 	 * 获取表中总记录数

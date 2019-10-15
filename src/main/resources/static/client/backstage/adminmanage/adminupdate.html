@@ -43,6 +43,12 @@
 					</select>
 				</div>
 			</div>
+			<div class="layui-form-item" pane="">
+				<label class="layui-form-label">角色</label>
+				<div class="layui-input-block" id="roleCheckBoxDiv">
+						
+				</div>
+			</div>
 			<div class="layui-form-item">
 				<div class="layui-input-block">
 					<button class="layui-btn" lay-submit="" lay-filter="updateAdmin">修改管理账户</button>
@@ -63,7 +69,7 @@
 				    function(msg){
 				    	if(msg.code==code_success){
 				    		var admin=msg.data;
-				    		//var admin= $.parseJSON(msg.data); 
+							initRoles(admin);
 				    		form.val("editAdminForm", {
 				    			"id":admin.id,
 								"username": admin.username, // "name": "value"		
@@ -75,6 +81,37 @@
 						}				    	
 				    }
 				)
+
+				//读取角色的复选框列表并初始化
+				function initRoles(admin){//admin为服务端返回的js对象
+					var rolesSelect=admin.roles;//获取该客户拥有的角色集合
+					var rolesIdSelect=new Array();//定义一个数组用来保存客户拥有的角色id集合
+					$.each(rolesSelect,function(index,item){
+						rolesIdSelect.push(item.id);
+					});
+					//读取角色的复选框列表
+					$.getJSON(//先读取产品栏目列表初始化下拉框，作为第一读取顺序
+						WEBURL_API + "backstage/rolemanage/all",
+						function(data){
+							if(data.code==code_success){
+								var roles=data.data;//获取服务端的角色集合							
+								$.each(roles,function(index,item){//对于java的list集合转换为的json格式的遍历
+									if(rolesIdSelect.indexOf(item.id)==-1){//如果该角色不是账户拥有的角色
+										//option  第一个参数是页面显示的值，第二个参数是传递到后台的值
+										$('#roleCheckBoxDiv').append("<input type='checkbox' lay-skin='primary'  name='roleId' value='"+item.id+"' title='"+item.nameZH+"'>");
+									}else{//如果该角色是账户拥有的角色
+										//option  第一个参数是页面显示的值，第二个参数是传递到后台的值
+										$('#roleCheckBoxDiv').append("<input type='checkbox' lay-skin='primary'  checked='true' name='roleId' value='"+item.id+"' title='"+item.nameZH+"'>");
+									}
+									
+								})
+								form.render('checkbox'); //刷新表单checkbox渲染	    		
+							}else{
+								layer.msg(data.msg);
+							}
+						}
+					)
+				}
 				
 
 				//自定义表单验证规则
@@ -110,6 +147,11 @@
 
 				//监听提交
 				form.on('submit(updateAdmin)', function(data) {
+					var roleArray = new Array();//定义一个数组，用来存储勾选了的角色复选框的信息
+					$("input:checkbox[name='roleId']:checked").each(function(){
+						roleArray.push($(this).val());
+					});
+					data.field.roleIds = roleArray ;
 					$.putRestful(WEBURL_API + "backstage/adminmanage", 
 					    JSON.stringify(data.field), 
 					    function(msg) {
