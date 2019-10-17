@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 为这个mapper指定一个唯一的namespace，namespace的值习惯上设置成包名+sql映射文件名，这样就能够保证namespace的值是唯一的
+例如namespace="com.cn.mybatis.test1.dao.userMapper"就是com.cn.mybatis.test1.dao(包名)+userMapper(userMapper.xml文件去除后缀)
+ -->
+<mapper namespace="com.lcvc.ebuy_springboot.dao.PurviewDao">
+    <!--自定义返回的类型-->
+    <!--<resultMap id="product" type="Product">
+        <association property="productType" javaType="ProductType" column="productTypeId" select="com.lcvc.ebuy_springboot.dao.ProductTypeDao.getForCascade">
+        </association>
+        <association property="creator" javaType="Admin" column="creatorId" select="com.lcvc.ebuy_springboot.dao.AdminDao.get">
+        </association>
+    </resultMap>-->
+
+    <select id="get" resultType="Purview">
+        select * from purview where id=#{id}
+    </select>
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="id">
+        insert into purview(id,name,url,enabled,description)
+        values(null,#{name},#{url},#{enabled},#{description})
+    </insert>
+
+    <update id="update" parameterType="Purview">
+        update purview
+        <!-- 使用set标签可以将动态的配置SET 关键字，和剔除追加到条件末尾的任何不相关的逗号。 -->
+        <set>
+            <if test="name!=null and name.length()>0">name=#{name},</if>
+            <if test="url!=null">url=#{url},</if>
+            <if test="enabled!=null">enabled=#{enabled},</if>
+            <if test="enabled!=null">description=#{description},</if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <delete id="delete">
+        delete from purview where id=#{id}
+    </delete>
+
+    <delete id="deletes" >
+        delete from purview where id in
+        <foreach item="item" collection="array" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+
+    <select id="readAll" resultType="Purview">
+        select * from purview order by id asc
+    </select>
+
+    <select id="total" resultType="int">
+        select count(id) from purview
+    </select>
+
+    <select id="querySize" resultType="int">
+        select count(1) from purview
+        <if test="objectQuery!=null">
+            <where>
+                <if test="objectQuery.name!=null and objectQuery.name.length()>0">
+                    <!-- bind，重新定义一个变量，可用于模糊查询等，并且可以直接覆盖原变量 -->
+                    <bind name="name" value="'%' + _parameter.objectQuery.name + '%'" />
+                    and name like #{name}
+                </if>
+                <if test="objectQuery.enabled!=null">
+                    and enabled=#{objectQuery.enabled}
+                </if>
+            </where>
+        </if>
+    </select>
+
+    <select id="query" resultType="Purview">
+        select * from purview
+        <if test="objectQuery!=null">
+            <where>
+                <if test="objectQuery!=null">
+                    <where>
+                        <if test="objectQuery.name!=null and objectQuery.name.length()>0">
+                            <!-- bind，重新定义一个变量，可用于模糊查询等，并且可以直接覆盖原变量 -->
+                            <bind name="name" value="'%' + _parameter.objectQuery.name + '%'" />
+                            and name like #{name}
+                        </if>
+                        <if test="objectQuery.enabled!=null">
+                            and enabled=#{objectQuery.enabled}
+                        </if>
+                    </where>
+                </if>
+            </where>
+        </if>
+        limit #{offset},#{length}
+    </select>
+
+    <select id="getSimple" resultType="Purview">
+        select * from purview where id=#{id}
+    </select>
+
+    <!--<select id="getNewTopProductList" resultType="Product">-->
+        <!--select * from product order by createTime desc limit 0,#{pageSize}-->
+    <!--</select>-->
+
+
+
+
+
+
+
+</mapper>

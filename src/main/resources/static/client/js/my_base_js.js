@@ -8,8 +8,8 @@ const code_success=0;//设置状态码，表示成功，应与服务端保持一
 const code_error=-1;//设置状态码，表示失败，应与服务端保持一致
 //设置本地存储变量
 var storage = window.localStorage;
-
 $(function() {
+
     //设置ajax默认的设置，即每次访问时都会为header设置token
     $.ajaxSetup({
         timeout: 500000, //超时时间设置，单位毫秒。要后端调试的时候，这里可以设置长些
@@ -66,16 +66,3 @@ jQuery.each( [ "getRestful", "postRestful","putRestful","patchRestful","deleteRe
         }, jQuery.isPlainObject( url ) && url ) );
     };
 } );
-
-function getSessionId(){  
-    var c_name = 'JSESSIONID';  
-    if(document.cookie.length>0){  
-       c_start=document.cookie.indexOf(c_name + "=")  
-       if(c_start!=-1){   
-         c_start=c_start + c_name.length+1   
-         c_end=document.cookie.indexOf(";",c_start)  
-         if(c_end==-1) c_end=document.cookie.length  
-         return unescape(document.cookie.substring(c_start,c_end));  
-       }  
-    }  
-}  

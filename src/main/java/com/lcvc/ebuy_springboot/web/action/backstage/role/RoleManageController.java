@@ -2,12 +2,14 @@ package com.lcvc.ebuy_springboot.web.action.backstage.role;
 
 
 import com.lcvc.ebuy_springboot.model.Role;
+import com.lcvc.ebuy_springboot.model.RolePurview;
 import com.lcvc.ebuy_springboot.model.base.Constant;
 import com.lcvc.ebuy_springboot.model.base.JsonCode;
 import com.lcvc.ebuy_springboot.model.base.PageObject;
 import com.lcvc.ebuy_springboot.model.query.AdminQuery;
 import com.lcvc.ebuy_springboot.service.AdminRoleService;
 import com.lcvc.ebuy_springboot.service.AdminService;
+import com.lcvc.ebuy_springboot.service.RolePurviewService;
 import com.lcvc.ebuy_springboot.service.RoleService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -19,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Api(tags = "后台角色管理模块")
@@ -34,6 +37,8 @@ public class RoleManageController {
 	private AdminService adminService;
 	@Autowired
 	private AdminRoleService adminRoleService;
+	@Autowired
+	private RolePurviewService rolePurviewService;
 
 
 	@ApiOperation(value = "读取所有角色信息", notes = "读取所有角色信息")
@@ -130,6 +135,45 @@ public class RoleManageController {
 	public Map<String, Object>  removeAdminsFromRole(@PathVariable("roleId") Integer roleId,@PathVariable("adminIds") Integer[] adminIds){
 		Map<String, Object> map=new HashMap<String, Object>();
 		adminRoleService.removeAdminRoles(adminIds,roleId);
+		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
+		return map;
+	}
+
+	@ApiOperation(value = "根据角色id获取指定角色的权限关系列表", notes = "根据角色id获取指定角色的权限关系列表")
+	@ApiImplicitParam(name = "id", value = "要读取的角色id", paramType = "path", required = true,example="1")
+	@GetMapping("/{id}/rolePurviewRelationManage")
+	public Map<String, Object>  getPurviewsByRoleId(@PathVariable Integer id){
+		Map<String, Object> map=new HashMap<String, Object>();
+		List<RolePurview> list=rolePurviewService.getRolePurviewsByRoleId(id);
+		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
+		map.put(Constant.JSON_DATA,list);
+		map.put(Constant.JSON_TOTAL,list.size());
+		return map;
+	}
+
+	@ApiOperation(value = "为指定角色赋予指定权限的关系", notes = "为指定角色赋予指定权限的关系")
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "roleId", value = "指定角色的id", paramType = "path", required = true,example="1"),
+			@ApiImplicitParam(name = "purviewId", value = "指定权限的id", paramType = "path", required = true,example="1")
+	})
+	@PostMapping("/{roleId}/rolePurviewRelationManage/{purviewId}")
+	public Map<String, Object>  addPurviewForRole(@PathVariable("roleId") Integer roleId,@PathVariable("purviewId") Integer purviewId){
+		Map<String, Object> map=new HashMap<String, Object>();
+		RolePurview rolePurview=rolePurviewService.addRolePurview(roleId,purviewId);
+		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
+		map.put(Constant.JSON_DATA,rolePurview);
+		return map;
+	}
+
+	@ApiOperation(value = "从指定角色移除和指定权限的关系", notes = "从指定角色移除和指定权限的关系")
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "roleId", value = "指定角色的id", paramType = "path", required = true,example="1"),
+			@ApiImplicitParam(name = "purviewId", value = "指定权限的id", paramType = "path", required = true,example="1")
+	})
+	@DeleteMapping("/{roleId}/rolePurviewRelationManage/{purviewId}")
+	public Map<String, Object>  removePurviewsFromRole(@PathVariable("roleId") Integer roleId,@PathVariable("purviewId") Integer purviewId){
+		Map<String, Object> map=new HashMap<String, Object>();
+		rolePurviewService.removeRolePurview(roleId,purviewId);
 		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
 		return map;
 	}

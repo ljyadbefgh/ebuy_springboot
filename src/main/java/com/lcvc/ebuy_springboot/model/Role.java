@@ -15,7 +15,8 @@ public class Role {
     private Boolean defaultRole;//是否为默认角色，方便用户创建时的选择，如果是，则在创建账户时默认选择（也可自行取消）
 
     //非数据库字段
-    private Integer adminNumber;//该角色拥有的账户数量
+    private Integer adminNumber;//该角色对应的账户数量
+    private Integer purviewNumber;//该角色对应的权限数量
 
     public Role() {
     }
@@ -78,6 +79,14 @@ public class Role {
 
     public void setAdminNumber(Integer adminNumber) {
         this.adminNumber = adminNumber;
+    }
+
+    public Integer getPurviewNumber() {
+        return purviewNumber;
+    }
+
+    public void setPurviewNumber(Integer purviewNumber) {
+        this.purviewNumber = purviewNumber;
     }
 
     @Override

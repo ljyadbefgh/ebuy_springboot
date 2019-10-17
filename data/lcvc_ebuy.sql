@@ -11,7 +11,7 @@
  Target Server Version : 80016
  File Encoding         : 65001
 
- Date: 15/10/2019 11:57:49
+ Date: 17/10/2019 18:58:47
 */
 
 SET NAMES utf8mb4;
@@ -86,7 +86,7 @@ CREATE TABLE `admin_role`  (
   `roleId` int(11) NULL DEFAULT NULL COMMENT 'role主键',
   `createTime` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 95 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 99 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of admin_role
@@ -110,8 +110,6 @@ INSERT INTO `admin_role` VALUES (77, 31, -1, '2019-10-14 18:15:05');
 INSERT INTO `admin_role` VALUES (79, 42, -1, '2019-10-14 18:15:20');
 INSERT INTO `admin_role` VALUES (80, 25, 3, '2019-10-14 18:19:38');
 INSERT INTO `admin_role` VALUES (81, 31, 3, '2019-10-14 18:19:38');
-INSERT INTO `admin_role` VALUES (82, 42, 3, '2019-10-14 18:19:53');
-INSERT INTO `admin_role` VALUES (88, 96, 3, '2019-10-15 08:40:06');
 INSERT INTO `admin_role` VALUES (89, 96, 6, '2019-10-15 08:40:06');
 INSERT INTO `admin_role` VALUES (90, 96, 7, '2019-10-15 08:40:58');
 
@@ -162,10 +160,49 @@ INSERT INTO `customer` VALUES (27, '123a', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '
 DROP TABLE IF EXISTS `menu`;
 CREATE TABLE `menu`  (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '角色名称，采用spring security的命名规则',
-  `nameZH` varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '角色中文名称',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+  `url` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '请求路径规则(表示拥有该路径的访问规则)',
+  `path` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '菜单地址（通过点击该菜单跳转到的url）',
+  `component` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '组件名称（用于前端生成组件的名称）',
+  `name` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '菜单名/权限名',
+  `iconCls` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '图片地址',
+  `requireAuth` bit(1) NULL DEFAULT NULL COMMENT '是否要求登陆后才能访问',
+  `parentId` int(11) NULL DEFAULT NULL COMMENT '父菜单id',
+  `enabled` bit(1) NULL DEFAULT b'1' COMMENT '是否可用',
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `parentId`(`parentId`) USING BTREE,
+  CONSTRAINT `menu_ibfk_1` FOREIGN KEY (`parentId`) REFERENCES `menu` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+) ENGINE = InnoDB AUTO_INCREMENT = 29 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of menu
+-- ----------------------------
+INSERT INTO `menu` VALUES (2, '/', '/home', 'Home', '员工资料', 'fa fa-user-circle-o', b'1', NULL, b'1');
+INSERT INTO `menu` VALUES (3, '/', '/home', 'Home', '人事管理', 'fa fa-address-card-o', b'1', NULL, b'1');
+INSERT INTO `menu` VALUES (4, '/', '/home', 'Home', '薪资管理', 'fa fa-money', b'1', NULL, b'1');
+INSERT INTO `menu` VALUES (5, '/', '/home', 'Home', '统计管理', 'fa fa-bar-chart', b'1', NULL, b'1');
+INSERT INTO `menu` VALUES (6, '/', '/home', 'Home', '系统管理', 'fa fa-windows', b'1', NULL, b'1');
+INSERT INTO `menu` VALUES (7, '/employee/basic/**', '/emp/basic', 'EmpBasic', '基本资料', NULL, b'1', 2, b'1');
+INSERT INTO `menu` VALUES (8, '/employee/advanced/**', '/emp/adv', 'EmpAdv', '高级资料', NULL, b'1', 2, b'0');
+INSERT INTO `menu` VALUES (9, '/personnel/emp/**', '/per/emp', 'PerEmp', '员工资料', NULL, b'1', 3, b'0');
+INSERT INTO `menu` VALUES (10, '/personnel/ec/**', '/per/ec', 'PerEc', '员工奖惩', NULL, b'1', 3, b'1');
+INSERT INTO `menu` VALUES (11, '/personnel/train/**', '/per/train', 'PerTrain', '员工培训', NULL, b'1', 3, b'1');
+INSERT INTO `menu` VALUES (12, '/personnel/salary/**', '/per/salary', 'PerSalary', '员工调薪', NULL, b'1', 3, b'1');
+INSERT INTO `menu` VALUES (13, '/personnel/remove/**', '/per/mv', 'PerMv', '员工调动', NULL, b'1', 3, b'1');
+INSERT INTO `menu` VALUES (14, '/salary/sob/**', '/sal/sob', 'SalSob', '工资账套管理', NULL, b'1', 4, b'1');
+INSERT INTO `menu` VALUES (15, '/salary/sobcfg/**', '/sal/sobcfg', 'SalSobCfg', '员工账套设置', NULL, b'1', 4, b'1');
+INSERT INTO `menu` VALUES (16, '/salary/table/**', '/sal/table', 'SalTable', '工资表管理', NULL, b'1', 4, b'1');
+INSERT INTO `menu` VALUES (17, '/salary/month/**', '/sal/month', 'SalMonth', '月末处理', NULL, b'1', 4, b'1');
+INSERT INTO `menu` VALUES (18, '/salary/search/**', '/sal/search', 'SalSearch', '工资表查询', NULL, b'1', 4, b'1');
+INSERT INTO `menu` VALUES (19, '/statistics/all/**', '/sta/all', 'StaAll', '综合信息统计', NULL, b'1', 5, b'1');
+INSERT INTO `menu` VALUES (20, '/statistics/score/**', '/sta/score', 'StaScore', '员工积分统计', NULL, b'1', 5, b'1');
+INSERT INTO `menu` VALUES (21, '/statistics/personnel/**', '/sta/pers', 'StaPers', '人事信息统计', NULL, b'1', 5, b'1');
+INSERT INTO `menu` VALUES (22, '/statistics/recored/**', '/sta/record', 'StaRecord', '人事记录统计', NULL, b'1', 5, b'1');
+INSERT INTO `menu` VALUES (23, '/system/basic/**', '/sys/basic', 'SysBasic', '基础信息设置', NULL, b'1', 6, b'1');
+INSERT INTO `menu` VALUES (24, '/system/cfg/**', '/sys/cfg', 'SysCfg', '系统管理', NULL, b'1', 6, b'1');
+INSERT INTO `menu` VALUES (25, '/system/log/**', '/sys/log', 'SysLog', '操作日志管理', NULL, b'1', 6, b'1');
+INSERT INTO `menu` VALUES (26, '/system/hr/**', '/sys/hr', 'SysHr', '操作员管理', NULL, b'1', 6, b'1');
+INSERT INTO `menu` VALUES (27, '/system/data/**', '/sys/data', 'SysData', '备份恢复数据库', NULL, b'1', 6, b'1');
+INSERT INTO `menu` VALUES (28, '/system/init/**', '/sys/init', 'SysInit', '初始化数据库', NULL, b'1', 6, b'1');
 
 -- ----------------------------
 -- Table structure for order_detail
@@ -374,6 +411,29 @@ INSERT INTO `producttype` VALUES (49, '靓汤', '', '49.jpg', '', NULL, 100);
 INSERT INTO `producttype` VALUES (50, 'adsf', '', NULL, '阿斯顿发', NULL, 100);
 
 -- ----------------------------
+-- Table structure for purview
+-- ----------------------------
+DROP TABLE IF EXISTS `purview`;
+CREATE TABLE `purview`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '菜单名/权限名',
+  `url` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '请求路径规则(表示拥有该路径的访问规则)',
+  `enabled` bit(1) NULL DEFAULT NULL COMMENT '是否可用',
+  `description` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '权限的描述',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 29 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of purview
+-- ----------------------------
+INSERT INTO `purview` VALUES (30, '权限管理', '/api/backstage/purviewmanage/**', b'1', NULL);
+INSERT INTO `purview` VALUES (31, '角色管理', '/api/backstage/rolemanage/**', b'1', NULL);
+INSERT INTO `purview` VALUES (32, '个人资料编辑', '/api/backstage/admin/**', b'1', '');
+INSERT INTO `purview` VALUES (33, '管理员管理', '/api/backstage/adminmanage/**', b'1', '');
+INSERT INTO `purview` VALUES (34, '客户模块管理', '/api/backstage/customermanage/**', b'1', '');
+INSERT INTO `purview` VALUES (38, '产品类别模块', '/api/backstage/producttype/*', b'0', '');
+
+-- ----------------------------
 -- Table structure for role
 -- ----------------------------
 DROP TABLE IF EXISTS `role`;
@@ -395,5 +455,29 @@ INSERT INTO `role` VALUES (-1, 'ROLE_user', '普通管理员', 20, b'1', '系统
 INSERT INTO `role` VALUES (3, 'adfasd', '地方', 100, b'0', '');
 INSERT INTO `role` VALUES (6, 'adfsd2', '史蒂文2', 1002, b'0', '123123');
 INSERT INTO `role` VALUES (7, 'adf', '撒旦法', 12312, b'0', 'sdsd');
+
+-- ----------------------------
+-- Table structure for role_purview
+-- ----------------------------
+DROP TABLE IF EXISTS `role_purview`;
+CREATE TABLE `role_purview`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `roleId` int(11) NULL DEFAULT NULL COMMENT 'role主键',
+  `purviewId` int(11) NULL DEFAULT NULL COMMENT 'purview主键',
+  `createTime` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 99 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of role_purview
+-- ----------------------------
+INSERT INTO `role_purview` VALUES (1, -99, 30, '2019-10-17 15:45:55');
+INSERT INTO `role_purview` VALUES (3, -99, 32, '2019-10-17 15:46:07');
+INSERT INTO `role_purview` VALUES (5, -99, 34, '2019-10-17 15:46:08');
+INSERT INTO `role_purview` VALUES (7, -99, 31, '2019-10-17 16:21:02');
+INSERT INTO `role_purview` VALUES (9, -99, 33, '2019-10-17 16:21:04');
+INSERT INTO `role_purview` VALUES (11, -99, 38, '2019-10-17 18:46:14');
+INSERT INTO `role_purview` VALUES (12, -1, 30, '2019-10-17 18:58:32');
+INSERT INTO `role_purview` VALUES (13, -1, 31, '2019-10-17 18:58:33');
 
 SET FOREIGN_KEY_CHECKS = 1;

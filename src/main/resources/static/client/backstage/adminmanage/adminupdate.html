@@ -156,7 +156,7 @@
 					    JSON.stringify(data.field), 
 					    function(msg) {
 							if(msg.code == code_success) {
-								layer.msg("编辑成功");
+								layer.alert("编辑成功");
 							} else{
 								layer.msg(msg.msg);
 							}

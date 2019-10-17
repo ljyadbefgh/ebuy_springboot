@@ -148,7 +148,7 @@
 							if(msg.code==code_success){
 								$('#myForm')[0].reset();
 								layui.form.render();//这个一定要加上去，不然的话，select/checkbox/radio不会重置的
-								layer.msg("管理员创建成功");
+								layer.alert("管理员创建成功");
 							}else{
 								layer.msg(msg.msg);
 							}

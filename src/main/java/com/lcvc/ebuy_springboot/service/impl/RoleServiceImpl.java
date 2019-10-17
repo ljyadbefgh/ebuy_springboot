@@ -2,6 +2,7 @@ package com.lcvc.ebuy_springboot.service.impl;
 
 import com.lcvc.ebuy_springboot.dao.AdminRoleDao;
 import com.lcvc.ebuy_springboot.dao.RoleDao;
+import com.lcvc.ebuy_springboot.dao.RolePurviewDao;
 import com.lcvc.ebuy_springboot.model.Role;
 import com.lcvc.ebuy_springboot.model.base.PageObject;
 import com.lcvc.ebuy_springboot.model.exception.MyServiceException;
@@ -14,8 +15,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Transactional(propagation = Propagation.REQUIRED,isolation = Isolation.DEFAULT,timeout=36000,rollbackFor=Exception.class)
@@ -27,6 +26,8 @@ public class RoleServiceImpl implements RoleService {
     private RoleDao roleDao;
     @Autowired
     private AdminRoleDao adminRoleDao;
+    @Autowired
+    private RolePurviewDao rolePurviewDao;
 
     /**
      * 是否是系统角色
@@ -54,7 +55,8 @@ public class RoleServiceImpl implements RoleService {
             //获取该角色拥有的账户数量
             int adminNumber=adminRoleDao.getAdminNumberByRoleId(role.getId());
             role.setAdminNumber(adminNumber);
-
+            //获取该角色对应的权限数量
+            role.setPurviewNumber(rolePurviewDao.getRolePurviewNumberByRoleId(role.getId()));
         }
         return pageObject;
     }
@@ -65,7 +67,7 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public void addRole(@Valid @NotNull Role role) {
+    public void addRole(Role role) {
         //前面必须经过spring验证框架的验证
         role.setId(null);//主键自增
         if(role.getLevel()==null){
@@ -78,7 +80,7 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public void updateRole(@Valid @NotNull Role role) {
+    public void updateRole(Role role) {
         if(role.getId()==null){
             throw new MyWebException("角色编辑失败：id不能为空");
         }
