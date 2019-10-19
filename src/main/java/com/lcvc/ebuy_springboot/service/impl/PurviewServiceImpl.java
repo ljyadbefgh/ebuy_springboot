@@ -25,6 +25,14 @@ public class PurviewServiceImpl implements PurviewService {
     private PurviewDao purviewDao;
     @Autowired
     private RolePurviewDao rolePurviewDao;
+
+    @Override
+    public List<Purview> getAllEnabledPurviews() {
+        PurviewQuery purviewQuery=new PurviewQuery();
+        purviewQuery.setEnabled(true);//只查询启用的条件
+        return purviewDao.readAll(purviewQuery);
+    }
+
     @Override
     public PageObject searchPurviews(Integer page, Integer limit, PurviewQuery purviewQuery) {
         PageObject pageObject = new PageObject(limit,page,purviewDao.querySize(purviewQuery));

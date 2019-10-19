@@ -19,6 +19,15 @@ import java.util.List;
 @Validated//表示开启sprint的校检框架，会自动扫描方法里的@Valid（@Valid注解一般写在接口即可）
 @Service
 public class RolePurviewServiceImpl implements RolePurviewService {
+    /**
+     * 权限配置
+     */
+    private final List<Permission> PERMISSIONS = new ArrayList<Permission>() {{//可以忽略的url的地址，即不要进行权限验证
+        add(new Permission(1,"查看","GET"));
+        add(new Permission(2,"新增","POST"));
+        add(new Permission(3,"编辑","PATCH|PUT"));
+        add(new Permission(4,"删除","DELETE"));
+    }};
 
     @Autowired
     private RoleDao roleDao;
@@ -31,12 +40,87 @@ public class RolePurviewServiceImpl implements RolePurviewService {
     @Autowired
     private RolePurviewDao rolePurviewDao;
 
+    /**
+     *根据所有操作权限的id集合，获取相应的方法集合
+     * @param permissionIds 角色和权限的集合
+     * @return
+     */
+    private List<String> getPermissionMethods(String permissionIds) {
+        List<String> methodList=new ArrayList<String>();//定义方法集合
+        for(int i=0;i<permissionIds.length();i++){//遍历主键字符串
+            int id = Integer.parseInt(String.valueOf(permissionIds.charAt(i)));//注意：字符串中的单个数字转为数字，和char转为数字的方法不同
+            int index=PERMISSIONS.indexOf(new Permission(id));//获取相应权限在集合中的相应位置
+            if(index!=-1){//如果该id有效
+                Permission permission=PERMISSIONS.get(index);
+                String methods=permission.getMethods();//获取允许的方法集合
+                String[] methodArray=methods.split("\\|");//如果该操作权限有多个方法，则进行切割
+                for(String method:methodArray){
+                    methodList.add(method);
+                }
+            }
+        }
+        return methodList;
+       /* String[] methodArray=new String[methodList.size()];//定义一个数组，用于接收方法集合
+        return methodList.toArray(methodArray);*/
+    }
+
+
+    /**
+     *根据所有操作权限的id集合，获取相应的方法对象集合
+     * @param permissionIds 角色和权限的集合
+     * @return
+     */
+    private List<Permission> getPermissions(String permissionIds) {
+        if(permissionIds==null){
+            permissionIds="";
+        }
+        List<Permission> permissions=new ArrayList<Permission>();//定义方法对象集合
+        for(int i=0;i<permissionIds.length();i++){//遍历主键字符串
+            int id = Integer.parseInt(String.valueOf(permissionIds.charAt(i)));//注意：字符串中的单个数字转为数字，和char转为数字的方法不同
+            int index=PERMISSIONS.indexOf(new Permission(id));//获取相应权限在集合中的相应位置
+            if(index!=-1){//如果该id有效
+                Permission permission=PERMISSIONS.get(index);
+                permissions.add(permission);
+            }
+        }
+        return permissions;
+       /* String[] methodArray=new String[methodList.size()];//定义一个数组，用于接收方法集合
+        return methodList.toArray(methodArray);*/
+    }
+
+    /**
+     *根据所有操作权限的id集合，获取所有的方法对象集合
+     * 说明：
+     * 如果没有关系，则将selected字段设置为false
+     * @param permissionIds 角色和权限的集合
+     * @return
+     */
+    private List<Permission> getAllPermissions(String permissionIds) {
+        if(permissionIds==null){
+            permissionIds="";
+        }
+        List<Permission> permissionList=new ArrayList<Permission>();//定义方法对象集合
+        for(Permission permissionData:PERMISSIONS){//遍历系统所有操作权限
+            //注意（已经出错过一次）：不能直接引用添加到集合中，因为共用内存区间，会直接影响到数据源
+            //重新创建一个对象,以免影响到数据源PERMISSIONS
+            Permission permission=new Permission(permissionData.getId(),permissionData.getName(),permissionData.getMethods());
+            String permissionId=String.valueOf(permission.getId());
+            if(permissionIds.contains(permissionId)){//如果包含该操作权限
+                permission.setSelected(true);
+            }else{
+                permission.setSelected(false);
+            }
+            permissionList.add(permission);
+        }
+        return permissionList;
+    }
+
     @Override
-    public List<RolePurview> getRolePurviewsByRoleId(Integer roleId) {
+    public List<RolePurview> getAllRolePurviewsByRoleId(Integer roleId) {
         List<RolePurview> rolePurviews = new ArrayList<RolePurview>();//定义所有权限信息
         Role role = roleDao.get(roleId);//获取指定角色信息
         if (role != null) {
-            List<Purview> purviews = purviewDao.readAll();//获取所有权限信息
+            List<Purview> purviews = purviewDao.readAll(null);//获取所有权限信息
             List<RolePurview> rolePurviewsExistence = rolePurviewDao.getRolePurviewsByRoleId(roleId);//获取该角色拥有的权限关系集合
             RolePurview rolePurview = null;
             for (Purview purview : purviews) {
@@ -47,11 +131,22 @@ public class RolePurviewServiceImpl implements RolePurviewService {
                 if (index != -1) {//如果该对象存在
                     rolePurview = rolePurviewsExistence.get(index);//获取该对象在数据库的完整值
                 }
+                rolePurview.setPermissions(this.getAllPermissions(rolePurview.getPermissionIds()));//获取url访问的方法集合
                 rolePurviews.add(rolePurview);
             }
         }
         return rolePurviews;
     }
+
+    @Override
+    public RolePurview getRolePurview(Integer roleId, Integer purviewId) {
+        if(roleId==null||purviewId==null){
+            throw new MyWebException("操作失败：非法参数");
+        }
+        return rolePurviewDao.getRolePurviewByRoleIdAndPurviewId(roleId,purviewId);
+    }
+
+
 
     @Override
     public RolePurview addRolePurview(Integer roleId, Integer purviewId) {
@@ -67,14 +162,16 @@ public class RolePurviewServiceImpl implements RolePurviewService {
             throw new MyWebException("操作失败：相关权限不存在");
         }
 
-        if(rolePurviewDao.getRoleAndPurviewRelationNumber(roleId,purviewId)>0){
+        if(rolePurviewDao.getRolePurviewNumberByRoleIdAndPurviewId(roleId,purviewId)>0){
             throw new MyWebException("操作失败：该角色已存在，不需要再赋予");
         }
         RolePurview rolePurview=new RolePurview();
         rolePurview.setPurview(purview);
         rolePurview.setRole(role);
+        rolePurview.setPermissionIds("1");//默认拥有的权限
         rolePurview.setCreateTime(Calendar.getInstance().getTime());
-        rolePurviewDao.save(rolePurview);//保存新的关系进入数据库
+        rolePurviewDao.save(rolePurview);//保存新的关系进入数据库，并获取到Id
+        rolePurview.setPermissions(this.getPermissions(rolePurview.getPermissionIds()));
         return rolePurview;
     }
 
@@ -86,6 +183,60 @@ public class RolePurviewServiceImpl implements RolePurviewService {
         Integer id=(Integer)rolePurviewDao.getId(roleId,purviewId);//查找该关系的主键
         if(id!=null){//如果存在该关系
             rolePurviewDao.delete(id);
+        }
+    }
+
+    @Override
+    public List<Role> getRolesByPurview(Integer purviewId) {
+        List<Role> roles=new ArrayList<Role>();
+        if(purviewId!=null){
+            roles.addAll(rolePurviewDao.getRolesByPurviewId(purviewId));
+        }
+        return roles;
+    }
+
+    @Override
+    public List<String> getRolePurviewPermissionMethods(Integer roleId, Integer purviewId) {
+        if(roleId==null||purviewId==null){
+            throw new MyWebException("操作失败：非法参数");
+        }
+        RolePurview rolePurview=rolePurviewDao.getRolePurviewByRoleIdAndPurviewId(roleId,purviewId);//读取相应的关系
+        List<String> methods=this.getPermissionMethods(rolePurview.getPermissionIds());//获取方法集合
+        return methods;
+    }
+
+    @Override
+    public void addRolePurviewPermission(Integer roleId, Integer purviewId, Integer permissionId) {
+        if(roleId==null||purviewId==null||permissionId==null){
+            throw new MyWebException("操作失败：非法参数");
+        }
+        RolePurview rolePurview=rolePurviewDao.getRolePurviewByRoleIdAndPurviewId(roleId,purviewId);//获取对应的关系信息
+        if(rolePurview==null){
+            throw new MyWebException("操作失败：请先添加该关系，再赋予操作权限");
+        }
+        String permissionIds=rolePurview.getPermissionIds();//获取操作id集合
+        if(!permissionIds.contains(String.valueOf(permissionId))){//如果该关系不存在则添加关系；如果关系已经存在则不作任何处理
+            permissionIds+=permissionId;//将这个关系添加
+            rolePurview.setPermissionIds(permissionIds);
+            rolePurviewDao.update(rolePurview);//保存关系
+        }
+    }
+
+    @Override
+    public void removeRolePurviewPermission(Integer roleId, Integer purviewId, Integer permissionId) {
+        if(roleId==null||purviewId==null||permissionId==null){
+            throw new MyWebException("操作失败：非法参数");
+        }
+        RolePurview rolePurview=rolePurviewDao.getRolePurviewByRoleIdAndPurviewId(roleId,purviewId);//获取对应的关系信息
+        if(rolePurview==null){
+            throw new MyWebException("操作失败：请先添加该关系，再赋予操作权限");
+        }
+        String permissionIds=rolePurview.getPermissionIds();//获取操作id集合
+        String permissionIdString=String.valueOf(permissionId);
+        if(permissionIds.contains(permissionIdString)){//如果该关系存在则删除该关系；如果关系不存在则不作任何处理
+            permissionIds=permissionIds.replace(permissionIdString,"");//直接将该字符替换掉
+            rolePurview.setPermissionIds(permissionIds);
+            rolePurviewDao.update(rolePurview);//保存关系
         }
     }
 }

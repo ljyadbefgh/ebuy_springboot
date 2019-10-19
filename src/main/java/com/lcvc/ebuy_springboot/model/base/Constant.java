@@ -15,6 +15,8 @@ public class Constant {
     public static final String JSON_DATA="data";//用于网站的JSON交互的数据信息名称
     public static final String JSON_TOTAL="count";//用于分页，记录总数
 
+
+
     /**
      * 文件上传配置
      */

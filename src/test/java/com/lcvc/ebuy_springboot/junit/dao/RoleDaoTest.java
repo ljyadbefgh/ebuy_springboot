@@ -14,7 +14,7 @@ public class RoleDaoTest extends EbuySpringbootApplicationTests {
 
     @Test
     public void testReadAll(){
-        System.out.println("角色总数："+roleDao.readAll().size());
+        System.out.println("角色总数："+roleDao.readAll(null).size());
     }
 
     @Test

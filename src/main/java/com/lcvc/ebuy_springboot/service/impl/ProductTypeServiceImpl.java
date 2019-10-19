@@ -30,7 +30,7 @@ public class ProductTypeServiceImpl implements ProductTypeService {
     private ProductDao productDao;
 
     public List<ProductType> getProductTypes(String basePath){
-        List<ProductType> productTypeList=productTypeDao.readAll();
+        List<ProductType> productTypeList=productTypeDao.readAll(null);
         ProductQuery productQuery=null;//预设产品查询条件
         for(ProductType productType:productTypeList){
             //将头像网址进行处理，变为完整的地址

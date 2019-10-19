@@ -45,7 +45,20 @@
     </delete>
 
     <select id="readAll" resultType="Purview">
-        select * from purview order by id asc
+        select * from purview
+        <if test="objectQuery!=null">
+            <where>
+                <if test="objectQuery.name!=null and objectQuery.name.length()>0">
+                    <!-- bind，重新定义一个变量，可用于模糊查询等，并且可以直接覆盖原变量 -->
+                    <bind name="name" value="'%' + _parameter.objectQuery.name + '%'" />
+                    and name like #{name}
+                </if>
+                <if test="objectQuery.enabled!=null">
+                    and enabled=#{objectQuery.enabled}
+                </if>
+            </where>
+        </if>
+        order by id asc
     </select>
 
     <select id="total" resultType="int">

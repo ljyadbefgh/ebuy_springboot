@@ -28,7 +28,7 @@ public class ProductTypeDaoTest extends EbuySpringbootApplicationTests {
 
     @Test
     public void testReadAll(){
-        System.out.println("账户总数："+productTypeDao.readAll().size());
+        System.out.println("账户总数："+productTypeDao.readAll(null).size());
     }
 
     @Test

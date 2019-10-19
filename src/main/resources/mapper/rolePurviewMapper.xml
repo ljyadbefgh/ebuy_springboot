@@ -25,9 +25,18 @@
     </select>
 
     <insert id="save"  useGeneratedKeys="true" keyProperty="id">
-          insert into role_purview(id,roleId,purviewId,createTime)
-          values(null,#{role.id},#{purview.id},#{createTime})
+          insert into role_purview(id,roleId,purviewId,permissionIds,createTime)
+          values(null,#{role.id},#{purview.id},#{permissionIds},#{createTime})
     </insert>
+
+    <update id="update" parameterType="Role">
+        update role_purview
+        <!--set标签可以剔除末尾的,-->
+        <set>
+            <if test="permissionIds!=null">permissionIds=#{permissionIds},</if>
+        </set>
+        where id=#{id}
+    </update>
 
     <delete id="delete" >
         delete from role_purview where id=#{id}
@@ -48,7 +57,11 @@
         select id from role_purview where roleId=#{roleId} and purviewId=#{purviewId}
     </select>
 
-    <select id="getRoleAndPurviewRelationNumber"  resultType="int">
+    <select id="getRolePurviewByRoleIdAndPurviewId" resultType="RolePurview">
+        select * from role_purview where roleId=#{roleId} and purviewId=#{purviewId}
+    </select>
+
+    <select id="getRolePurviewNumberByRoleIdAndPurviewId"  resultType="int">
         select count(id) from role_purview where roleId=#{roleId} and purviewId=#{purviewId}
     </select>
 
@@ -56,12 +69,17 @@
         select * from role_purview where roleId=#{roleId}
     </select>
 
+    <select id="getRolePurviewNumberByRoleId"  resultType="int">
+        select count(id) from role_purview where  roleId=#{roleId}
+    </select>
+
     <select id="getRolePurviewNumberByPurviewId"  resultType="int">
         select count(id) from role_purview where  purviewId=#{purviewId}
     </select>
 
-    <select id="getRolePurviewNumberByRoleId"  resultType="int">
-        select count(id) from role_purview where  roleId=#{roleId}
+
+    <select id="getRolesByPurviewId"  resultType="Role">
+        select role.* from role,role_purview where role.id=role_purview.roleId and purviewId=#{purviewId}
     </select>
 
 

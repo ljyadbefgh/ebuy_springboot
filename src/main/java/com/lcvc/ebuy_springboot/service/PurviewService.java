@@ -8,8 +8,17 @@ import com.lcvc.ebuy_springboot.model.query.PurviewQuery;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 public interface PurviewService {
+
+    /**
+     * 获取所有可用的权限
+     * 说明：
+     * 不包含未启用的权限
+     * @return
+     */
+    List<Purview> getAllEnabledPurviews();
 
     /**
      * 分页查询权限
@@ -19,7 +28,6 @@ public interface PurviewService {
      * @return
      */
     PageObject searchPurviews(Integer page, Integer limit, PurviewQuery purviewQuery);
-
 
 
     /**

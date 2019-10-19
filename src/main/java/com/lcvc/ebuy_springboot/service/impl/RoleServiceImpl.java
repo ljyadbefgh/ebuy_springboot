@@ -44,7 +44,7 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public List<Role> getAllRoles() {
-        return roleDao.readAll();
+        return roleDao.readAll(null);
     }
 
     @Override

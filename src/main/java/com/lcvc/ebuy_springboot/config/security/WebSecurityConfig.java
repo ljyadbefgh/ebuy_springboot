@@ -7,12 +7,15 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.config.annotation.ObjectPostProcessor;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter;
 
 import java.util.Collections;
@@ -42,6 +45,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private AdminAccessDeniedHandler adminAccessDeniedHandler;//自定义权限不足异常
 
+    @Autowired
+    private AdminFilterInvocationSecurityMetadataSource adminFilterInvocationSecurityMetadataSource;//自定义权限资源验证规则
+
+    @Autowired
+    private AdminAccessDecisionManager adminAccessDecisionManager;//自定义权限决策规则
 
     /**
      * 该方法是用基于内存的方式，来保存本地的用户信息
@@ -61,12 +69,19 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         //auth.authenticationProvider(adminAuthenticationProvider);//自定义验证方式
     }
 
-    //用于配置类似防火墙，放行某些URL。
+    /**
+     * Web层面的配置，一般用来配置无需权限校验的路径，也可以在HttpSecurity中配置，但是在web.ignoring()中配置效率更高。
+     * web.ignoring()是一个忽略的过滤器，而HttpSecurity中定义了一个过滤器链，即使permitAll()放行还是会走所有的过滤器，
+     * 直到最后一个过滤器FilterSecurityInterceptor认定是可以放行的，才能访问。
+     */
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring()
                 //因为ueditor每次调用上传组件前会先访问服务端配置，如果访问不了服务端配置无法调用相关组件，所以这里只要拦截了服务端配置就可以（暂行办法）
                 .antMatchers(HttpMethod.POST, "/api/backstage/ueditor")//表示不拦截ueditor的图片上传请求，因为ueditor在测试中发现在上传的时候无法传递cookie
+                //.antMatchers(HttpMethod.POST, "/api/backstage/login")
+                .antMatchers("/upload/**")//不拦截上传文件展示的信息
+                .antMatchers( "/api/shop/**")//不拦截前端请求
                 .antMatchers("/v2/api-docs", "/configuration/ui", "/swagger-resources", "/configuration/security", "/swagger-ui.html", "/webjars/**","/swagger-resources/configuration/ui","/swagge‌​r-ui.html")//swagger文档不拦截
                 ;
     }
@@ -78,21 +93,29 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         //http.requestMatchers().antMatchers(HttpMethod.OPTIONS, "/**");//不拦截OPTIONS请求，目前已知用Ueditor上传时，因为用OPTIONS导致403跨域异常
 
         http
-            .csrf()
-                .disable()
+            .csrf() .disable()
                 .cors()//允许跨域，注意必须配置相应的跨域过滤器
             .and().headers()
                 .addHeaderWriter(new XFrameOptionsHeaderWriter(XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN))//表示该页面可以在相同域名页面的 frame 中展示,因为Ueditor兼容性问题，所以必须加上
                 .frameOptions().disable()
                 .frameOptions().sameOrigin()//设置可以iframe访问;
             .and().authorizeRequests()//URL权限配置
-                .antMatchers("/upload/**").permitAll()//不拦截上传文件的信息
-                .antMatchers("/shop/**").permitAll()//不拦截前端请求
-                .antMatchers("/api/backstage/login").permitAll() //不拦截后端的登陆请求
-                .antMatchers("/api/backstage/**").hasRole("admin")//要访问后端管理页面，必须要admin角色
+                //.antMatchers("/upload/**").permitAll()//不拦截上传文件展示的信息
                 //.requestMatchers(CorsUtils::isPreFlightRequest).permitAll()//对PreflightRequest不做拦截。因为Preflight不携带Cookie，即不携带JSESSIONID，因此Spring Security拦截器会认为你没有登录。
-                .anyRequest().authenticated()  //anyRequest()表示其余请求，都需要进行认证（登陆）才能访问
-            .and().formLogin()//登陆认证设定
+                .and().authorizeRequests()//URL权限配置
+                .anyRequest().authenticated()//anyRequest()表示其余请求，都需要进行认证（登陆）才能访问
+                .withObjectPostProcessor(new ObjectPostProcessor<FilterSecurityInterceptor>() {//自定义权限验证
+                    @Override
+                    public <O extends FilterSecurityInterceptor> O postProcess(O object) {
+                        object.setSecurityMetadataSource(adminFilterInvocationSecurityMetadataSource);//自定义权限资源验证规则
+                        object.setAccessDecisionManager(adminAccessDecisionManager);//自定义决策资源验证规则
+                        return object;
+                    }
+                })
+                // 在 UsernamePasswordAuthenticationFilter 前添加 adminAuthenticationFilter
+                // 在 addFilterAt表示 相同位置添加 filter， 此 filter 不覆盖另一个filter
+                .and().addFilterAt(adminAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class).authorizeRequests()//添加自定义登陆接口
+                //.and().formLogin()//登陆认证设定
                 //.loginPage("/api/backstage/login")//服务端的登陆页面地址。因为已经前后端分离，故这里不进行设置
                 //.loginProcessingUrl("/api/backstage/login")//服务端执行登陆验证的地址（如果配置了相应的控制器地址可以采用）。因为已经前后端分离，故这里不进行设置
                 //.usernameParameter("username").passwordParameter("password")//自定义服务端认证器中接收前台的账户名参数名称和密码参数名称。因为已经自定义过滤器处理，故这里不进行设置
@@ -106,17 +129,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .invalidateHttpSession(true)//清空session,如果是false表示不清空
             .and().exceptionHandling()//自定义异常处理设置-初始化。因为采用前后端分离，故全部重新定义返回json
                 .authenticationEntryPoint(adminAuthenticationEntryPoint)//自定义匿名用户访问无权限资源时的异常处理
-                .accessDeniedHandler(adminAccessDeniedHandler);//自定义权限不足异常处理
-        // 在 UsernamePasswordAuthenticationFilter 前添加 adminAuthenticationFilter
-        //.and().addFilterAt(adminAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class).authorizeRequests()
-        //.antMatchers("/**").permitAll();//配置不需要登录验证
+                .accessDeniedHandler(adminAccessDeniedHandler)//自定义权限不足异常处理
+
+
         ;
 
 
     }
 
     /**
-     * 自定义处理登陆请求的Filter.
+     * 自定义处理登陆请求的Filter：如果要修改登陆地址或验证规则，必须自定义
      */
     @Bean
     AdminAuthenticationProcessingFilter adminAuthenticationFilter() {

@@ -48,10 +48,11 @@ public interface IBaseDao<T>{
 	int deletes(java.io.Serializable[] ids);
 	
 	/**
-	 * 获取表中所有记录
+	 * 获取表中符合条件的所有记录
+	 * 说明：如果查询条件为null，则表示查询所有记录
 	 * @return
 	 */
-	List<T> readAll();
+	List<T> readAll(@Param(value = "objectQuery")Object objectQuery);
 	
 	/**
 	 * 获取表中总记录数

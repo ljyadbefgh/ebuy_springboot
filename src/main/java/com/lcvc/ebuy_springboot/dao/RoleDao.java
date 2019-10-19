@@ -9,6 +9,13 @@ import java.util.List;
 public interface RoleDao extends IBaseDao<Role>{
 
     /**
+     * 根据角色名读取角色信息
+     * @param name
+     * @return
+     */
+    Role getRoleByName(String name);
+
+    /**
      * 获取指定管理员拥有的角色集合
      * @param adminId
      * @return

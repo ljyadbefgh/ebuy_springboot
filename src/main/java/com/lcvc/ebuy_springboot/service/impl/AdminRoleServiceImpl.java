@@ -36,7 +36,7 @@ public class AdminRoleServiceImpl implements AdminRoleService {
         List<AdminRole> adminRoles=new ArrayList<AdminRole>();//定义所有角色信息
         Admin admin=adminDao.get(adminId);//获取指定账户信息
         if(admin!=null){
-            List<Role> roles=roleDao.readAll();//获取所有角色信息
+            List<Role> roles=roleDao.readAll(null);//获取所有角色信息
             List<AdminRole> adminRolesExistence=adminRoleDao.getAdminRoleByAdminId(adminId);//获取该账户拥有的关系集合
             AdminRole adminRole=null;
             for(Role role:roles){
@@ -128,7 +128,7 @@ public class AdminRoleServiceImpl implements AdminRoleService {
         Admin admin=adminDao.get(adminId);//获取指定账户信息
         if(admin!=null){
             List<AdminRole> adminRoles=new ArrayList<AdminRole>();//定义账户和所有角色联系集合
-            List<Role> roles=roleDao.readAll();//获取所有角色信息
+            List<Role> roles=roleDao.readAll(null);//获取所有角色信息
             AdminRole adminRole=null;
             for(Role role:roles){
                 adminRole=new AdminRole();

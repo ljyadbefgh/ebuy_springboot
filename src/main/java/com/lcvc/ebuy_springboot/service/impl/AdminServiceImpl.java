@@ -73,7 +73,7 @@ public class AdminServiceImpl implements  AdminService,UserDetailsService{
 
     @Override
     public List<Admin> getAdmins() {
-        return adminDao.readAll();
+        return adminDao.readAll(null);
     }
 
     @Override
@@ -250,7 +250,7 @@ public class AdminServiceImpl implements  AdminService,UserDetailsService{
         }
         //对修改的角色进行处理。注：这里没有简单的对角色进行删除再重新添加，仅对变更的关系进行数据库的处理
         if(admin.getRoleIds()!=null){//如果前端传有角色信息进来才进行处理，否则不对角色关系进行维护
-            List<Role> rolesAll=roleDao.readAll();//获取所有角色信息
+            List<Role> rolesAll=roleDao.readAll(null);//获取所有角色信息
             List<Role> rolesSelect=new ArrayList<Role>();//定义前端选择的角色集合
             for(Integer roleId:admin.getRoleIds()) {//获取账户表当前选择的值
                 int index=rolesAll.indexOf(new Role(roleId));//直接从集合中获取角色元素，避免读取数据库

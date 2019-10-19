@@ -15,6 +15,14 @@
 		<!--导入自己插件：前端基础设置-->
 		<script src="../../js/my_base_js.js"></script>
 
+		
+		<script type="text/html" id="methodsTemplet">
+			{{# layui.each(d.permissions, function(key, value){ }}			
+				<!-- <button class="layui-btn layui-btn-sm">{{value.name}}</button> -->
+				<input type="checkbox" id="method_{{d.purview.id}}_{{value.id}}" name="{{d.purview.id}}" value="{{value.id}}" title="{{value.name}}" lay-filter="permissionMethodCheckBoxFilter" {{ value.selected ==true ? 'checked' : '' }}>
+			{{# }); }}
+		</script>
+
 		<script>
 			var rowId;//获取行的信息，此处设置的目的是为了在打开账户编辑窗口时，将账户id传递给子窗口（注：如果不是前后端分离，可以直接通过url将参数传递过去,不需要单独处理）
 			layui.use('table', function() {
@@ -67,6 +75,12 @@
 							}
 						}
 						, {
+							field: 'permissionIds'
+							,title: '操作权限'
+							,width:400
+							,templet:'#methodsTemplet'
+						}
+						, {
 							field: 'createTime'
 							,sort: true
 							,title: '创建时间'
@@ -76,10 +90,9 @@
 						//在done: function(res, page, count)中添加没用的，done中是加载完table之后的操作，已经渲染完成
 						if(res.code==0){//如果调用成功
 							//可以自行添加判断的条件是否选中
-							var rolePurviews=res.data;
+							var rolePurviews=res.data;//获取返回的数据
 							for(i=0;i<rolePurviews.length;i++){
 								rolePurview=rolePurviews[i];//获取相应的关系对象
-								console.log(rolePurview);
 								if(rolePurview.id!=null){//如果有id，则表示有这个关系，即复选框默认选中
 									res.data[i].LAY_CHECKED=true;//这句才是真正选中，通过设置关键字LAY_CHECKED为true选中
 									//下面三句是通过更改css来实现选中的效果（只有在done渲染结束后需要手动渲染才调用），此处不需要加。
@@ -119,9 +132,16 @@
 					}else{//如果点击的是每一行的按钮
 						if(obj.checked){//如果是选中状态，则添加该关系
 							$.postRestful(WEBURL_API + "backstage/rolemanage/" + obj.data.role.id+"/rolePurviewRelationManage/"+obj.data.purview.id, function(msg) {
-									if(msg.code == code_success) {
+									if(msg.code == code_success) {										
 										//更新表格数据，缓存对应的值
 										var rolePurview=msg.data;
+										$.each(rolePurview.permissions,function(index,item){//对于java的list集合转换为的json格式的遍历
+											//如果添加成功，则将相应的所有操作权限复选框都开始勾选状态
+											var methodId="method_"+obj.data.purview.id+"_"+item.id;//获取复选框的id
+											var $checkBox = $("input[id^='"+methodId+"']");//获取指定的复选框对象(),以methodId开头的文件
+											$checkBox.prop("checked", true);//让复选框默认勾选状态
+										})										
+										form.render('checkbox'); //刷新表单checkbox渲染，让重新赋值生效
 										obj.update({
 											createTime: rolePurview.createTime
 										});
@@ -135,6 +155,11 @@
 						}else{//如果是未选中状态，则移除该关系
 							$.deleteRestful(WEBURL_API + "backstage/rolemanage/" + obj.data.role.id+"/rolePurviewRelationManage/"+obj.data.purview.id, function(msg) {
 									if(msg.code == code_success) {
+										//如果移除成功，则将相应的所有操作权限复选框都取消勾选状态
+										var methodId="method_"+obj.data.purview.id+"_";//获取复选框的id
+										var $checkBox = $("input[id^='"+methodId+"']");//获取指定的复选框对象(),以methodId开头的文件
+										$checkBox.prop("checked", false);//让复选框取消勾选状态
+										form.render('checkbox'); //刷新表单checkbox渲染，让重新赋值生效
 										//更新表格数据，缓存对应的值
 										obj.update({
 											createTime: ""
@@ -149,6 +174,42 @@
 						}
 					}
        		   });
+
+				//监听是否为操作权限复选框的操作，如果变更，则直接将变更后的状态信息存入数据库
+				form.on('checkbox(permissionMethodCheckBoxFilter)', function(obj){
+					var purviewId=obj.elem.name;//获取相应复选框的name属性值，即权限id
+					var permissionId=this.value;//获取操作权限id
+					if(obj.elem.checked){//如果是选中状态
+						//添加该关系
+						$.postRestful(WEBURL_API+"backstage/rolemanage/"+parent.rowId+"/rolePurviewRelationManage/"+purviewId+"/rolePurviewMethod/"+permissionId
+							,function(msg){
+								if(msg.code!=code_success){//如果添加失败
+									var methodId="method_"+purviewId+"_"+permissionId;//获取复选框的id
+									var $checkBox = $("input[id='"+methodId+"']");//获取指定的复选框对象
+									$checkBox.prop("checked", !obj.elem.checked);//让复选框回到勾选前的状态
+									form.render('checkbox'); //刷新表单checkbox渲染，让重新赋值生效
+									layer.msg(msg.msg);
+								}	
+							}
+						);
+					}else{
+						//删除该关系
+						$.deleteRestful(WEBURL_API+"backstage/rolemanage/"+parent.rowId+"/rolePurviewRelationManage/"+purviewId+"/rolePurviewMethod/"+permissionId
+							,JSON.stringify(rolePurview)
+							,function(msg){
+								if(msg.code!=code_success){//如果添加失败
+									var methodId="method_"+purviewId+"_"+permissionId;//获取复选框的id
+									var $checkBox = $("input[id='"+methodId+"']");//获取指定的复选框对象
+									$checkBox.prop("checked", !obj.elem.checked);//让复选框回到勾选前的状态
+									form.render('checkbox'); //刷新表单checkbox渲染，让重新赋值生效
+									layer.msg(msg.msg);
+								}	
+							}
+						);
+					}
+					
+				
+				});
 			});
 		</script>
 	</head>

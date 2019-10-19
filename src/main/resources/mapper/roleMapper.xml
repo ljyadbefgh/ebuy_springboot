@@ -66,6 +66,10 @@
     </select>
 
 
+    <select id="getRoleByName" resultType="Role">
+        select * from role where name=#{name}
+    </select>
+
 
 
 

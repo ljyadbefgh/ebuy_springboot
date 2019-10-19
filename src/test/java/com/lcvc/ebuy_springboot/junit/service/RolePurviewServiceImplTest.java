@@ -15,7 +15,7 @@ public class RolePurviewServiceImplTest extends EbuySpringbootApplicationTests {
 
     @Test
     public void testGetRolePurviewsByRoleId() {
-        List<RolePurview> rolePurviews=rolePurviewService.getRolePurviewsByRoleId(-99);
+        List<RolePurview> rolePurviews=rolePurviewService.getAllRolePurviewsByRoleId(-99);
         for(RolePurview rolePurview:rolePurviews){
             System.out.print(rolePurview.getId());
             System.out.print(rolePurview.getPurview().getName());

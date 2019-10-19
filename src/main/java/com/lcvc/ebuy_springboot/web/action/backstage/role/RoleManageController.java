@@ -144,7 +144,7 @@ public class RoleManageController {
 	@GetMapping("/{id}/rolePurviewRelationManage")
 	public Map<String, Object>  getPurviewsByRoleId(@PathVariable Integer id){
 		Map<String, Object> map=new HashMap<String, Object>();
-		List<RolePurview> list=rolePurviewService.getRolePurviewsByRoleId(id);
+		List<RolePurview> list=rolePurviewService.getAllRolePurviewsByRoleId(id);
 		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
 		map.put(Constant.JSON_DATA,list);
 		map.put(Constant.JSON_TOTAL,list.size());
@@ -174,6 +174,34 @@ public class RoleManageController {
 	public Map<String, Object>  removePurviewsFromRole(@PathVariable("roleId") Integer roleId,@PathVariable("purviewId") Integer purviewId){
 		Map<String, Object> map=new HashMap<String, Object>();
 		rolePurviewService.removeRolePurview(roleId,purviewId);
+		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
+		return map;
+	}
+
+	@ApiOperation(value = "为指定角色权限关系赋予相应的操作权限", notes = "为指定角色权限关系赋予相应的操作权限")
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "roleId", value = "指定角色的id", paramType = "path", required = true,example="1"),
+			@ApiImplicitParam(name = "purviewId", value = "指定权限的id", paramType = "path", required = true,example="1"),
+			@ApiImplicitParam(name = "permissionId", value = "指定操作权限的id", paramType = "path", required = true,example="1")
+	})
+	@PostMapping("/{roleId}/rolePurviewRelationManage/{purviewId}/rolePurviewMethod/{permissionId}")
+	public Map<String, Object>  addMethodForRolePurview(@PathVariable("roleId") Integer roleId,@PathVariable("purviewId") Integer purviewId,@PathVariable("permissionId") Integer permissionId){
+		Map<String, Object> map=new HashMap<String, Object>();
+		rolePurviewService.addRolePurviewPermission(roleId,purviewId,permissionId);//添加该操作权限到关系中
+		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
+		return map;
+	}
+
+	@ApiOperation(value = "为指定角色权限关系赋予相应的操作权限", notes = "为指定角色权限关系赋予相应的操作权限")
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "roleId", value = "指定角色的id", paramType = "path", required = true,example="1"),
+			@ApiImplicitParam(name = "purviewId", value = "指定权限的id", paramType = "path", required = true,example="1"),
+			@ApiImplicitParam(name = "permissionId", value = "指定操作权限的id", paramType = "path", required = true,example="1")
+	})
+	@DeleteMapping("/{roleId}/rolePurviewRelationManage/{purviewId}/rolePurviewMethod/{permissionId}")
+	public Map<String, Object>  removeMethodFromRolePurview(@PathVariable("roleId") Integer roleId,@PathVariable("purviewId") Integer purviewId,@PathVariable("permissionId") Integer permissionId){
+		Map<String, Object> map=new HashMap<String, Object>();
+		rolePurviewService.removeRolePurviewPermission(roleId,purviewId,permissionId);//添加该操作权限到关系中
 		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
 		return map;
 	}

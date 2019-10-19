@@ -14,7 +14,7 @@ public class PurviewDaoTest extends EbuySpringbootApplicationTests {
 
     @Test
     public void testReadAll(){
-        System.out.println("总数："+purviewDao.readAll().size());
+        System.out.println("总数："+purviewDao.readAll(null).size());
     }
 
 

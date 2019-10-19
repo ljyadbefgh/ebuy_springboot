@@ -50,7 +50,7 @@ public class AdminDaoTest  extends EbuySpringbootApplicationTests {
 
     @Test
     public void testReadAll(){
-        System.out.println("账户总数："+adminDao.readAll().size());
+        System.out.println("账户总数："+adminDao.readAll(null).size());
     }
 
     @Test

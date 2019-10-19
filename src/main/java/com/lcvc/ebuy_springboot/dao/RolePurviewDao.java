@@ -1,5 +1,6 @@
 package com.lcvc.ebuy_springboot.dao;
 
+import com.lcvc.ebuy_springboot.model.Role;
 import com.lcvc.ebuy_springboot.model.RolePurview;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -18,12 +19,21 @@ public interface RolePurviewDao extends IBaseDao<RolePurview>{
     java.io.Serializable getId(@Param(value = "roleId") int roleId,@Param(value = "purviewId") int purviewId);
 
     /**
+     * 获取指定角色和权限的关系
+     * @param roleId
+     * @param purviewId
+     * @return 关系数量
+     */
+    RolePurview getRolePurviewByRoleIdAndPurviewId(@Param(value = "roleId") int roleId,@Param(value = "purviewId") int purviewId);
+
+    /**
      * 获取指定角色和权限的关系数量
      * @param roleId
      * @param purviewId
      * @return 关系数量
      */
-    int getRoleAndPurviewRelationNumber(@Param(value = "roleId") int roleId,@Param(value = "purviewId") int purviewId);
+    int getRolePurviewNumberByRoleIdAndPurviewId(@Param(value = "roleId") int roleId,@Param(value = "purviewId") int purviewId);
+
 
     /**
      * 获取指定角色的所有权限关系
@@ -34,17 +44,25 @@ public interface RolePurviewDao extends IBaseDao<RolePurview>{
 
     /**
      * 获取指定权限对应的角色而关系数量
+     * @param roleId
+     * @return
+     */
+    int getRolePurviewNumberByRoleId(int roleId);
+
+    /**
+     * 获取指定权限对应的角色而关系数量
      * @param purviewId
      * @return
      */
     int getRolePurviewNumberByPurviewId(int purviewId);
 
+
     /**
-     * 获取指定权限对应的角色而关系数量
-     * @param roleId
+     * 读取指定权限对应的所有角色集合
+     * @param purviewId
      * @return
      */
-    int getRolePurviewNumberByRoleId(int roleId);
+    List<Role> getRolesByPurviewId(int purviewId);
 
 
 

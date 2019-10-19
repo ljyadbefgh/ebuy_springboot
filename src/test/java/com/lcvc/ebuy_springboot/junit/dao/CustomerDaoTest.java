@@ -29,7 +29,7 @@ public class CustomerDaoTest extends EbuySpringbootApplicationTests {
 
     @Test
     public void testReadAll(){
-        System.out.println("账户总数："+customerDao.readAll().size());
+        System.out.println("账户总数："+customerDao.readAll(null).size());
     }
 
     @Test
