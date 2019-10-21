@@ -206,6 +206,29 @@ public class RoleManageController {
 		return map;
 	}
 
+	@ApiOperation(value = "为指定角色赋予所有权限的关系", notes = "为指定角色赋予所有权限的关系")
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "roleId", value = "指定角色的id", paramType = "path", required = true,example="1")
+	})
+	@PostMapping("/{roleId}/rolePurviewRelationManage")
+	public Map<String, Object>  addAllPurviewForRole(@PathVariable("roleId") Integer roleId){
+		Map<String, Object> map=new HashMap<String, Object>();
+		rolePurviewService.addAllRolePurviewForRole(roleId);
+		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
+		return map;
+	}
+
+	@ApiOperation(value = "为指定角色移除所有权限的关系", notes = "为指定角色移除所有权限的关系")
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "roleId", value = "指定角色的id", paramType = "path", required = true,example="1")
+	})
+	@DeleteMapping("/{roleId}/rolePurviewRelationManage")
+	public Map<String, Object>  removeAllPurviewfromRole(@PathVariable("roleId") Integer roleId){
+		Map<String, Object> map=new HashMap<String, Object>();
+		rolePurviewService.removeAllRolePurviewForRole(roleId);
+		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
+		return map;
+	}
 
 
 }

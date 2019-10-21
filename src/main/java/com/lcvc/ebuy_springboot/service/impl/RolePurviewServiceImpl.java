@@ -2,6 +2,7 @@ package com.lcvc.ebuy_springboot.service.impl;
 
 import com.lcvc.ebuy_springboot.dao.*;
 import com.lcvc.ebuy_springboot.model.*;
+import com.lcvc.ebuy_springboot.model.base.Constant;
 import com.lcvc.ebuy_springboot.model.exception.MyWebException;
 import com.lcvc.ebuy_springboot.service.RolePurviewService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -168,7 +169,7 @@ public class RolePurviewServiceImpl implements RolePurviewService {
         RolePurview rolePurview=new RolePurview();
         rolePurview.setPurview(purview);
         rolePurview.setRole(role);
-        rolePurview.setPermissionIds("1");//默认拥有的权限
+        rolePurview.setPermissionIds(Constant.DEFAULTPERMISSIONIDS);//默认拥有的权限
         rolePurview.setCreateTime(Calendar.getInstance().getTime());
         rolePurviewDao.save(rolePurview);//保存新的关系进入数据库，并获取到Id
         rolePurview.setPermissions(this.getPermissions(rolePurview.getPermissionIds()));
@@ -184,6 +185,38 @@ public class RolePurviewServiceImpl implements RolePurviewService {
         if(id!=null){//如果存在该关系
             rolePurviewDao.delete(id);
         }
+    }
+
+    @Override
+    public void addAllRolePurviewForRole(Integer roleId){
+        if(roleId==null){
+            throw new MyWebException("操作失败：非法参数");
+        }
+        Role role=roleDao.get(roleId);
+        if(role!=null){
+            List<RolePurview> rolePurviews=new ArrayList<RolePurview>();//用于后续保存该角色要添加到数据库的关系集合
+            List<Purview> purviews=purviewDao.readAll(null);//获取所有权限信息
+            RolePurview rolePurview=new RolePurview();
+            for(Purview purview:purviews){
+                rolePurview=new RolePurview();
+                rolePurview.setRole(role);
+                rolePurview.setPurview(purview);
+                rolePurview.setPermissionIds(Constant.DEFAULTPERMISSIONIDS);
+                rolePurview.setCreateTime(Calendar.getInstance().getTime());
+                rolePurviews.add(rolePurview);
+            }
+            List<RolePurview> rolePurviewsExistence=rolePurviewDao.getRolePurviewsByRoleId(roleId);//获取该角色拥有的权限关系集合
+            rolePurviews.removeAll(rolePurviewsExistence);//移除已经有的关系
+            rolePurviewDao.saves(rolePurviews);//将没有的关系添加进数据库
+        }
+    }
+
+    @Override
+    public void removeAllRolePurviewForRole(Integer roleId) {
+        if(roleId==null){
+            throw new MyWebException("操作失败：非法参数");
+        }
+        rolePurviewDao.deleteAllRolePurviewByPurviewId(roleId);
     }
 
     @Override

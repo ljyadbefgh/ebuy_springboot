@@ -57,7 +57,7 @@ public interface AdminRoleDao{
     /**
      * 一次插入多条记录：将账户和角色关系的多条记录同时插入
      * 说明：集合为空则不插入任何记录
-     * @param adminRoles 不能为Null，并且每个对象的adminId和roleId字段不能为空
+     * @param adminRoles 不能为Null
      * @return 返回插入的记录数
      */
     int saves(List<AdminRole> adminRoles);

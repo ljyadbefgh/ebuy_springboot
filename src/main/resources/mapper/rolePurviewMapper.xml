@@ -29,6 +29,22 @@
           values(null,#{role.id},#{purview.id},#{permissionIds},#{createTime})
     </insert>
 
+    <insert id="saves"  useGeneratedKeys="true" keyProperty="id">
+        <choose>
+            <when test="list.size()>0">
+                insert into role_purview(id,roleId,purviewId,permissionIds,createTime) values
+                <foreach collection="list" item="item" index="index" separator=",">
+                    (null,#{item.role.id},#{item.purview.id},#{item.permissionIds},#{item.createTime})
+                </foreach>
+            </when>
+            <otherwise>
+                <!--执行一个空的begin语句，否则如果是空的代码会报错-->
+                begin
+               /* ;end;*/
+            </otherwise>
+        </choose>
+    </insert>
+
     <update id="update" parameterType="Role">
         update role_purview
         <!--set标签可以剔除末尾的,-->
@@ -81,6 +97,11 @@
     <select id="getRolesByPurviewId"  resultType="Role">
         select role.* from role,role_purview where role.id=role_purview.roleId and purviewId=#{purviewId}
     </select>
+
+    <delete id="deleteAllRolePurviewByPurviewId" >
+        delete from role_purview where roleId=#{roleId}
+    </delete>
+
 
 
 

@@ -25,6 +25,14 @@ public interface IBaseDao<T>{
 	 * @return 1表示成功，0表示失败，>1表示数据库存在异常。并且会将插入后的主键值赋给对象t返回
 	 */
 	int save(T t);
+
+	/**
+	 * 一次插入多条记录：将账户和角色关系的多条记录同时插入
+	 * 说明：集合为空则不插入任何记录
+	 * @param list 不能为Null
+	 * @return 返回插入的记录数
+	 */
+	int saves(List<T> list);
 	
 	/**
 	 * 编辑指定记录

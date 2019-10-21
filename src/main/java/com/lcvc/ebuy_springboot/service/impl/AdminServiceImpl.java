@@ -42,13 +42,14 @@ public class AdminServiceImpl implements  AdminService,UserDetailsService{
     private AdminRoleDao adminRoleDao;
 
     /**
-     * 是否是超级管理员
+     * 是否是系统管理员
+     * 说明：系统管理员不允许删除
      * @param admin
      * @return true表示是超级管理员
      */
     private boolean isSystemAdmin(Admin admin){
         boolean result=false;
-        if(admin.getId()<0){
+        if(admin.getId()<=0){
             result=true;
         }
         return result;

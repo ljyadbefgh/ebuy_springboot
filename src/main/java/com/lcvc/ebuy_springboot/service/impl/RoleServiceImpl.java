@@ -31,12 +31,13 @@ public class RoleServiceImpl implements RoleService {
 
     /**
      * 是否是系统角色
+     * 说明：系统角色不允许删除
      * @param role
-     * @return true表示是超级管理员
+     * @return true表示是系统角色
      */
     private boolean isSystemRole(Role role){
         boolean result=false;
-        if(role.getId()<0){
+        if(role.getId()<=0){
             result=true;
         }
         return result;

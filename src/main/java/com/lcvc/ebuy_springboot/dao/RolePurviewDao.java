@@ -64,6 +64,13 @@ public interface RolePurviewDao extends IBaseDao<RolePurview>{
      */
     List<Role> getRolesByPurviewId(int purviewId);
 
+    /**
+     * 删除指定角色的所有权限关系
+     * @param roleId
+     * @return 删除的记录数
+     */
+    int deleteAllRolePurviewByPurviewId(int roleId);
+
 
 
 }

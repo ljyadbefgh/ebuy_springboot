@@ -111,22 +111,22 @@
 					var data = tableObject.data;//获取表格的所有数据对象
 					if(obj.type=="all"){//如果是点击的全选按钮
 						if(obj.checked){//如果是选中状态，则为账户添加所有角色
-							$.postRestful(WEBURL_API + "backstage/adminmanage/" + parent.rowId+"/adminRoleRelationManage", function(msg) {
+							$.postRestful(WEBURL_API + "backstage/rolemanage/" + parent.rowId+"/rolePurviewRelationManage", function(msg) {
 									if(msg.code == code_success) {			
 										layer.msg("成功赋予所有角色");							
 									}else{//如果关系添加失败
 										layer.msg(msg.msg);
 									} 
-									table.reload('admin_role_relation_table');//重新刷新表格数据
+									table.reload('role_purview_relation_table');//重新刷新表格数据
 							});
 						}else{//如果是点击的全部取消状态
-							$.deleteRestful(WEBURL_API + "backstage/adminmanage/" + parent.rowId+"/adminRoleRelationManage", function(msg) {
+							$.deleteRestful(WEBURL_API + "backstage/rolemanage/" + parent.rowId+"/rolePurviewRelationManage", function(msg) {
 									if(msg.code == code_success) {			
 										layer.msg("成功移除所有角色关系");							
 									}else{//如果关系添加失败
 										layer.msg(msg.msg);
 									} 
-									table.reload('admin_role_relation_table');//重新刷新表格数据
+									table.reload('role_purview_relation_table');//重新刷新表格数据
 							});
 						}
 					}else{//如果点击的是每一行的按钮

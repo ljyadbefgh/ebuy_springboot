@@ -26,10 +26,10 @@ public interface RolePurviewService {
 
 
     /**
-     * 为指定账户添加和指定角色的关系，并返回保存后的关系信息对象
+     * 为指定角色添加和指定权限的关系，并返回保存后的关系信息对象
      * 说明：
      * 1.同一个角色不能拥有相同的两个权限
-     * 2.在添加关系时会默认添加查询的操作权限
+     * 2.在添加关系时会附上默认的操作权限
      * @param roleId
      * @param purviewId
      * @return 返回插入后的关系信息（包含拥有的权限操作集合），null表示没有添加任何关系
@@ -38,11 +38,27 @@ public interface RolePurviewService {
 
 
     /**
-     * 为指定角色移除相应权限的关系
+     * 为指定角色批量移除相应权限的关系
      *@param roleId
-     * @param purviewId
+     * @param purviewsId
      */
-    void removeRolePurview(Integer roleId,Integer purviewId);
+    void removeRolePurview(Integer roleId,Integer purviewsId);
+
+    /**
+     * 为指定角色添加所有权限关系
+     * 说明：该方法不会重复添加该角色已有的角色关系
+     * 1.同一个角色不能拥有相同的两个权限
+     * 2.在添加关系时会附上默认的操作权限
+     * @param roleId
+     */
+    void addAllRolePurviewForRole(Integer roleId);
+
+    /**
+     * 移除指定角色的所有权限关系
+     * 说明：
+     * @param roleId
+     */
+    void removeAllRolePurviewForRole(Integer roleId);
 
     /**
      * 读取指定权限对应的所有角色集合

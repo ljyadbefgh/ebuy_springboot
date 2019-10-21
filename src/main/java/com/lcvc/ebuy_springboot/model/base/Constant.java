@@ -16,6 +16,10 @@ public class Constant {
     public static final String JSON_TOTAL="count";//用于分页，记录总数
 
 
+    /**
+     * 权限模块
+     */
+    public static final String DEFAULTPERMISSIONIDS="1";//默认的资源操作权限，可以写多个。1查询、2新增、3编辑、4删除
 
     /**
      * 文件上传配置
