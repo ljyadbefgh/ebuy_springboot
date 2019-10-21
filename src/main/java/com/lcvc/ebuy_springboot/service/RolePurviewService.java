@@ -68,6 +68,13 @@ public interface RolePurviewService {
     List<Role> getRolesByPurview(Integer purviewId);
 
     /**
+     * 读取指定权限对应的当前启用的所有角色集合
+     * @param purviewId
+     * @return 如果没有相应角色，则返回空集合
+     */
+    List<Role> getEnabledRolesByPurview(Integer purviewId);
+
+    /**
      * 获取指定的账户和角色关系的method方法集合
      * @param roleId
      * @param purviewId

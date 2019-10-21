@@ -56,9 +56,11 @@ public class AdminController {
 	@ApiOperation(value = "修改密码", notes = "修改密码")
 	@PatchMapping
 	public Map<String, Object> updateAdmin(@RequestBody @Validated AdminPasswordEditForm adminPasswordEditForm, HttpSession session) {
-		String username = ((Admin) session.getAttribute("admin")).getUsername();
+		//String username = ((Admin) session.getAttribute("admin")).getUsername();
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		Admin admin=(Admin)authentication.getPrincipal();
 		Map<String, Object> map = new HashMap<String, Object>();
-		adminService.updatePassword(username,adminPasswordEditForm.getPassword(),adminPasswordEditForm.getNewPass(),adminPasswordEditForm.getRePass());
+		adminService.updatePassword(admin.getUsername(),adminPasswordEditForm.getPassword(),adminPasswordEditForm.getNewPass(),adminPasswordEditForm.getRePass());
 		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
 		map.put(Constant.JSON_MESSAGE, "密码修改成功");
 		return map;

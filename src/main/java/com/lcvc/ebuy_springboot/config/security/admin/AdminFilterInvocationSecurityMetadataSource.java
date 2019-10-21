@@ -58,7 +58,7 @@ public class AdminFilterInvocationSecurityMetadataSource implements FilterInvoca
             if(antPathMatcher.match(purview.getUrl(),servletPath)){//如果访问的url符合权限规定的路径
                 boolean judge=false;//路径符合，还要判断请求该路径的方法是否符合。默认为false，不符合
                 //String[] methods=permissionService.getPermissionMethods("1234");
-                List<Role> roleList=rolePurviewService.getRolesByPurview(purview.getId());//获取拥有该权限的所有角色集合
+                List<Role> roleList=rolePurviewService.getEnabledRolesByPurview(purview.getId());//获取拥有该权限的所有角色集合
                 Iterator it=roleList.iterator();
                 while (it.hasNext()){
                     Role role=(Role)it.next();

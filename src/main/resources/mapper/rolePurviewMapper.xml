@@ -98,6 +98,12 @@
         select role.* from role,role_purview where role.id=role_purview.roleId and purviewId=#{purviewId}
     </select>
 
+    <select id="getEnabledRolesByPurview"  resultType="Role">
+        select role.* from role,role_purview where role.id=role_purview.roleId and purviewId=#{purviewId} and role.enabled=true
+    </select>
+
+
+
     <delete id="deleteAllRolePurviewByPurviewId" >
         delete from role_purview where roleId=#{roleId}
     </delete>

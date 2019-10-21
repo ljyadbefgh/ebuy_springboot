@@ -14,6 +14,12 @@ public interface RoleService {
      * @return
      */
     List<Role> getAllRoles();
+
+    /**
+     * 获取当前可用的所角色信息
+     * @return
+     */
+    List<Role> getAllEnabledRoles();
     /**
      * 分页查询角色集合
      */

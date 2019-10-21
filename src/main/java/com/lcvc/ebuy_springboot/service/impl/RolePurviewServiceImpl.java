@@ -229,6 +229,15 @@ public class RolePurviewServiceImpl implements RolePurviewService {
     }
 
     @Override
+    public List<Role> getEnabledRolesByPurview(Integer purviewId) {
+        List<Role> roles=new ArrayList<Role>();
+        if(purviewId!=null){
+            roles.addAll(rolePurviewDao.getEnabledRolesByPurview(purviewId));
+        }
+        return roles;
+    }
+
+    @Override
     public List<String> getRolePurviewPermissionMethods(Integer roleId, Integer purviewId) {
         if(roleId==null||purviewId==null){
             throw new MyWebException("操作失败：非法参数");

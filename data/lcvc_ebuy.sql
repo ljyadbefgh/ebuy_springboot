@@ -11,7 +11,7 @@
  Target Server Version : 80016
  File Encoding         : 65001
 
- Date: 19/10/2019 09:02:45
+ Date: 21/10/2019 11:48:53
 */
 
 SET NAMES utf8mb4;
@@ -34,9 +34,9 @@ CREATE TABLE `admin`  (
 -- ----------------------------
 -- Records of admin
 -- ----------------------------
-INSERT INTO `admin` VALUES (-99, 'admin', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '管理员', 1, '2013-08-23 15:33:01');
-INSERT INTO `admin` VALUES (1, 'user', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '演示账户', 1, '2013-08-23 15:33:01');
-INSERT INTO `admin` VALUES (18, 'vistor', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '观光管理员', 1, '2013-10-15 17:30:01');
+INSERT INTO `admin` VALUES (-99, 'admin', '-fe2nispc28dcddckd443jdmhnl8l9bjv', '管理员', 1, '2013-08-23 15:33:01');
+INSERT INTO `admin` VALUES (-1, 'user', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '演示账户', 1, '2013-08-23 15:33:01');
+INSERT INTO `admin` VALUES (0, 'vistor', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '观光管理员', 1, '2013-10-15 17:30:01');
 INSERT INTO `admin` VALUES (19, 'a75565', 'c605e6e35ed4c1c955a081a2980a7fa5', 'aaa', 1, '2013-10-15 17:30:27');
 INSERT INTO `admin` VALUES (23, 'a554523', 'e10adc3949ba59abbe56e057f20f883e', 'kkk1', 1, '2013-10-15 17:38:10');
 INSERT INTO `admin` VALUES (25, 'dfdsfsdf', 'e10adc3949ba59abbe56e057f20f883e', '665656', 1, '2013-10-15 17:38:34');
@@ -86,7 +86,7 @@ CREATE TABLE `admin_role`  (
   `roleId` int(11) NULL DEFAULT NULL COMMENT 'role主键',
   `createTime` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 99 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 100 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of admin_role
@@ -94,22 +94,15 @@ CREATE TABLE `admin_role`  (
 INSERT INTO `admin_role` VALUES (1, -99, -99, '2019-10-07 16:23:54');
 INSERT INTO `admin_role` VALUES (2, -99, -1, '2019-10-07 16:23:58');
 INSERT INTO `admin_role` VALUES (11, -99, 3, '2019-10-09 17:01:20');
-INSERT INTO `admin_role` VALUES (12, -99, 7, '2019-10-09 17:01:38');
-INSERT INTO `admin_role` VALUES (29, -99, 6, '2019-10-10 10:51:01');
 INSERT INTO `admin_role` VALUES (64, 19, -99, '2019-10-14 10:32:34');
 INSERT INTO `admin_role` VALUES (65, 19, 3, '2019-10-14 10:32:34');
 INSERT INTO `admin_role` VALUES (66, 19, -1, '2019-10-14 10:32:34');
-INSERT INTO `admin_role` VALUES (68, 19, 7, '2019-10-14 10:32:34');
-INSERT INTO `admin_role` VALUES (71, 23, 7, '2019-10-14 10:32:48');
-INSERT INTO `admin_role` VALUES (72, 42, 6, '2019-10-14 18:12:45');
-INSERT INTO `admin_role` VALUES (73, 42, 7, '2019-10-14 18:12:45');
 INSERT INTO `admin_role` VALUES (77, 31, -1, '2019-10-14 18:15:05');
 INSERT INTO `admin_role` VALUES (79, 42, -1, '2019-10-14 18:15:20');
 INSERT INTO `admin_role` VALUES (80, 25, 3, '2019-10-14 18:19:38');
 INSERT INTO `admin_role` VALUES (81, 31, 3, '2019-10-14 18:19:38');
-INSERT INTO `admin_role` VALUES (89, 96, 6, '2019-10-15 08:40:06');
-INSERT INTO `admin_role` VALUES (90, 96, 7, '2019-10-15 08:40:58');
-INSERT INTO `admin_role` VALUES (99, 1, -1, '2019-10-19 09:01:39');
+INSERT INTO `admin_role` VALUES (101, 0, 3, '2019-10-21 10:54:40');
+INSERT INTO `admin_role` VALUES (102, -1, -1, '2019-10-21 11:43:12');
 
 -- ----------------------------
 -- Table structure for customer
@@ -395,7 +388,7 @@ CREATE TABLE `producttype`  (
   `intro` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '栏目简介（富文本）',
   `orderNum` int(11) NULL DEFAULT 0 COMMENT '排序（默认0，规则由前台决定，一般排序为最大）',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 52 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 51 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of producttype
@@ -419,7 +412,7 @@ CREATE TABLE `purview`  (
   `enabled` bit(1) NULL DEFAULT NULL COMMENT '是否可用',
   `description` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '权限的描述',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 39 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 41 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of purview
@@ -431,7 +424,7 @@ INSERT INTO `purview` VALUES (33, '管理员管理', '/api/backstage/adminmanage
 INSERT INTO `purview` VALUES (34, '客户模块管理', '/api/backstage/customermanage/**', b'1', '');
 INSERT INTO `purview` VALUES (38, '产品类别模块', '/api/backstage/producttype/**', b'1', NULL);
 INSERT INTO `purview` VALUES (39, '产品模块', '/api/backstage/product/**', b'1', '');
-INSERT INTO `purview` VALUES (40, '富文本操作权限', '/api/backstage/ueditor/**', b'1', '');
+INSERT INTO `purview` VALUES (40, '富文本操作权限', '/api/backstage/ueditor/**', b'1', NULL);
 
 -- ----------------------------
 -- Table structure for role
@@ -443,6 +436,7 @@ CREATE TABLE `role`  (
   `nameZH` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '角色中文名称',
   `level` int(11) NULL DEFAULT NULL COMMENT '角色级别',
   `defaultRole` bit(1) NULL DEFAULT NULL COMMENT '是否为默认角色',
+  `enabled` bit(1) NULL DEFAULT NULL COMMENT '是否启用',
   `description` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '角色说明',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
@@ -450,11 +444,9 @@ CREATE TABLE `role`  (
 -- ----------------------------
 -- Records of role
 -- ----------------------------
-INSERT INTO `role` VALUES (-99, 'ROLE_admin', '系统管理员', -99, b'0', '系统自带管理员，最高权限');
-INSERT INTO `role` VALUES (-1, 'ROLE_user', '普通管理员', 20, b'1', '系统自带管理员，基本角色');
-INSERT INTO `role` VALUES (3, 'ROLE_visitor', '观光管理员', 100, b'0', '只拥有查询权限');
-INSERT INTO `role` VALUES (6, 'adfsd2', '史蒂文2', 1002, b'0', '123123');
-INSERT INTO `role` VALUES (7, 'adf', '撒旦法', 12312, b'0', 'sdsd');
+INSERT INTO `role` VALUES (-99, 'ROLE_admin', '系统管理员', -99, b'0', b'1', '系统自带管理员，最高权限');
+INSERT INTO `role` VALUES (-1, 'ROLE_user', '普通管理员', 20, b'1', b'1', '系统自带管理员，基本角色');
+INSERT INTO `role` VALUES (3, 'ROLE_visitor', '观光管理员', 100, b'0', b'1', '只拥有查询权限');
 
 -- ----------------------------
 -- Table structure for role_purview
@@ -467,7 +459,7 @@ CREATE TABLE `role_purview`  (
   `permissionIds` char(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '操作权限，非数据库外键，在业务层写死',
   `createTime` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 14 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 43 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of role_purview
@@ -495,5 +487,13 @@ INSERT INTO `role_purview` VALUES (39, 3, 39, '1', '2019-10-19 08:57:27');
 INSERT INTO `role_purview` VALUES (40, 3, 40, '1', '2019-10-19 08:57:28');
 INSERT INTO `role_purview` VALUES (41, -1, 30, '1', '2019-10-19 09:02:10');
 INSERT INTO `role_purview` VALUES (42, -1, 31, '1', '2019-10-19 09:02:10');
+INSERT INTO `role_purview` VALUES (51, 7, 30, '1', '2019-10-21 10:53:12');
+INSERT INTO `role_purview` VALUES (52, 7, 31, '1', '2019-10-21 10:53:12');
+INSERT INTO `role_purview` VALUES (54, 7, 33, '1', '2019-10-21 10:53:12');
+INSERT INTO `role_purview` VALUES (56, 7, 38, '1', '2019-10-21 10:53:12');
+INSERT INTO `role_purview` VALUES (57, 7, 39, '1', '2019-10-21 10:53:12');
+INSERT INTO `role_purview` VALUES (58, 7, 40, '1', '2019-10-21 10:53:12');
+INSERT INTO `role_purview` VALUES (59, 7, 32, '1', '2019-10-21 10:53:26');
+INSERT INTO `role_purview` VALUES (60, 7, 34, '1', '2019-10-21 10:53:26');
 
 SET FOREIGN_KEY_CHECKS = 1;

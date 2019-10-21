@@ -63,6 +63,18 @@
 							}
 						}
 						, {
+							field: 'role_enabled'
+							,title: '是否启用'
+							,templet:function(d){
+								if(d.role.enabled==true){
+									return '<span class="layui-icon layui-icon-ok-circle" style="color:green;">启用中</span>';
+						   	 	}else{
+									return '<span class="layui-icon layui-icon-close-fill" style="color:red;">未启用</span>';
+						   		}			
+								return d.role.level					   	
+							}
+						}
+						, {
 							field: 'createTime'
 							,sort: true
 							,title: '创建时间'

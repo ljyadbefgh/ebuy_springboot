@@ -7,6 +7,7 @@ import com.lcvc.ebuy_springboot.model.Role;
 import com.lcvc.ebuy_springboot.model.base.PageObject;
 import com.lcvc.ebuy_springboot.model.exception.MyServiceException;
 import com.lcvc.ebuy_springboot.model.exception.MyWebException;
+import com.lcvc.ebuy_springboot.model.query.RoleQuery;
 import com.lcvc.ebuy_springboot.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -49,6 +50,13 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
+    public List<Role> getAllEnabledRoles() {
+        RoleQuery roleQuery=new RoleQuery();
+        roleQuery.setEnabled(true);
+        return roleDao.readAll(roleQuery);
+    }
+
+    @Override
     public PageObject searchRoles(Integer page, Integer limit) {
         PageObject pageObject = new PageObject(limit,page,roleDao.querySize(null));
         pageObject.setList(roleDao.query(pageObject.getOffset(),pageObject.getLimit(),null));
@@ -76,6 +84,9 @@ public class RoleServiceImpl implements RoleService {
         }
         if(role.getDefaultRole()==null){//如果没有传递默认角色字段
             role.setDefaultRole(false);
+        }
+        if(role.getEnabled()==null){//如果没有传递是否启用字段
+            role.setEnabled(true);
         }
         roleDao.save(role);
     }

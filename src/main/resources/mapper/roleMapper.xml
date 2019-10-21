@@ -12,8 +12,8 @@
    <!-- useGeneratedKeys="true" 表示给主键设置自增长-->
     <!--keyProperty="id" 表示将自增长后的Id赋值给实体类中的id字段。-->
     <insert id="save" useGeneratedKeys="true" keyProperty="id">
-        insert into role(id,name,nameZH,level,defaultRole,description)
-        values(null,#{name},#{nameZH},#{level},#{defaultRole},#{description})
+        insert into role(id,name,nameZH,level,defaultRole,enabled,description)
+        values(null,#{name},#{nameZH},#{level},#{defaultRole},#{enabled},#{description})
     </insert>
 
     <update id="update" parameterType="Role">
@@ -24,6 +24,7 @@
             <if test="nameZH!=null and nameZH.length()>0">nameZH=#{nameZH},</if>
             <if test="level!=null">level=#{level},</if>
             <if test="defaultRole!=null">defaultRole=#{defaultRole},</if>
+            <if test="enabled!=null">enabled=#{enabled},</if>
             <if test="description!=null">description=#{description},</if>
         </set>
         where id=#{id}
@@ -42,7 +43,15 @@
 
 
     <select id="readAll" resultType="Role">
-        select * from role order by level asc
+        select * from role
+        <if test="objectQuery!=null">
+            <where>
+            <if test="objectQuery.enabled!=null">
+                and enabled=#{objectQuery.enabled}
+            </if>
+            </where>
+        </if>
+         order by level asc
     </select>
 
     <select id="total" resultType="int">

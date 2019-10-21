@@ -46,6 +46,12 @@
 					<input type="checkbox" name="defaultRole" value="true" lay-skin="switch" lay-text="是|否">
 				</div>
 		   </div>
+		   <div class="layui-form-item" pane="">
+				<label class="layui-form-label">是否启用</label>
+				<div class="layui-input-block">
+					<input type="checkbox" name="enabled" value="true" lay-skin="switch" lay-text="是|否">
+				</div>
+			</div>
 			<div class="layui-form-item layui-form-text">
 				<label class="layui-form-label">描述</label>
 				<div class="layui-input-block">
@@ -96,6 +102,10 @@
 					if (typeof(data.field.defaultRole) == "undefined"){//如果默认角色没有选择，则手动将其值设定为false
 						data.field.defaultRole=false;
 					}
+					if (typeof(data.field.enabled) == "undefined"){//如果启用状态没有选择，则手动将其值设定为false
+						data.field.enabled=false;
+					}
+					console.log(data);
 					$.postRestful(WEBURL_API+"backstage/rolemanage"
 						,JSON.stringify(data.field)
 						,function(msg){

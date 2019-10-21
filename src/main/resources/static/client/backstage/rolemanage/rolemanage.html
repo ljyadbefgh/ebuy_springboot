@@ -33,6 +33,11 @@
 			<input type="checkbox" id="defaultRole{{d.id}}" name="defaultRole" value="{{d.id}}" readOnly="" title="是" lay-filter="defaultRoleFilter" {{ d.defaultRole == true ? 'checked' : '' }}>
 		  </script>
 
+		  <script type="text/html" id="enabledSwitch">
+			<!-- 这里的 checked 的状态只是演示 -->
+			<input type="checkbox" id="enabled{{d.id}}" name="enabled" value="{{d.id}}" readOnly="" title="启用" lay-filter="enabledFilter" {{ d.enabled == true ? 'checked' : '' }}>
+		  </script>
+
 		<script>
 			var rowId;//获取行的信息，此处设置的目的是为了在打开账户编辑窗口时，将账户id传递给子窗口（注：如果不是前后端分离，可以直接通过url将参数传递过去,不需要单独处理）
 			layui.use('table', function() {
@@ -55,6 +60,7 @@
 						, {field: 'name',title: '角色英文名',sort: true}						
 						, {field: 'level',title: '级别',sort: true,edit: 'text'}
 						 ,{field: 'defaultRole',title: '默认角色', templet: '#defaultRoleSwitch'}
+						 ,{field: 'enabled',title: '是否启用', templet: '#enabledSwitch'}
 						, {field: 'description',title: '角色描述',sort: true,edit: 'text'}
 						, {field: 'adminNumber',sort: true,title: '管理账户数量'}
 						, {field: 'purviewNumber',sort: true,title: '权限数量'}
@@ -178,6 +184,26 @@
 							    defaultRoleId="defaultRole"+role.id;//获取复选框的id
 								var $defaultRoleCheckBox = $("input[id='"+defaultRoleId+"']");//获取指定的复选框对象
 								$defaultRoleCheckBox.prop("checked", !obj.elem.checked);//让复选框回到勾选前的状态
+								form.render('checkbox'); //刷新表单checkbox渲染，让重新赋值生效
+							}							
+							layer.msg(msg.msg);
+						}
+					);
+				});
+
+				//监听是否启用复选框的操作，如果变更，则直接将变更后的状态信息存入数据库
+				form.on('checkbox(enabledFilter)', function(obj){
+					var role ={//创建角色对象
+						id: this.value,
+						enabled:obj.elem.checked
+				   }; 
+				   $.putRestful(WEBURL_API+"backstage/rolemanage"
+						,JSON.stringify(role)
+						,function(msg){
+							if(msg.code!=code_success){//如果修改失败
+							    enabledId="enabled"+role.id;//获取复选框的id
+								var $enabledCheckBox = $("input[id='"+enabledId+"']");//获取指定的复选框对象
+								$enabledCheckBox.prop("checked", !obj.elem.checked);//让复选框回到勾选前的状态
 								form.render('checkbox'); //刷新表单checkbox渲染，让重新赋值生效
 							}							
 							layer.msg(msg.msg);

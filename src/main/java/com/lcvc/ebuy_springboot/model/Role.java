@@ -12,6 +12,7 @@ public class Role {
     private String nameZH;//角色中文名称
     private Integer level;//角色级别
     private String description;//角色说明
+    private Boolean enabled;//是否启用
     private Boolean defaultRole;//是否为默认角色，方便用户创建时的选择，如果是，则在创建账户时默认选择（也可自行取消）
 
     //非数据库字段
@@ -87,6 +88,14 @@ public class Role {
 
     public void setPurviewNumber(Integer purviewNumber) {
         this.purviewNumber = purviewNumber;
+    }
+
+    public Boolean getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
     }
 
     @Override
