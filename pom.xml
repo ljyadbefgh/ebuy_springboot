@@ -12,7 +12,8 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.1.8.RELEASE</version>
+		<!--<version>2.1.8.RELEASE</version>-->
+		<version>2.2.0.RELEASE</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 
@@ -34,6 +35,9 @@
 		<json-lib.version>2.4</json-lib.version>
 		<!--ueditor编辑器-->
 		<ueditor.version>1.4.3</ueditor.version>
+		<!--Oauth2版本-->
+		<oauth2.version>2.3.7.RELEASE</oauth2.version>
+
 
 
 
@@ -71,10 +75,23 @@
 			<artifactId>spring-boot-starter-aop</artifactId>
 		</dependency>
 
-		<!--需要spring security则加入，否则不需要-->
+		<!--需要spring security则加入，否则不需要。注意加入该配置后spring security会自动配置并生效，对整个项目请求进行拦截-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+
+		<!--需要OAuth授权认证则导入，用于token令牌登陆。本项目基于spring security使用-->
+		<dependency>
+			<groupId>org.springframework.security.oauth</groupId>
+			<artifactId>spring-security-oauth2</artifactId>
+			<version>${oauth2.version}</version>
+		</dependency>
+
+		<!--redis配置-->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-redis</artifactId>
 		</dependency>
 
 		<!--mysql驱动包-->
@@ -99,11 +116,7 @@
 			<optional>true</optional>
 		</dependency>
 
-		<!--redis配置-->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-redis</artifactId>
-		</dependency>
+
 
 		<!--添加thymeleaf支持的架构包，启用之后，默认跳转视图从static变为template-->
 		<dependency>

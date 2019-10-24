@@ -100,7 +100,8 @@
 		    function(msg){
 		    	if(msg.code==code_success){
 		    		var admin=msg.data;
-		    		$("#username").html(admin.name);
+                    $("#username").html(admin.name);
+                    sessionStorage.setItem("JSESSIONID",msg.JSESSIONID);//将客户端的session对象保存下来，只用于ueditor
 		    	}else{
 					layer.msg(msg.msg);
 				}				    	

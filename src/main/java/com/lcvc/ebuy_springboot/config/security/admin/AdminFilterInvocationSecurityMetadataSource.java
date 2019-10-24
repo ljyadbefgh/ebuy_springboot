@@ -35,7 +35,7 @@ public class AdminFilterInvocationSecurityMetadataSource implements FilterInvoca
        //add("/api/upload/**");
         //add("/api/shop/**");
         //add(" /api/backstage/ueditor");
-
+         add( "/oauth/**");//不拦截Oauth2的认证请求，注意不能放在web.ignoring()里面
     }};
 
     /**

@@ -47,7 +47,7 @@ public class AdminAccessDecisionManager implements AccessDecisionManager {
                 }
             }
         }
-        throw new AccessDeniedException("权限不足");
+        throw new AccessDeniedException("权限不足，请联系管理员");
     }
 
     @Override

@@ -4,7 +4,7 @@ import org.hibernate.validator.constraints.Length;
 
 import java.util.Objects;
 
-public class Role {
+public class Role implements java.io.Serializable{
     private Integer id;
     @Length(min = 2, max = 30, message = "角色英文名长度必须在 {min} - {max} 之间")
     private String name;//角色名称，采用spring security的命名规则

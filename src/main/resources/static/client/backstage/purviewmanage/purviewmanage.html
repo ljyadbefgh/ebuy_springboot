@@ -28,8 +28,7 @@
 		</script>
 
 		<script type="text/html" id="enabledSwitch">
-			<!-- 这里的 checked 的状态只是演示 -->
-			<input type="checkbox" id="enabled{{d.id}}" name="enabled" value="{{d.id}}" readOnly="" title="启用" lay-filter="enabledFilter" {{ d.enabled == true ? 'checked' : '' }}>
+			<input type="checkbox" id="enabled{{d.id}}" name="enabled" value="{{d.id}}"  readOnly="" title="启用" lay-filter="enabledFilter" {{ d.enabled == true ? 'checked' : '' }}>
 		  </script>
 
 		<script>

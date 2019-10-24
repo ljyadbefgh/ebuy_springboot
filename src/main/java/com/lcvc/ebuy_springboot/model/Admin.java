@@ -18,7 +18,8 @@ import java.util.List;
  * 管理账户
  * 说明：UserDetails为spring security的专属方法
  */
-public class Admin implements UserDetails{
+public class Admin implements UserDetails {
+	private static final long serialVersionUID = 5952689219411916553L;
 
 	private Integer id;
 

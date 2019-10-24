@@ -11,7 +11,9 @@ import io.swagger.annotations.ApiOperation;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,8 +39,11 @@ public class AdminController {
 		Map<String, Object> map=new HashMap<String, Object>();
 		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
 		//map.put(Constant.JSON_DATA,session.getAttribute("admin"));
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		//Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		SecurityContext securityContext = (SecurityContext) session.getAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY);
+		Authentication authentication = securityContext.getAuthentication();
 		map.put(Constant.JSON_DATA,authentication.getPrincipal());
+		map.put("JSESSIONID",session.getId());//将sessionId传给客户端，这里是为了解决ueditor手动传递的问题
 		return map;
 	}
 

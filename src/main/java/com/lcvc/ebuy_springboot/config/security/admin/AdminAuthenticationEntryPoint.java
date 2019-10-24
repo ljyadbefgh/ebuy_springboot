@@ -17,7 +17,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 处理后台匿名用户访问无权限资源时的异常
+ * 处理后台匿名用户访问无权限资源时的异常。
+ * 在验证登陆状态失败时会发生
  * AuthenticationEntryPoint：该异常类实现了很多子类，概括来说都是身份校验问题。
  * AuthenticationException子实现
  * UsernameNotFoundException：用户名未找到。
@@ -43,6 +44,7 @@ public class AdminAuthenticationEntryPoint implements AuthenticationEntryPoint {
         map.put(Constant.JSON_CODE, JsonCode.ERROR.getValue());
         if(authException instanceof InsufficientAuthenticationException){//认证信息不足异常，例如登陆信息已经失效（session不存在该值）
             map.put(Constant.JSON_MESSAGE, "请先登陆");
+            map.put("state","请先登陆");//专门为ueditor写的返回信息，如果不需要可以去掉该行
         }
 
         response.setContentType("application/json;charset=UTF-8");

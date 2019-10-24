@@ -30,21 +30,30 @@ public class AdminAuthenticationFailureHandler implements AuthenticationFailureH
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException e) throws IOException, ServletException {
         Map<String, Object> map=new HashMap<String, Object>();
         map.put(Constant.JSON_CODE, JsonCode.ERROR.getValue());
+        String message=null;
         if(e instanceof UsernameNotFoundException){
+            message="登录失败：账户名不存在";
             map.put(Constant.JSON_MESSAGE, "登录失败：账户名不存在");
         }else  if(e instanceof BadCredentialsException){
+            message="登录失败：账户名不存在";
             map.put(Constant.JSON_MESSAGE, "登录失败：密码错误");
         }else if(e instanceof CredentialsExpiredException){
+            message="录失败：密码已过期";
             map.put(Constant.JSON_MESSAGE, "登录失败：密码已过期");
         }else if(e instanceof LockedException){
+            message="登录失败：账户被锁定";
             map.put(Constant.JSON_MESSAGE, "登录失败：账户被锁定");
         }else if(e instanceof DisabledException){
+            message="登录失败：账户被禁用";
             map.put(Constant.JSON_MESSAGE, "登录失败：账户被禁用");
         }else if(e instanceof AccountExpiredException){
+            message="登录失败：账户已过期";
             map.put(Constant.JSON_MESSAGE, "登录失败：账户已过期");
         }else{
-            map.put(Constant.JSON_MESSAGE, "登录失败：未知异常："+e.getMessage());
+            message="登录失败：未知异常："+e.getMessage();
         }
+        map.put(Constant.JSON_MESSAGE, message);//正常返回信息
+        map.put("state",message);//专门为ueditor写的返回信息，如果不需要可以去掉该行
         response.setContentType("application/json;charset=UTF-8");
         response.getWriter().write(objectMapper.writeValueAsString(map));
     }

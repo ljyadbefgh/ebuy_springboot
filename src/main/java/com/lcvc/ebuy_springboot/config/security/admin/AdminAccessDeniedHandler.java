@@ -32,7 +32,8 @@ public class AdminAccessDeniedHandler implements AccessDeniedHandler {
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException e) throws IOException, ServletException {
         Map<String, Object> map=new HashMap<String, Object>();
         map.put(Constant.JSON_CODE, JsonCode.ERROR.getValue());
-        map.put(Constant.JSON_MESSAGE, "没有相关权限");
+        map.put(Constant.JSON_MESSAGE, "没有相关权限，请联系管理员");
+        map.put("state","没有相关权限，请联系管理员");//专门为ueditor写的返回信息，如果不需要可以去掉该行
         response.setContentType("application/json;charset=UTF-8");
         response.getWriter().write(objectMapper.writeValueAsString(map));
     }

@@ -1,7 +1,6 @@
 package com.lcvc.ebuy_springboot.config.security.admin;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.lcvc.ebuy_springboot.model.Admin;
 import com.lcvc.ebuy_springboot.model.base.Constant;
 import com.lcvc.ebuy_springboot.model.base.JsonCode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +25,8 @@ public class AdminAuthenticationSuccessHandler implements AuthenticationSuccessH
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
-        Admin admin = (Admin) authentication.getPrincipal();
-        System.out.println("管理员 " + admin.getUsername() + " 登录");
+        //Admin admin = (Admin) authentication.getPrincipal();
+        //System.out.println("管理员 " + admin.getUsername() + " 登录");
         Map<String, Object> map=new HashMap<String, Object>();
         map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
         response.setContentType("application/json;charset=UTF-8");
