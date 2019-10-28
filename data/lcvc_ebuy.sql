@@ -11,7 +11,7 @@
  Target Server Version : 80016
  File Encoding         : 65001
 
- Date: 24/10/2019 20:43:15
+ Date: 28/10/2019 20:56:17
 */
 
 SET NAMES utf8mb4;
@@ -27,6 +27,7 @@ CREATE TABLE `admin`  (
   `password` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '用户密码',
   `name` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '网名',
   `sex` int(11) NULL DEFAULT NULL COMMENT '性别（1表示男，2表示女）',
+  `unLocked` bit(1) NULL DEFAULT NULL COMMENT '账户是否没有锁定，true表示没有锁定',
   `createTime` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 97 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
@@ -34,47 +35,47 @@ CREATE TABLE `admin`  (
 -- ----------------------------
 -- Records of admin
 -- ----------------------------
-INSERT INTO `admin` VALUES (-99, 'admin', '-fe2nispc28dcddckd443jdmhnl8l9bjv', '管理员', 1, '2013-08-23 15:33:01');
-INSERT INTO `admin` VALUES (-1, 'user', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '演示账户', 1, '2013-08-23 15:33:01');
-INSERT INTO `admin` VALUES (0, 'vistor', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '观光管理员', 1, '2013-10-15 17:30:01');
-INSERT INTO `admin` VALUES (19, 'student', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '学生', 1, '2013-10-15 17:30:27');
-INSERT INTO `admin` VALUES (23, 'a554523', 'e10adc3949ba59abbe56e057f20f883e', 'kkk1', 1, '2013-10-15 17:38:10');
-INSERT INTO `admin` VALUES (25, 'dfdsfsdf', 'e10adc3949ba59abbe56e057f20f883e', '665656', 1, '2013-10-15 17:38:34');
-INSERT INTO `admin` VALUES (31, '67457464', 'e10adc3949ba59abbe56e057f20f883e', '6464565', 1, '2013-10-15 17:39:50');
-INSERT INTO `admin` VALUES (42, '1213df', 'e10adc3949ba59abbe56e057f20f883e', '85445', 1, '2013-10-16 09:14:26');
-INSERT INTO `admin` VALUES (46, '4343asdf', 'e10adc3949ba59abbe56e057f20f883e', '3434', 2, '2013-10-16 11:55:55');
-INSERT INTO `admin` VALUES (49, '888er12', 'e10adc3949ba59abbe56e057f20f883e', '999', 1, '2013-10-16 17:50:51');
-INSERT INTO `admin` VALUES (51, 'asdfed', 'e10adc3949ba59abbe56e057f20f883e', '123123', 1, '2013-10-17 09:46:24');
-INSERT INTO `admin` VALUES (52, 'chenru', 'e10adc3949ba59abbe56e057f20f883e', '测试管理员-陈儒', 2, '2013-10-17 13:48:37');
-INSERT INTO `admin` VALUES (53, 'asdfasd', 'e10adc3949ba59abbe56e057f20f883e', '阿萨德发', 1, '2013-10-18 09:21:34');
-INSERT INTO `admin` VALUES (54, '1231231', 'e10adc3949ba59abbe56e057f20f883e', '撒旦法', 1, '2013-10-18 09:21:41');
-INSERT INTO `admin` VALUES (55, 'asdfsd', 'e10adc3949ba59abbe56e057f20f883e', 'sfasdfwe', 2, '2013-10-18 09:24:23');
-INSERT INTO `admin` VALUES (57, '123123', 'e10adc3949ba59abbe56e057f20f883e', '阿是否大是大非', 1, '2013-10-18 09:24:36');
-INSERT INTO `admin` VALUES (59, '131adfad', 'e10adc3949ba59abbe56e057f20f883e', '试点范围非', 1, '2013-10-18 09:24:51');
-INSERT INTO `admin` VALUES (60, 'adadfad', 'e10adc3949ba59abbe56e057f20f883e', '斯蒂芬', 1, '2013-10-18 09:25:00');
-INSERT INTO `admin` VALUES (61, '123adf', 'e10adc3949ba59abbe56e057f20f883e', '阿萨德发12', 2, '2013-10-18 09:25:08');
-INSERT INTO `admin` VALUES (62, 'asdfaf', 'e10adc3949ba59abbe56e057f20f883e', '阿萨德发顺丰', 1, '2013-10-18 09:25:14');
-INSERT INTO `admin` VALUES (63, 'asdfasf', 'e10adc3949ba59abbe56e057f20f883e', '阿萨德发1', 1, '2013-10-18 09:25:22');
-INSERT INTO `admin` VALUES (64, 'asdfadf', 'e10adc3949ba59abbe56e057f20f883e', '删除账户1', 1, '2013-10-18 09:31:35');
-INSERT INTO `admin` VALUES (65, 'adfawef', 'e10adc3949ba59abbe56e057f20f883e', '删除账户2', 2, '2013-10-18 09:31:52');
-INSERT INTO `admin` VALUES (66, 'asdfasdf', 'e10adc3949ba59abbe56e057f20f883e', '删除账户3', 1, '2013-10-18 09:31:58');
-INSERT INTO `admin` VALUES (67, '测试删除账户', 'e10adc3949ba59abbe56e057f20f883e', '删除帐号4', 1, '2013-10-18 09:34:10');
-INSERT INTO `admin` VALUES (68, '测试删除账户5', 'e10adc3949ba59abbe56e057f20f883e', '删除账户5', 1, '2013-10-18 09:35:10');
-INSERT INTO `admin` VALUES (69, '测试删除账户6', 'e10adc3949ba59abbe56e057f20f883e', '删除账户6', 1, '2013-10-18 09:36:34');
-INSERT INTO `admin` VALUES (70, '12asdfsdfa', 'e10adc3949ba59abbe56e057f20f883e', 'sadfasdf', 2, '2013-10-18 09:43:32');
-INSERT INTO `admin` VALUES (71, 'aaaaa123', 'e10adc3949ba59abbe56e057f20f883e', 'asdfasdfa', 1, '2013-10-19 15:03:41');
-INSERT INTO `admin` VALUES (75, 'chengru', 'e10adc3949ba59abbe56e057f20f883e', '测试账户-陈儒', 1, '2013-10-22 13:58:49');
-INSERT INTO `admin` VALUES (76, 'test1', '123456', '测试账号1', 1, '2017-08-25 20:32:21');
-INSERT INTO `admin` VALUES (77, 'test2', '123456', '测试账户2', 2, '2017-08-25 20:43:15');
-INSERT INTO `admin` VALUES (78, 'tes3', '123456', '阿道夫', 2, '2017-08-25 20:45:23');
-INSERT INTO `admin` VALUES (79, 'test4', '123456', '撒旦法', 1, '2017-08-25 20:45:32');
-INSERT INTO `admin` VALUES (80, 'adfadfadf', '123456', '第三方', 1, NULL);
-INSERT INTO `admin` VALUES (81, 'adfadfadf1', '123456', '第三方', 2, NULL);
-INSERT INTO `admin` VALUES (82, 'ljyadbefgh1', '123456', '洪洪', 2, NULL);
-INSERT INTO `admin` VALUES (86, 'ljy', 'string', 'string', 0, '2019-08-05 23:24:04');
-INSERT INTO `admin` VALUES (89, 'ljy3', '111111', '张三', 1, '2019-09-01 16:13:43');
-INSERT INTO `admin` VALUES (95, 'user9', '13', '小红', 1, NULL);
-INSERT INTO `admin` VALUES (96, 'adfds', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '撒旦法', 2, '2019-10-15 08:40:06');
+INSERT INTO `admin` VALUES (-99, 'admin', '-fe2nispc28dcddckd443jdmhnl8l9bjv', '管理员', 2, b'1', '2013-08-23 15:33:01');
+INSERT INTO `admin` VALUES (-1, 'user', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '演示账户', 1, b'1', '2013-08-23 15:33:01');
+INSERT INTO `admin` VALUES (0, 'vistor', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '观光管理员', 1, b'0', '2013-10-15 17:30:01');
+INSERT INTO `admin` VALUES (19, 'student', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '学生', 1, b'1', '2013-10-15 17:30:27');
+INSERT INTO `admin` VALUES (23, 'a554523', 'e10adc3949ba59abbe56e057f20f883e', 'kkk1', 1, b'1', '2013-10-15 17:38:10');
+INSERT INTO `admin` VALUES (25, 'dfdsfsdf', 'e10adc3949ba59abbe56e057f20f883e', '665656', 1, b'1', '2013-10-15 17:38:34');
+INSERT INTO `admin` VALUES (31, '67457464', 'e10adc3949ba59abbe56e057f20f883e', '6464565', 1, b'1', '2013-10-15 17:39:50');
+INSERT INTO `admin` VALUES (42, '1213df', 'e10adc3949ba59abbe56e057f20f883e', '85445', 1, b'1', '2013-10-16 09:14:26');
+INSERT INTO `admin` VALUES (46, '4343asdf', 'e10adc3949ba59abbe56e057f20f883e', '3434', 2, b'1', '2013-10-16 11:55:55');
+INSERT INTO `admin` VALUES (49, '888er12', 'e10adc3949ba59abbe56e057f20f883e', '999', 1, b'1', '2013-10-16 17:50:51');
+INSERT INTO `admin` VALUES (51, 'asdfed', 'e10adc3949ba59abbe56e057f20f883e', '123123', 1, b'1', '2013-10-17 09:46:24');
+INSERT INTO `admin` VALUES (52, 'chenru', 'e10adc3949ba59abbe56e057f20f883e', '测试管理员-陈儒', 2, b'1', '2013-10-17 13:48:37');
+INSERT INTO `admin` VALUES (53, 'asdfasd', 'e10adc3949ba59abbe56e057f20f883e', '阿萨德发', 1, b'1', '2013-10-18 09:21:34');
+INSERT INTO `admin` VALUES (54, '1231231', 'e10adc3949ba59abbe56e057f20f883e', '撒旦法', 1, b'1', '2013-10-18 09:21:41');
+INSERT INTO `admin` VALUES (55, 'asdfsd', 'e10adc3949ba59abbe56e057f20f883e', 'sfasdfwe', 2, b'1', '2013-10-18 09:24:23');
+INSERT INTO `admin` VALUES (57, '123123', 'e10adc3949ba59abbe56e057f20f883e', '阿是否大是大非', 1, b'1', '2013-10-18 09:24:36');
+INSERT INTO `admin` VALUES (59, '131adfad', 'e10adc3949ba59abbe56e057f20f883e', '试点范围非', 1, b'1', '2013-10-18 09:24:51');
+INSERT INTO `admin` VALUES (60, 'adadfad', 'e10adc3949ba59abbe56e057f20f883e', '斯蒂芬', 1, b'1', '2013-10-18 09:25:00');
+INSERT INTO `admin` VALUES (61, '123adf', 'e10adc3949ba59abbe56e057f20f883e', '阿萨德发12', 2, b'1', '2013-10-18 09:25:08');
+INSERT INTO `admin` VALUES (62, 'asdfaf', 'e10adc3949ba59abbe56e057f20f883e', '阿萨德发顺丰', 1, b'1', '2013-10-18 09:25:14');
+INSERT INTO `admin` VALUES (63, 'asdfasf', 'e10adc3949ba59abbe56e057f20f883e', '阿萨德发1', 1, b'1', '2013-10-18 09:25:22');
+INSERT INTO `admin` VALUES (64, 'asdfadf', 'e10adc3949ba59abbe56e057f20f883e', '删除账户1', 1, b'1', '2013-10-18 09:31:35');
+INSERT INTO `admin` VALUES (65, 'adfawef', 'e10adc3949ba59abbe56e057f20f883e', '删除账户2', 2, b'1', '2013-10-18 09:31:52');
+INSERT INTO `admin` VALUES (66, 'asdfasdf', 'e10adc3949ba59abbe56e057f20f883e', '删除账户3', 1, b'1', '2013-10-18 09:31:58');
+INSERT INTO `admin` VALUES (67, '测试删除账户', 'e10adc3949ba59abbe56e057f20f883e', '删除帐号4', 1, b'1', '2013-10-18 09:34:10');
+INSERT INTO `admin` VALUES (68, '测试删除账户5', 'e10adc3949ba59abbe56e057f20f883e', '删除账户5', 1, b'1', '2013-10-18 09:35:10');
+INSERT INTO `admin` VALUES (69, '测试删除账户6', 'e10adc3949ba59abbe56e057f20f883e', '删除账户6', 1, b'1', '2013-10-18 09:36:34');
+INSERT INTO `admin` VALUES (70, '12asdfsdfa', 'e10adc3949ba59abbe56e057f20f883e', 'sadfasdf', 2, b'1', '2013-10-18 09:43:32');
+INSERT INTO `admin` VALUES (71, 'aaaaa123', 'e10adc3949ba59abbe56e057f20f883e', 'asdfasdfa', 1, b'1', '2013-10-19 15:03:41');
+INSERT INTO `admin` VALUES (75, 'chengru', 'e10adc3949ba59abbe56e057f20f883e', '测试账户-陈儒', 1, b'1', '2013-10-22 13:58:49');
+INSERT INTO `admin` VALUES (76, 'test1', '123456', '测试账号1', 1, b'1', '2017-08-25 20:32:21');
+INSERT INTO `admin` VALUES (77, 'test2', '123456', '测试账户2', 2, b'1', '2017-08-25 20:43:15');
+INSERT INTO `admin` VALUES (78, 'tes3', '123456', '阿道夫', 2, b'1', '2017-08-25 20:45:23');
+INSERT INTO `admin` VALUES (79, 'test4', '123456', '撒旦法', 1, b'1', '2017-08-25 20:45:32');
+INSERT INTO `admin` VALUES (80, 'adfadfadf', '123456', '第三方', 1, b'1', NULL);
+INSERT INTO `admin` VALUES (81, 'adfadfadf1', '123456', '第三方', 2, b'1', NULL);
+INSERT INTO `admin` VALUES (82, 'ljyadbefgh1', '123456', '洪洪', 2, b'1', NULL);
+INSERT INTO `admin` VALUES (86, 'ljy', 'string', 'string', 0, b'1', '2019-08-05 23:24:04');
+INSERT INTO `admin` VALUES (89, 'ljy3', '111111', '张三', 1, b'1', '2019-09-01 16:13:43');
+INSERT INTO `admin` VALUES (95, 'user9', '13', '小红', 1, b'1', NULL);
+INSERT INTO `admin` VALUES (96, 'adfds', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '撒旦法', 2, b'1', '2019-10-15 08:40:06');
 
 -- ----------------------------
 -- Table structure for admin_role
@@ -86,7 +87,7 @@ CREATE TABLE `admin_role`  (
   `roleId` int(11) NULL DEFAULT NULL COMMENT 'role主键',
   `createTime` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 103 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 109 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of admin_role
@@ -98,7 +99,7 @@ INSERT INTO `admin_role` VALUES (80, 25, 3, '2019-10-14 18:19:38');
 INSERT INTO `admin_role` VALUES (81, 31, 3, '2019-10-14 18:19:38');
 INSERT INTO `admin_role` VALUES (101, 0, 3, '2019-10-21 10:54:40');
 INSERT INTO `admin_role` VALUES (104, 19, 12, '2019-10-24 20:19:57');
-INSERT INTO `admin_role` VALUES (107, -1, 12, '2019-10-24 20:41:58');
+INSERT INTO `admin_role` VALUES (109, -1, -1, '2019-10-28 11:55:09');
 
 -- ----------------------------
 -- Table structure for customer
@@ -118,7 +119,7 @@ CREATE TABLE `customer`  (
   `intro` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '客户信息备注，简介',
   `createTime` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 28 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 54 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of customer
@@ -140,6 +141,32 @@ INSERT INTO `customer` VALUES (23, 'abc11', '123141421', 'abc客户11', 1, '1335
 INSERT INTO `customer` VALUES (25, 'user1', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '张三', 1, '17376108213', '', '', '', '', '', '2019-08-31 15:11:15');
 INSERT INTO `customer` VALUES (26, 'sdf', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '123', 1, '', '', '', '', NULL, '', '2019-08-31 18:30:05');
 INSERT INTO `customer` VALUES (27, '123a', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '12', 2, '', '', '', '', NULL, '', '2019-08-31 18:30:19');
+INSERT INTO `customer` VALUES (28, 'zhangsan', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '张三丰', 1, '13633083200', '柳州城市职业学院', '000000', '89287689@qq.com', '', '张三丰简介', '2019-10-25 09:04:29');
+INSERT INTO `customer` VALUES (29, 'LiuFeng', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '你的名字', 1, '18775207581', '柳州城市职业学院7栋', '545003', '2508507565@qq.com', '29.jpg', '没有任何生气', '2019-10-25 09:08:18');
+INSERT INTO `customer` VALUES (30, 'zhangwuji', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '张无忌', 1, '18844528478', '广西陆川', '537700', '452555878@qq.com', '30.jpg', '张无忌简介', '2019-10-25 09:08:47');
+INSERT INTO `customer` VALUES (31, 'saber', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '阿尔托利亚·潘德拉贡', 1, '14795309399', '大不列颠帝国', '666666', '666666666@qq.com', '31.jpg', '亚瑟王', '2019-10-25 09:08:47');
+INSERT INTO `customer` VALUES (32, 'chs', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '岑辉山', 1, '13087726397', '柳州城市职业学院', '047300', '2827824808@qq.com', '', '我是最帅的，最牛B的。完美。', '2019-10-25 09:08:57');
+INSERT INTO `customer` VALUES (33, 'lys', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '阿沙姐姐丶', 2, '18174918911', '西伯利亚', '547200', '1367541027@qq.com', '33.jpg', '你号没了', '2019-10-25 09:09:06');
+INSERT INTO `customer` VALUES (34, 'mohuiyong', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '勇哥', 1, '18078764223', '柳州城市职业学院', '202020', '2273838703@qq.com', NULL, '不差钱', '2019-10-25 09:09:24');
+INSERT INTO `customer` VALUES (35, 'yuan', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '芙蓉姐', 2, '17888993366', '柳城职9栋519', '000000', '54586384@qq.com', '35.jpg', '', '2019-10-25 09:09:28');
+INSERT INTO `customer` VALUES (36, 'htl', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '灰娘娘', 1, '18254567891', '青青草原', '000000', '456789@qq.com', '36.jpg', '', '2019-10-25 09:10:11');
+INSERT INTO `customer` VALUES (37, 'xiaoxiao', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '小小', 2, '17677253547', '柳州市官塘大道柳州城市职业学院', '000000', '37645238374@qq.com', '37.jpg', '我是一名学生', '2019-10-25 09:10:16');
+INSERT INTO `customer` VALUES (38, 'yongge', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '勇哥', 1, '18648841344', '柳州城市职业学院', '000000', '1120449400@qq.com', NULL, '问怅茫大地谁主沉浮', '2019-10-25 09:10:33');
+INSERT INTO `customer` VALUES (39, 'uuiu', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '邓一封', 2, '15468951235', '北京市朝阳区', '545933', 'shun12032@qq.com', NULL, '我是小邋遢的后人', '2019-10-25 09:10:34');
+INSERT INTO `customer` VALUES (40, 'lixian', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '李小', 1, '13640516155', '柳州城市职业技术学院', '000000', '3122500251@qq.com', NULL, '李小的简介', '2019-10-25 09:10:41');
+INSERT INTO `customer` VALUES (41, 'ywc', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '嘟嘟', 1, '17377235562', '广西柳州', '545107', '', NULL, '.................', '2019-10-25 09:11:02');
+INSERT INTO `customer` VALUES (42, 'LiXuan', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '林轩', 1, '15151788955', '新疆维吾尔自治区满斗村', '545597', '554466@qq.com', '42.jpg', '呜呜呜呜无无无无无无无', '2019-10-25 09:11:11');
+INSERT INTO `customer` VALUES (43, 'wsy', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '王守义', 1, '13737664103', '石家庄', '000000', '13737664103@136.com', '43.jpg', '王守义说你13香', '2019-10-25 09:11:11');
+INSERT INTO `customer` VALUES (44, '打打3', 'fh58q2ea6thauof5ikg98fe2ciafh50r', 'ad', 1, '13677533336', '', '', '', NULL, '', '2019-10-25 09:11:14');
+INSERT INTO `customer` VALUES (45, 'lll', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '李丽莉', 2, '13877690264', '柳州城市职业学院', '000000', '13877690264@qq.com', '45.jpg', '李丽莉', '2019-10-25 09:11:17');
+INSERT INTO `customer` VALUES (46, 'uiiu', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '邓一封', 2, '15648544696', '北京市朝阳区', '548766', '', NULL, '', '2019-10-25 09:11:35');
+INSERT INTO `customer` VALUES (47, 'Sakura', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '憨憨', 1, '15578568273', '柳州城市职业学院', '000000', '754358745@qq.com', NULL, '不关粥粥的事喔', '2019-10-25 09:11:42');
+INSERT INTO `customer` VALUES (48, 'amgg', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '啊毛', 1, '17677430458', '柳州城市职业学院', '124587', '1175345922@qq.com', '48.jpg', '叫我靓仔。', '2019-10-25 09:11:50');
+INSERT INTO `customer` VALUES (49, 'xiaomi', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '白云', 1, '18277589582', '柳州城市职业学院', '537400', '2287088066@qq.com', '49.jpg', '这个人很懒,什么也没有说。', '2019-10-25 09:12:11');
+INSERT INTO `customer` VALUES (50, 'zjl', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '周杰伦', 1, '13633088047', '柳州城市职业学院', '545005', '529550987@qq.com', '50.jpg', '歌手', '2019-10-25 09:12:33');
+INSERT INTO `customer` VALUES (51, 'yyqx', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '易燃', 1, '18520001128', '北京市昌平区回龙观镇北清路', '', '', NULL, '', '2019-10-25 09:12:34');
+INSERT INTO `customer` VALUES (52, 'asd', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '小二', 2, '17777777777', '外太空', '545000', '8888@qq.com', NULL, '简介', '2019-10-25 09:13:06');
+INSERT INTO `customer` VALUES (53, 'xiaoma', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '马化腾', 1, '15678078888', '柳州市恒大小区', '545000', 'xiaoma@qq.com', '53.jpg', '鹅厂搬运工', '2019-10-25 09:14:03');
 
 -- ----------------------------
 -- Table structure for menu
@@ -395,7 +422,6 @@ INSERT INTO `producttype` VALUES (46, '西餐', '', '46.jpg', '西餐，顾名�
 INSERT INTO `producttype` VALUES (47, '烧烤', '', '47.png', '烧烤，可能是人类最原始的烹调方式，是以燃料加热和干燥空气，并把食物放置于热干空气中一个比较接近热源的位置来加热食物。一般来说，烧烤是在火上将食物（多为肉类，海鲜，蔬菜）烤熟，烹调至可食用；现代社会，由于人类发明了多种用火方式，烧烤方式也逐渐多样化，发展出各式烧烤炉、烧烤架、烧烤酱等烧烤用品。', NULL, 20);
 INSERT INTO `producttype` VALUES (48, '海鲜', '', '48.jpg', '海鲜（hoisin），又称海产食物，包括了鱼类、虾类、贝类这些海产等。虽然海带这类海洋生物也常是被料理成食物，但是海鲜主要还是针对动物制成的料理为主。', NULL, 20);
 INSERT INTO `producttype` VALUES (49, '靓汤', '', '49.jpg', '', NULL, 100);
-INSERT INTO `producttype` VALUES (50, 'adsfq', '', NULL, '', NULL, 100);
 
 -- ----------------------------
 -- Table structure for purview
@@ -435,7 +461,7 @@ CREATE TABLE `role`  (
   `enabled` bit(1) NULL DEFAULT NULL COMMENT '是否启用',
   `description` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '角色说明',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 12 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 13 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of role
@@ -456,7 +482,7 @@ CREATE TABLE `role_purview`  (
   `permissionIds` char(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '操作权限，非数据库外键，在业务层写死',
   `createTime` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 61 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 71 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of role_purview
@@ -469,7 +495,7 @@ INSERT INTO `role_purview` VALUES (9, -99, 33, '1234', '2019-10-17 16:21:04');
 INSERT INTO `role_purview` VALUES (11, -99, 38, '1234', '2019-10-17 18:46:14');
 INSERT INTO `role_purview` VALUES (15, 3, 30, '1', '2019-10-19 01:36:02');
 INSERT INTO `role_purview` VALUES (25, -1, 34, '1234', '2019-10-19 08:11:25');
-INSERT INTO `role_purview` VALUES (26, -1, 38, '1234', '2019-10-19 08:12:10');
+INSERT INTO `role_purview` VALUES (26, -1, 38, '2341', '2019-10-19 08:12:10');
 INSERT INTO `role_purview` VALUES (27, -1, 33, '1234', '2019-10-19 08:12:58');
 INSERT INTO `role_purview` VALUES (30, -1, 32, '13', '2019-10-19 08:24:01');
 INSERT INTO `role_purview` VALUES (31, 3, 31, '1', '2019-10-19 08:26:02');
@@ -491,8 +517,8 @@ INSERT INTO `role_purview` VALUES (57, 7, 39, '1', '2019-10-21 10:53:12');
 INSERT INTO `role_purview` VALUES (58, 7, 40, '1', '2019-10-21 10:53:12');
 INSERT INTO `role_purview` VALUES (59, 7, 32, '1', '2019-10-21 10:53:26');
 INSERT INTO `role_purview` VALUES (60, 7, 34, '1', '2019-10-21 10:53:26');
-INSERT INTO `role_purview` VALUES (61, -1, 39, '12', '2019-10-24 20:14:58');
-INSERT INTO `role_purview` VALUES (62, -1, 40, '1', '2019-10-24 20:14:59');
+INSERT INTO `role_purview` VALUES (61, -1, 39, '21', '2019-10-24 20:14:58');
+INSERT INTO `role_purview` VALUES (62, -1, 40, '12', '2019-10-24 20:14:59');
 INSERT INTO `role_purview` VALUES (63, 12, 30, '1', '2019-10-24 20:16:02');
 INSERT INTO `role_purview` VALUES (64, 12, 31, '1', '2019-10-24 20:16:02');
 INSERT INTO `role_purview` VALUES (65, 12, 32, '1', '2019-10-24 20:16:02');
