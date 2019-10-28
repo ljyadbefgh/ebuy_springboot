@@ -34,6 +34,10 @@
 			<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
 		</script>
 
+		<script type="text/html" id="unLockedSwitch">
+			<input type="checkbox" id="unLocked{{d.id}}" class="layui-bg-red"  name="locked" value="{{d.id}}"  readOnly="" title="未锁定" lay-filter="unLockedFilter" {{ d.unLocked == true ? 'checked' : '' }}>
+		  </script>
+
 		<script>
 			var rowId;//获取行的信息，此处设置的目的是为了在打开账户编辑窗口时，将账户id传递给子窗口（注：如果不是前后端分离，可以直接通过url将参数传递过去,不需要单独处理）
 			var adminIds;//自定义数组，存储选择的账户id集合
@@ -64,12 +68,11 @@
 					page: true, //开启分页
 					cols: [[
 						{type: 'checkbox'} //假如复选框，用于批量操作
-						, {field: 'username',width: 200,title: '用户名',sore: true,edit: 'text'}
+						, {field: 'username',title: '用户名',sore: true,edit: 'text'}
 						//, {field: 'password',width: 300,title: '密码'}
-						, {field: 'name',width: 200,title: '网名',sort: true}
+						, {field: 'name',title: '网名',sort: true,edit: 'text'}
 						, {
 							field: 'sex',
-							width: 200,
 							title: '性别',
 							sort: true,
 							templet:function(d){
@@ -79,10 +82,11 @@
 						   	 		return '女';
 						   		}						   	
 						   }}
+						,{field: 'unLocked',title: '是否锁定',width:110,templet: '#unLockedSwitch'}
 						, {field: 'roleNumber',title: '角色数量',event: 'manageRoles',sort: true}
 						, {field: 'saveProductNumber',title: '发布产品数',sort: true}
 						, {field: 'createTime',title: '注册时间',sort: true}
-						, {fixed: 'right',width: 200,title: '操作',toolbar: '#barDemo'}
+						, {fixed: 'right',width: 230,title: '操作',toolbar: '#barDemo'}
 					]]
 				});
 
@@ -231,6 +235,44 @@
 								}
 						});
 					}
+				});
+
+				//监听单元格编辑事件
+				table.on('edit(admins_event)', function(obj){
+				    var value = obj.value; //得到修改后的值，如果没有修改这里不会触发
+				    field = obj.field; //得到字段名
+				    data = obj.data; //得到所在行所有键值
+				    $.putRestful(WEBURL_API+"backstage/adminmanage"
+						,JSON.stringify(obj.data)
+						,function(msg){
+							if(msg.code==code_success){
+								//layui.form.render();//这个一定要加上去，不然的话，select/checkbox/radio不会重置的
+							}else{
+								table.reload('adminmanage_table');//重新刷新表格数据，让错误数据还原
+							}
+							layer.msg(msg.msg);
+						}
+					);
+				});
+
+				//监听是否为默认角色复选框的操作，如果变更，则直接将变更后的状态信息存入数据库
+				form.on('checkbox(unLockedFilter)', function(obj){
+					var admin ={//创建对象
+						id: this.value,
+						unLocked:obj.elem.checked
+				   }; 
+				   $.putRestful(WEBURL_API+"backstage/adminmanage"
+						,JSON.stringify(admin)
+						,function(msg){
+							if(msg.code!=code_success){//如果修改失败
+							    unLockedId="unLocked"+admin.id;//获取复选框的id
+								var $checkBox = $("input[id='"+unLockedId+"']");//获取指定的复选框对象
+								$checkBox.prop("checked", !obj.elem.checked);//让复选框回到勾选前的状态
+								form.render('checkbox'); //刷新表单checkbox渲染，让重新赋值生效
+							}							
+							layer.msg(msg.msg);
+						}
+					);
 				});
 
 				

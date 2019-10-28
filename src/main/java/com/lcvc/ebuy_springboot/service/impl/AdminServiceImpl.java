@@ -231,29 +231,34 @@ public class AdminServiceImpl implements  AdminService,UserDetailsService{
     }
 
     @Override
-    public void updateAdmin(Admin admin){
-        if(admin.getId()==null){
+    public void updateAdmin(Admin admin,Admin user){
+        if(user.getId()==null){
             throw new MyWebException("账户编辑失败：id不能为空");
         }
-        if(admin.getUsername()!=null){
-            if(admin.getUsername().length()==0){
+        if(admin!=null){
+            if(admin.getId()==user.getId().intValue()){
+                throw new MyWebException("账户编辑失败：不能编辑自己的账户");
+            }
+        }
+        if(user.getUsername()!=null){
+            if(user.getUsername().length()==0){
                 throw new MyWebException("账户编辑失败：账户名不能为空");
             }
         }
-        if(admin.getName()!=null){
-            if(admin.getName().length()==0){
+        if(user.getName()!=null){
+            if(user.getName().length()==0){
                 throw new MyWebException("账户编辑失败：网名不能为空");
             }else{
-                if(adminDao.countOtherUsername(admin.getUsername(),admin.getId())>0) {//如果账户名重名
+                if(adminDao.countOtherUsername(user.getUsername(),user.getId())>0) {//如果账户名重名
                     throw new MyServiceException("账户编辑失败：和其他管理账户的账户名重名");
                 }
             }
         }
         //对修改的角色进行处理。注：这里没有简单的对角色进行删除再重新添加，仅对变更的关系进行数据库的处理
-        if(admin.getRoleIds()!=null){//如果前端传有角色信息进来才进行处理，否则不对角色关系进行维护
+        if(user.getRoleIds()!=null){//如果前端传有角色信息进来才进行处理，否则不对角色关系进行维护
             List<Role> rolesAll=roleDao.readAll(null);//获取所有角色信息
             List<Role> rolesSelect=new ArrayList<Role>();//定义前端选择的角色集合
-            for(Integer roleId:admin.getRoleIds()) {//获取账户表当前选择的值
+            for(Integer roleId:user.getRoleIds()) {//获取账户表当前选择的值
                 int index=rolesAll.indexOf(new Role(roleId));//直接从集合中获取角色元素，避免读取数据库
                 if(index!=-1){//如果角色存在
                     rolesSelect.add(rolesAll.get(index));
@@ -264,25 +269,25 @@ public class AdminServiceImpl implements  AdminService,UserDetailsService{
             List<AdminRole> adminRoles=new ArrayList<AdminRole>();//定义账户和所有角色联系集合,用于在数据库添加
             AdminRole adminRole=null;
             for(Role roleEach:rolesAll){
-                int adminRoleNumber=adminRoleDao.getAdminAndRoleRelationNumber(admin.getId(),roleEach.getId());//获取选择的角色关系原来在数据库中存在的数量
+                int adminRoleNumber=adminRoleDao.getAdminAndRoleRelationNumber(user.getId(),roleEach.getId());//获取选择的角色关系原来在数据库中存在的数量
                 if(rolesSelect.contains(roleEach)){//如果该角色已经选择
                     if(adminRoleNumber==0){//如果选择的角色关系原来在数据库不存在
                         adminRole=new AdminRole();//创建关系
                         adminRole.setRole(roleEach);
-                        adminRole.setAdmin(admin);
+                        adminRole.setAdmin(user);
                         adminRole.setCreateTime(Calendar.getInstance().getTime());
                         adminRoles.add(adminRole);//将关系存入集合中
                     }
                 }else{//如果该角色没有选择
                     if(adminRoleNumber>0){//如果该角色关系已经在数据库存在
-                        adminRoleDao.deleteByAdminIdAndRoleId(admin.getId(),roleEach.getId());//删除该关系
+                        adminRoleDao.deleteByAdminIdAndRoleId(user.getId(),roleEach.getId());//删除该关系
                     }
                 }
             }
             adminRoleDao.saves(adminRoles);//将新添加的关系插入数据库
         }
-        admin.setPassword(null);
-        adminDao.update(admin);
+        user.setPassword(null);
+        adminDao.update(user);
     }
 
     @Override

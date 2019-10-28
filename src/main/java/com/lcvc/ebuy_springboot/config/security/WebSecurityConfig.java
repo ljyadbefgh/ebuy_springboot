@@ -4,7 +4,6 @@ import com.lcvc.ebuy_springboot.config.security.admin.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.ObjectPostProcessor;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -13,6 +12,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter;
@@ -50,13 +51,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private AdminAccessDecisionManager adminAccessDecisionManager;//自定义权限决策规则
 
+    @Autowired
+    private SessionRegistry sessionRegistry;//必须首先用@Bean注入，再在这里调用
+
     //主要用于给Oauth2的AbstractAuthenticationProcessingFilter认证服务器中进行依赖注入
-    @Override
+   /* @Override
     @Bean
     public AuthenticationManager authenticationManagerBean() throws Exception {
         //return super.authenticationManagerBean();
         return new ProviderManager(Collections.singletonList(adminAuthenticationProvider));//自定义验证方式
-    }
+    }*/
 
     /**
      * 该方法是用基于内存的方式，来保存本地的用户信息
@@ -136,6 +140,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .addLogoutHandler(adminLogoutHandler)//设定注销时的执行动作
                 .logoutSuccessHandler(adminLogoutHandler)//设置注销成功后的执行动作
                 .invalidateHttpSession(true)//清空session,如果是false表示不清空
+
             .and().exceptionHandling()//自定义异常处理设置-初始化。因为采用前后端分离，故全部重新定义返回json
                 .authenticationEntryPoint(adminAuthenticationEntryPoint)//自定义匿名用户访问无权限资源时的异常处理
                 .accessDeniedHandler(adminAccessDeniedHandler)//自定义权限不足异常处理
@@ -157,5 +162,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         adminAuthenticationProcessingFilter.setAuthenticationSuccessHandler(adminAuthenticationSuccessHandler);//自定义认证成功后的处理方式
         adminAuthenticationProcessingFilter.setAuthenticationFailureHandler(adminAuthenticationFailureHandler);//自定义认证失败后的处理方式
         return adminAuthenticationProcessingFilter;
+    }
+
+    /**
+     *  获取spring security的session管理器，注意该管理器为只读。
+     *  可以用于在线用户统计、在线用户删除等
+     */
+    @Bean
+    public SessionRegistry getSessionRegistry(){
+        SessionRegistry sessionRegistry=new SessionRegistryImpl();
+        return sessionRegistry;
     }
 }

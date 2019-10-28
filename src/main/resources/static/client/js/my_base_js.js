@@ -11,9 +11,14 @@ const code_error=-1;//设置状态码，表示失败，应与服务端保持一�
 var localStorage=window.localStorage;
 //设置session存储变量
 var sessionStorage=window.sessionStorage;
-
+var toAbsURL = function(url){
+    var div = document.createElement('div');
+    div.innerHTML = '<a href="' + url.replace(/"/g, '%22') + '"/>';
+    return div.firstChild.href;
+};
 
 $(function() {
+
 
     //设置ajax默认的设置，即每次访问时都会为header设置token
     $.ajaxSetup({

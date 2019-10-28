@@ -5,6 +5,7 @@ import com.lcvc.ebuy_springboot.model.base.Constant;
 import com.lcvc.ebuy_springboot.model.base.JsonCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
@@ -42,11 +43,14 @@ public class AdminAuthenticationEntryPoint implements AuthenticationEntryPoint {
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
         Map<String, Object> map=new HashMap<String, Object>();
         map.put(Constant.JSON_CODE, JsonCode.ERROR.getValue());
-        if(authException instanceof InsufficientAuthenticationException){//认证信息不足异常，例如登陆信息已经失效（session不存在该值）
-            map.put(Constant.JSON_MESSAGE, "请先登陆");
-            map.put("state","请先登陆");//专门为ueditor写的返回信息，如果不需要可以去掉该行
+        String message=null;
+        if(authException instanceof LockedException){
+            message="账户已被锁定，请联系管理员";
+        }else if(authException instanceof InsufficientAuthenticationException){//认证信息不足异常，例如登陆信息已经失效（session不存在该值）
+            message="请先登陆";
         }
-
+        map.put(Constant.JSON_MESSAGE, message);
+        map.put("state",message);//专门为ueditor写的返回信息，如果不需要可以去掉该行
         response.setContentType("application/json;charset=UTF-8");
         response.getWriter().write(objectMapper.writeValueAsString(map));
     }

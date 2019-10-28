@@ -32,6 +32,7 @@ public interface AdminService {
      */
     PageObject searchAdmins(Integer page, Integer limit, AdminQuery adminQuery);
 
+
     /**
      * 删除指定账户
      * 说明：
@@ -90,9 +91,10 @@ public interface AdminService {
      * （1）如果选择的角色关系在数据库中不存在，则添加新的角色关系
      * （2）如果选择的角色关系在数据库中已经存在，则不对数据库进行任何处理
      * （3）如果未选择的角色关系在数据库中存在，则删除该关系
-     * @param admin
+     * @param admin 当前操作账户,如果为Null则表示不验证当前操作账户。例如该方法修改自己时，可以用null表示
+     * @param user 被操作的账户
      */
-    void updateAdmin(@Valid @NotNull Admin admin);
+    void updateAdmin(Admin admin,@Valid @NotNull Admin user);
 
     /**
      * 修改密码

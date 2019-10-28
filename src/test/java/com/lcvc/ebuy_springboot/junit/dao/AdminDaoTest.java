@@ -57,13 +57,13 @@ public class AdminDaoTest  extends EbuySpringbootApplicationTests {
     public void testQuerySize(){
         AdminQuery adminQuery=new AdminQuery();
         adminQuery.setRoleId(1);
-        System.out.println("账户总数："+adminDao.querySize(null));
+        System.out.println("账户总数："+adminDao.querySize(adminQuery));
     }
 
     @Test
     public void testQuery(){
         AdminQuery adminQuery=new AdminQuery();
-        adminQuery.setRoleId(1);
+        //adminQuery.setRoleId(1);
         List<Admin> list=adminDao.query(0,10,adminQuery);
         System.out.println("账户总数："+list.size());
         for(Admin admin:list){

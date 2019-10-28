@@ -5,6 +5,7 @@ import com.lcvc.ebuy_springboot.service.impl.AdminServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -31,12 +32,16 @@ public class AdminAuthenticationProvider implements AuthenticationProvider {
         String password = (String) authentication.getCredentials();
         Admin admin = adminService.loadUserByUsername(username);
         //对加密密码进行验证
-        if(adminPasswordEncoder.matches(password,admin.getPassword())){
+        if(adminPasswordEncoder.matches(password,admin.getPassword())){//如果密码验证通过
+            if(admin.isAccountNonLocked()==false){//如果账户没有被锁定
+                throw new LockedException("账户已经锁定");
+            }
             return new UsernamePasswordAuthenticationToken(admin,password,admin.getAuthorities());//分别设置账户信息，密码，权限（账户拥有的权限）
         }else {
             throw new BadCredentialsException("密码错误");
         }
     }
+
 
     @Override
     public boolean supports(Class<?> aClass) {

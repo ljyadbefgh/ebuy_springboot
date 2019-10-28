@@ -38,8 +38,8 @@
     </select>
 
     <insert id="save"  useGeneratedKeys="true" keyProperty="id">
-          insert into admin(id,username,password,name,sex,createTime)
-          values(null,#{username},#{password},#{name},#{sex},#{createTime})
+          insert into admin(id,username,password,name,sex,unLocked,createTime)
+          values(null,#{username},#{password},#{name},#{sex},#{unLocked},#{createTime})
     </insert>
 
     <select id="readAll" resultType="Admin">
@@ -72,6 +72,9 @@
                     <!-- bind，重新定义一个变量，可用于模糊查询等，并且可以直接覆盖原变量 -->
                     <bind name="name" value="'%' + _parameter.objectQuery.name + '%'" />
                     and admin.name like #{name}
+                </if>
+                <if test="objectQuery.unLocked!=null">
+                    and admin.unLocked=#{objectQuery.unLocked}
                 </if>
                 <if test="objectQuery.roleId!=null">
                     and admin_role.roleId=#{objectQuery.roleId}
@@ -109,6 +112,9 @@
                     <bind name="name" value="'%' + _parameter.objectQuery.name + '%'"/>
                     and admin.name like #{name}
                 </if>
+                <if test="objectQuery.unLocked!=null">
+                    and admin.unLocked=#{objectQuery.unLocked}
+                </if>
                 <if test="objectQuery.roleId!=null">
                     and admin_role.roleId=#{objectQuery.roleId}
                 </if>
@@ -143,6 +149,7 @@
             <if test="name!=null and name.length()>0">name=#{name},</if>
             <if test="password!=null and password.length()>0">password=#{password},</if>
             <if test="sex!=null">sex=#{sex},</if>
+            <if test="unLocked!=null">unLocked=#{unLocked},</if>
         </set>
         where id=#{id}
     </update>

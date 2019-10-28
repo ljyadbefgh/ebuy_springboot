@@ -33,22 +33,16 @@ public class AdminAuthenticationFailureHandler implements AuthenticationFailureH
         String message=null;
         if(e instanceof UsernameNotFoundException){
             message="登录失败：账户名不存在";
-            map.put(Constant.JSON_MESSAGE, "登录失败：账户名不存在");
         }else  if(e instanceof BadCredentialsException){
-            message="登录失败：账户名不存在";
-            map.put(Constant.JSON_MESSAGE, "登录失败：密码错误");
+            message="登录失败：密码错误";
         }else if(e instanceof CredentialsExpiredException){
             message="录失败：密码已过期";
-            map.put(Constant.JSON_MESSAGE, "登录失败：密码已过期");
         }else if(e instanceof LockedException){
             message="登录失败：账户被锁定";
-            map.put(Constant.JSON_MESSAGE, "登录失败：账户被锁定");
         }else if(e instanceof DisabledException){
             message="登录失败：账户被禁用";
-            map.put(Constant.JSON_MESSAGE, "登录失败：账户被禁用");
         }else if(e instanceof AccountExpiredException){
             message="登录失败：账户已过期";
-            map.put(Constant.JSON_MESSAGE, "登录失败：账户已过期");
         }else{
             message="登录失败：未知异常："+e.getMessage();
         }

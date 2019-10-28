@@ -36,6 +36,8 @@ public class Admin implements UserDetails {
 	@Range(min = 0, max = 2, message = "性别数值必须在 {min} - {max} 之间")
 	private Integer sex;//性别
 
+	private Boolean unLocked;//账户是否没有锁定，true表示没有锁定，false表示锁定。配合spring security的isAccountNonLocked()方法
+
 	//@JsonFormat(pattern = "yyyy-MM-dd HH:mm")
 	private Date createTime;//创建时间，由系统自动生成
 
@@ -49,6 +51,17 @@ public class Admin implements UserDetails {
 
 	private Integer[] roleIds;//用于接收前端传递过来的角色集合id。说明：接收“1,3,5”这样的类型（如果是js数组可以用tostring转换为这个类型），否则spring mvc数组参数无法接受
 
+
+
+
+	public Admin() {
+	}
+	
+	public Admin(Integer id){
+		super();
+		this.id=id;
+		
+	}
 
 	public Integer[] getRoleIds() {
 		return roleIds;
@@ -66,15 +79,6 @@ public class Admin implements UserDetails {
 		this.roles = roles;
 	}
 
-	public Admin() {
-	}
-	
-	public Admin(Integer id){
-		super();
-		this.id=id;
-		
-	}
-
 	public Integer getId() {
 		return id;
 	}
@@ -83,8 +87,13 @@ public class Admin implements UserDetails {
 		this.id = id;
 	}
 
+	public Boolean getUnLocked() {
+		return unLocked;
+	}
 
-
+	public void setUnLocked(Boolean unLocked) {
+		this.unLocked = unLocked;
+	}
 
 	public String getName() {
 		return name;
@@ -157,7 +166,7 @@ public class Admin implements UserDetails {
 	//当前账户是否未锁定
 	@Override
 	public boolean isAccountNonLocked() {
-		return false;
+		return unLocked;
 	}
 
 	//当前账户密码是否过期

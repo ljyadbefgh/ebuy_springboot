@@ -19,10 +19,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -62,11 +62,9 @@ public class AdminManageController {
 	@ApiOperation(value = "删除指定账户", notes = "根据id的值删除指定账户")
 	@ApiImplicitParam(name = "id", value = "要删除的账户id", paramType = "path",dataType="int", required = true,example="1")
 	@DeleteMapping("/{id}")
-	public Map<String, Object> deleteAdmin(@PathVariable Integer id, HttpSession session){
+	public Map<String, Object> deleteAdmin(@AuthenticationPrincipal Admin admin,@PathVariable Integer id){
 		Map<String, Object> map=new HashMap<String, Object>();
-		//Admin admin=(Admin)session.getAttribute("admin");
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		Admin admin=(Admin)authentication.getPrincipal();
 		adminService.deleteAdmin(admin,id);
 		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
 		return map;
@@ -75,11 +73,10 @@ public class AdminManageController {
 	@ApiOperation(value = "批量删除账户", notes = "根据id的值删除指定账户")
 	@ApiImplicitParam(name = "ids", value = "要删除的账户id集合", required = true,paramType = "path",example ="15,25,74" )
 	@DeleteMapping("/deletes/{ids}")
-	public Map<String, Object> deleteAdmins(@PathVariable("ids")Integer[] ids, HttpSession session){
+	public Map<String, Object> deleteAdmins(@PathVariable("ids")Integer[] ids, @AuthenticationPrincipal Admin admin){
 		Map<String, Object> map=new HashMap<String, Object>();
 		//Admin admin=(Admin)session.getAttribute("admin");
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		Admin admin=(Admin)authentication.getPrincipal();
 		adminService.deleteAdmins(admin,ids);
 		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
 		return map;
@@ -109,10 +106,10 @@ public class AdminManageController {
 	@ApiOperation(value = "编辑账户", notes = "根据传入的值（必须要有id）进行修改（没有传入的字段则保持原值）-不包括password、createTime字段")
 	@ApiImplicitParam(name = "admin", value = "管理账户信息，根据传入的值（必须要有id）进行修改（没有传入的字段则保持原值）-不包括password、createTime字段", paramType = "body", dataType="Admin",required = true)
 	@PutMapping
-	public Map<String, Object> updateAdmin(@RequestBody Admin admin){
+	public Map<String, Object> updateAdmin(@AuthenticationPrincipal Admin admin,@RequestBody Admin user){
 		Map<String, Object> map=new HashMap<String, Object>();
 		admin.setPassword(null);//根据业务层说明，不接收密码字段的值
-		adminService.updateAdmin(admin);
+		adminService.updateAdmin(admin,user);
 		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
 		map.put(Constant.JSON_MESSAGE, "账户信息修改成功");
 		return map;

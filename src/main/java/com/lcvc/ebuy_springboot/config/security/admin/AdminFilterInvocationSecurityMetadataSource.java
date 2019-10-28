@@ -1,12 +1,17 @@
 package com.lcvc.ebuy_springboot.config.security.admin;
 
+import com.lcvc.ebuy_springboot.model.Admin;
 import com.lcvc.ebuy_springboot.model.Purview;
 import com.lcvc.ebuy_springboot.model.Role;
 import com.lcvc.ebuy_springboot.service.PurviewService;
 import com.lcvc.ebuy_springboot.service.RolePurviewService;
+import com.lcvc.ebuy_springboot.service.impl.AdminServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.access.SecurityConfig;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.FilterInvocation;
 import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
 import org.springframework.stereotype.Component;
@@ -30,6 +35,8 @@ public class AdminFilterInvocationSecurityMetadataSource implements FilterInvoca
     private PurviewService purviewService;
     @Autowired
     private RolePurviewService rolePurviewService;
+    @Autowired
+    private AdminServiceImpl adminService;
 
     private List<String> ignoreUrls = new ArrayList<String>() {{//可以忽略的url的地址，即不要进行权限验证
        //add("/api/upload/**");
@@ -37,6 +44,25 @@ public class AdminFilterInvocationSecurityMetadataSource implements FilterInvoca
         //add(" /api/backstage/ueditor");
          add( "/oauth/**");//不拦截Oauth2的认证请求，注意不能放在web.ignoring()里面
     }};
+
+    /**
+     *自定义方法，重新读取账户的权限信息存入spring security
+     * 本方法使用说明：
+     * 1.本方法设计，只在需要验证的网址（没有设置ignore（）的网址进行刷新）
+     * 2.也可以自定义一个过滤器在整站对其进行扫描。
+     */
+    private void refreshAuthentication(){
+        // 得到当前的认证信息
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if(!auth.getPrincipal().equals("anonymousUser")){//如果不是匿名用户，表示已经登录，重新刷新登录账户信息；如果不是匿名用户，即没有登录。则不作任何处理
+            Admin admin=(Admin)auth.getPrincipal();//获取当前用户的账户信息
+            admin = adminService.loadUserByUsername(admin.getUsername());//获取数据库的最新信息和权限
+            // 生成新的认证信息
+            Authentication newAuth = new UsernamePasswordAuthenticationToken(admin, auth.getCredentials(), admin.getAuthorities());
+            // 重置认证信息
+            SecurityContextHolder.getContext().setAuthentication(newAuth);
+        }
+    }
 
     /**
      * 根据请求的资源（url），判断该资源对应的角色集合
@@ -48,6 +74,7 @@ public class AdminFilterInvocationSecurityMetadataSource implements FilterInvoca
     @Override
     public Collection<ConfigAttribute> getAttributes(Object object) throws IllegalArgumentException {
         Collection<ConfigAttribute> result=null;//最终的返回值，获取拥有访问该url资源的角色集合
+        refreshAuthentication();//重要，重新刷新自定义认证信息。
         FilterInvocation filterInvocation = (FilterInvocation) object;
         //String requestUrl=filterInvocation.getRequestUrl();//获取前端访问的接口地址，例如：/api/backstage/adminmanage?page=1&limit=10&_=1571329473477
         String httpMethod =filterInvocation.getRequest().getMethod();//获取访问方法，例如：GET、POST、PUT、PATCH、DELETE

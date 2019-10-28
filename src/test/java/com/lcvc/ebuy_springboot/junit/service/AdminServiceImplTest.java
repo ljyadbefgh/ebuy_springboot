@@ -26,7 +26,7 @@ public class AdminServiceImplTest extends EbuySpringbootApplicationTests {
         Admin admin=new Admin();
         admin.setId(1);
         admin.setPassword("12312fdafdadfasfdasfdf");
-        adminService.updateAdmin(admin);
+        adminService.updateAdmin(null,admin);
     }
 
 

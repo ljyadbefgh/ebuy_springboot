@@ -13,7 +13,7 @@
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<!--<version>2.1.8.RELEASE</version>-->
-		<version>2.2.0.RELEASE</version>
+		<version>2.1.8.RELEASE</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 
@@ -69,6 +69,21 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+
+		<!--
+		发现网上方法无效：
+		Failed to load class ’org.slf4j.impl.StaticLoggerBinder‘”的意思则是“加载类文件org.slf4j.impl.StaticLoggerBinder时失败”
+决的办法就是在Maven工程的pom文件中随便加载一个上述的包文件之一的依赖就可以了（且只有一个
+		-->
+		<!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-nop -->
+		<!--<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-nop</artifactId>
+			<version>2.0.0-alpha1</version>
+			<scope>test</scope>
+		</dependency>-->
+
+
 		<!--需要使用切面编程aop则加入，否则不需要-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
