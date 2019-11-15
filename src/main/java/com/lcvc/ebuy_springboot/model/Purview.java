@@ -10,6 +10,7 @@ public class Purview implements java.io.Serializable{
     private String name;//权限名称
     @Length(min = 2, max = 200, message = "路径的长度必须在 {min} - {max} 之间")
     private String url;//配合spring security使用，请求路径规则(表示拥有该路径的访问规则)。例如/employee/basic/**
+    private String path;//访问路径，用于提供给前端进行路由控制
     private Boolean enabled;//是否启用，true表示启用；false表示该权限不启用，即无法使用
     private String description;//权限的描述
 
@@ -65,6 +66,14 @@ public class Purview implements java.io.Serializable{
 
     public void setRoleNumber(Integer roleNumber) {
         this.roleNumber = roleNumber;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
     }
 
     @Override

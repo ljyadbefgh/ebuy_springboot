@@ -17,8 +17,8 @@
     </select>
 
     <insert id="save" useGeneratedKeys="true" keyProperty="id">
-        insert into purview(id,name,url,enabled,description)
-        values(null,#{name},#{url},#{enabled},#{description})
+        insert into purview(id,name,url,path,enabled,description)
+        values(null,#{name},#{url},#{path},#{enabled},#{description})
     </insert>
 
     <update id="update" parameterType="Purview">
@@ -27,6 +27,7 @@
         <set>
             <if test="name!=null and name.length()>0">name=#{name},</if>
             <if test="url!=null">url=#{url},</if>
+            <if test="path!=null">path=#{path},</if>
             <if test="enabled!=null">enabled=#{enabled},</if>
             <if test="enabled!=null">description=#{description},</if>
         </set>

@@ -35,6 +35,12 @@
 					<input type="text" name="url" required lay-verify="my_url" placeholder="请输入可以访问的资源地址" autocomplete="off" class="layui-input">
 				</div>
 			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">*路由</label>
+				<div class="layui-input-block">
+					<input type="text" name="path" required lay-verify="path" placeholder="请输入路由地址" autocomplete="off" class="layui-input">
+				</div>
+			</div>
 			<div class="layui-form-item" pane="">
 				<label class="layui-form-label">是否启用</label>
 				<div class="layui-input-block">
@@ -69,6 +75,7 @@
 				    			"id":purview.id,
 								"name": purview.name, // "name": "value"		
 								"url": purview.url,
+								"path": purview.path,
 								"enabled": purview.enabled,
 								"description": purview.description
 							});
@@ -91,6 +98,11 @@
 					my_url: function(value) {
 						if(value.length < 2|| value.length > 200) {
 							return '资源地址的长度必须在2-200个字符之间';
+						}
+					},
+					path: function(value) {
+						if(value.length < 2|| value.length > 200) {
+							return '路由的长度必须在2-200个字符之间';
 						}
 					}
 				});

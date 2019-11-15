@@ -37,6 +37,8 @@
 		<ueditor.version>1.4.3</ueditor.version>
 		<!--Oauth2版本-->
 		<oauth2.version>2.3.7.RELEASE</oauth2.version>
+		<!--poi版本-->
+		<poi.version>4.1.1</poi.version>
 
 
 
@@ -202,6 +204,30 @@
 		</dependency>
 
         <!--ueditor所需的架包，结束-->
+
+
+		<!--poi表格插件-->
+		<!-- https://mvnrepository.com/artifact/org.apache.poi/poi -->
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
+			<version>${poi.version}</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml -->
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>${poi.version}</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml-schemas -->
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml-schemas</artifactId>
+			<version>${poi.version}</version>
+		</dependency>
+
 
 	</dependencies>
 

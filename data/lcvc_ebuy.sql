@@ -11,7 +11,7 @@
  Target Server Version : 80016
  File Encoding         : 65001
 
- Date: 28/10/2019 20:56:17
+ Date: 15/11/2019 22:36:36
 */
 
 SET NAMES utf8mb4;
@@ -30,16 +30,15 @@ CREATE TABLE `admin`  (
   `unLocked` bit(1) NULL DEFAULT NULL COMMENT '账户是否没有锁定，true表示没有锁定',
   `createTime` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 97 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 98 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of admin
 -- ----------------------------
 INSERT INTO `admin` VALUES (-99, 'admin', '-fe2nispc28dcddckd443jdmhnl8l9bjv', '管理员', 2, b'1', '2013-08-23 15:33:01');
 INSERT INTO `admin` VALUES (-1, 'user', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '演示账户', 1, b'1', '2013-08-23 15:33:01');
-INSERT INTO `admin` VALUES (0, 'vistor', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '观光管理员', 1, b'0', '2013-10-15 17:30:01');
 INSERT INTO `admin` VALUES (19, 'student', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '学生', 1, b'1', '2013-10-15 17:30:27');
-INSERT INTO `admin` VALUES (23, 'a554523', 'e10adc3949ba59abbe56e057f20f883e', 'kkk1', 1, b'1', '2013-10-15 17:38:10');
+INSERT INTO `admin` VALUES (23, 'ruanjian', '-dtop9rm0u7k6k29espbkk07p12f6ch9p', '软件教研员', 1, b'1', '2013-10-15 17:38:10');
 INSERT INTO `admin` VALUES (25, 'dfdsfsdf', 'e10adc3949ba59abbe56e057f20f883e', '665656', 1, b'1', '2013-10-15 17:38:34');
 INSERT INTO `admin` VALUES (31, '67457464', 'e10adc3949ba59abbe56e057f20f883e', '6464565', 1, b'1', '2013-10-15 17:39:50');
 INSERT INTO `admin` VALUES (42, '1213df', 'e10adc3949ba59abbe56e057f20f883e', '85445', 1, b'1', '2013-10-16 09:14:26');
@@ -76,6 +75,7 @@ INSERT INTO `admin` VALUES (86, 'ljy', 'string', 'string', 0, b'1', '2019-08-05 
 INSERT INTO `admin` VALUES (89, 'ljy3', '111111', '张三', 1, b'1', '2019-09-01 16:13:43');
 INSERT INTO `admin` VALUES (95, 'user9', '13', '小红', 1, b'1', NULL);
 INSERT INTO `admin` VALUES (96, 'adfds', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '撒旦法', 2, b'1', '2019-10-15 08:40:06');
+INSERT INTO `admin` VALUES (97, 'vistor', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '观光管理员', 1, b'1', '2013-10-15 17:30:01');
 
 -- ----------------------------
 -- Table structure for admin_role
@@ -87,7 +87,7 @@ CREATE TABLE `admin_role`  (
   `roleId` int(11) NULL DEFAULT NULL COMMENT 'role主键',
   `createTime` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 109 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 114 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of admin_role
@@ -99,7 +99,9 @@ INSERT INTO `admin_role` VALUES (80, 25, 3, '2019-10-14 18:19:38');
 INSERT INTO `admin_role` VALUES (81, 31, 3, '2019-10-14 18:19:38');
 INSERT INTO `admin_role` VALUES (101, 0, 3, '2019-10-21 10:54:40');
 INSERT INTO `admin_role` VALUES (104, 19, 12, '2019-10-24 20:19:57');
-INSERT INTO `admin_role` VALUES (109, -1, -1, '2019-10-28 11:55:09');
+INSERT INTO `admin_role` VALUES (111, -1, -1, '2019-10-28 21:09:15');
+INSERT INTO `admin_role` VALUES (112, 97, 3, '2019-10-28 21:10:28');
+INSERT INTO `admin_role` VALUES (113, 23, -1, '2019-10-29 18:54:06');
 
 -- ----------------------------
 -- Table structure for customer
@@ -119,21 +121,21 @@ CREATE TABLE `customer`  (
   `intro` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '客户信息备注，简介',
   `createTime` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 54 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 65 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of customer
 -- ----------------------------
-INSERT INTO `customer` VALUES (1, 'xiaoer', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '张三', 1, '13124123132', '柳州市恒大小区', '134321', '1312313@qq.com', '1.jpg', '张三丰传人', '2013-11-21 17:31:46');
-INSERT INTO `customer` VALUES (9, 'wenye', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '温晓峰', 2, '12344513121', '柳州市宝骏', '55233', '23123123@qq.com', '9.jpg', '温爷传人', '2013-11-21 17:31:46');
+INSERT INTO `customer` VALUES (1, 'hqjmz', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '陈家龙', 1, '13124123132', '柳州市大傻子路逗比公寓1号', '134321', '1312313@qq.com', '1.jpg', '每天都很闲的,爱好是吃脚.', '2013-11-21 17:31:46');
+INSERT INTO `customer` VALUES (9, 'wenye', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '白安善', 1, '13647789517', '柳州市抠脚村', '547000', '23123123@qq.com', '9.jpg', '和家龙是好♂兄弟', '2013-11-21 17:31:46');
 INSERT INTO `customer` VALUES (12, 'huangsan', '666666', '至尊宝', 1, '13633083252', '桂林市大河小区', '151431', 'asdfa@163.com', '12.jpg', '你们懂的', '2013-11-21 17:39:38');
-INSERT INTO `customer` VALUES (13, 'guangge', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '客户1', 1, '17703771999', '', '', '', '', '', '2019-08-06 15:03:13');
-INSERT INTO `customer` VALUES (14, 'user2', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '客户2', 1, '15388889881', '北京市顺义区', '000000', '13233@qq.com', '', '非常友善', '2019-08-06 15:06:53');
+INSERT INTO `customer` VALUES (13, 'guangge', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '徐凤年', 1, '17703771999', '', '', '', '', '', '2019-08-06 15:03:13');
+INSERT INTO `customer` VALUES (14, 'user2', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '王大发', 1, '15388889881', '北京市顺义区', '000000', '13233@qq.com', '', '非常友善', '2019-08-06 15:06:53');
 INSERT INTO `customer` VALUES (15, 'user3', '3214234', '客户3', 1, '15388889881', '广东省广州市', '000000', '1352312@qq.com', '', '长隆', '2019-08-06 15:07:48');
-INSERT INTO `customer` VALUES (16, 'user4', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '客户4', 2, '18083815777', '', '', '', '', '', '2019-08-06 15:08:48');
+INSERT INTO `customer` VALUES (16, 'user4', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '紫霞', 2, '18083815777', '柳州橙汁园', '568741', '', '', '', '2019-08-06 15:08:48');
 INSERT INTO `customer` VALUES (17, 'abc1', 'fh58q2ea6thauof5ikg98fe2ciafh50r', 'ABC客户1', 1, '15377892222', '', '', '', '', '', '2019-08-06 15:09:12');
 INSERT INTO `customer` VALUES (18, 'abc2', 'fh58q2ea6thauof5ikg98fe2ciafh50r', 'ABC客户2', 2, '18168526111', '', '', '', '', '', '2019-08-06 16:21:41');
-INSERT INTO `customer` VALUES (19, 'abc3', '2341234123', 'ABC客户3', 1, '18100800709', '', '', '', NULL, '', '2019-08-06 16:22:12');
+INSERT INTO `customer` VALUES (19, 'abc3', '2341234123', 'ABC客户3', 1, '18100800709', '广西柳州', '', '123@qq.com', NULL, '', '2019-08-06 16:22:12');
 INSERT INTO `customer` VALUES (20, 'abc4', 'fh58q2ea6thauof5ikg98fe2ciafh50r', 'ABC客户4', 1, '15377892222', '', '', '', '', '', '2019-08-06 15:09:12');
 INSERT INTO `customer` VALUES (21, 'abc5', 'fh58q2ea6thauof5ikg98fe2ciafh50r', 'ABC客户5', 1, '15377892222', '', '', '', NULL, '', '2019-08-06 15:09:12');
 INSERT INTO `customer` VALUES (22, 'abc6', 'fh58q2ea6thauof5ikg98fe2ciafh50r', 'ABC客户6', 1, '15377892222', '', '', '', '', '', '2019-08-06 15:09:12');
@@ -167,6 +169,17 @@ INSERT INTO `customer` VALUES (50, 'zjl', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '�
 INSERT INTO `customer` VALUES (51, 'yyqx', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '易燃', 1, '18520001128', '北京市昌平区回龙观镇北清路', '', '', NULL, '', '2019-10-25 09:12:34');
 INSERT INTO `customer` VALUES (52, 'asd', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '小二', 2, '17777777777', '外太空', '545000', '8888@qq.com', NULL, '简介', '2019-10-25 09:13:06');
 INSERT INTO `customer` VALUES (53, 'xiaoma', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '马化腾', 1, '15678078888', '柳州市恒大小区', '545000', 'xiaoma@qq.com', '53.jpg', '鹅厂搬运工', '2019-10-25 09:14:03');
+INSERT INTO `customer` VALUES (54, '不要脸的你', 'fh58q2ea6thauof5ikg98fe2ciafh50r', 'buyaolian', 1, '18645678564', '北极半球', '530401', '123456789@qq.com', NULL, '你给我....', '2019-11-05 08:52:43');
+INSERT INTO `customer` VALUES (55, '3问问', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '位试试', 1, '18894622108', '123', '537519', '1608318868@qq.com', NULL, '', '2019-11-05 08:54:44');
+INSERT INTO `customer` VALUES (56, 'stud', 'fh58q2ea6thauof5ikg98fe2ciafh50r', 'nini', 2, '18378556608', 'liuzhou', '537114', '13245@360.com', NULL, 'haohai', '2019-11-05 08:55:24');
+INSERT INTO `customer` VALUES (57, '佩奇是只猪', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '小猪佩奇', 2, '18410358497', '柳州中山路8号', '', '', NULL, '', '2019-11-05 08:56:21');
+INSERT INTO `customer` VALUES (58, 'nininini', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '妮妮', 2, '18775534562', '广西柳州市鱼峰区', '253343', '12324345@126.com', NULL, '', '2019-11-05 08:56:40');
+INSERT INTO `customer` VALUES (59, 'king', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '嘻嘻', 2, '18216463254', '柳州市', '231433', '231433@126.com', NULL, '', '2019-11-05 08:56:41');
+INSERT INTO `customer` VALUES (60, 'jdsahfj ', 'fh58q2ea6thauof5ikg98fe2ciafh50r', 'adsfdsf', 2, '18697845987', 'sdfasd', '689541', 'dfasdfdsaf@126.com', NULL, '', '2019-11-05 08:58:38');
+INSERT INTO `customer` VALUES (61, 'avd', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '你好', 2, '18756987552', '柳州城市职业学院', '', '', NULL, '你好啊', '2019-11-05 08:58:54');
+INSERT INTO `customer` VALUES (62, '是昭君哎', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '昭君', 2, '15253524689', '广西贵港市港南区', '537100', '2811389@qq.com', NULL, '', '2019-11-05 09:00:55');
+INSERT INTO `customer` VALUES (63, 'Tany', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '谭谭谭', 2, '17677777771', '柳州城市职业学院', '515673', '', NULL, '', '2019-11-05 09:00:58');
+INSERT INTO `customer` VALUES (64, 'wwww111111', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '小白', 1, '13878474643', '很多事卡拉', '748520', '1515@qq.com', NULL, '小小小iOS试试', '2019-11-05 11:50:59');
 
 -- ----------------------------
 -- Table structure for menu
@@ -431,22 +444,23 @@ CREATE TABLE `purview`  (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '菜单名/权限名',
   `url` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '请求路径规则(表示拥有该路径的访问规则)',
+  `path` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `enabled` bit(1) NULL DEFAULT NULL COMMENT '是否可用',
   `description` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '权限的描述',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 41 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 40 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of purview
 -- ----------------------------
-INSERT INTO `purview` VALUES (30, '权限管理', '/api/backstage/purviewmanage/**', b'1', NULL);
-INSERT INTO `purview` VALUES (31, '角色管理', '/api/backstage/rolemanage/**', b'1', NULL);
-INSERT INTO `purview` VALUES (32, '个人资料编辑', '/api/backstage/admin/**', b'1', '');
-INSERT INTO `purview` VALUES (33, '管理员管理', '/api/backstage/adminmanage/**', b'1', '');
-INSERT INTO `purview` VALUES (34, '客户模块管理', '/api/backstage/customermanage/**', b'1', '');
-INSERT INTO `purview` VALUES (38, '产品类别模块', '/api/backstage/producttype/**', b'1', NULL);
-INSERT INTO `purview` VALUES (39, '产品模块', '/api/backstage/product/**', b'1', '');
-INSERT INTO `purview` VALUES (40, '富文本操作权限', '/api/backstage/ueditor/**', b'1', NULL);
+INSERT INTO `purview` VALUES (30, '权限管理', '/api/backstage/purviewmanage/**', '/purview', b'1', NULL);
+INSERT INTO `purview` VALUES (31, '角色管理', '/api/backstage/rolemanage/**', '/rolemanage', b'1', '');
+INSERT INTO `purview` VALUES (32, '个人资料编辑', '/api/backstage/admin/**', '/admin', b'1', '');
+INSERT INTO `purview` VALUES (33, '管理员管理', '/api/backstage/adminmanage/**', '/adminmanage', b'1', '');
+INSERT INTO `purview` VALUES (34, '客户模块管理', '/api/backstage/customermanage/**', '/customermanage/', b'1', '');
+INSERT INTO `purview` VALUES (38, '产品类别模块', '/api/backstage/producttype/**', '/producttype/', b'1', '');
+INSERT INTO `purview` VALUES (39, '产品模块', '/api/backstage/product/**', '/product', b'1', '');
+INSERT INTO `purview` VALUES (40, '富文本操作权限', '/api/backstage/ueditor/**', NULL, b'1', NULL);
 
 -- ----------------------------
 -- Table structure for role
@@ -482,7 +496,7 @@ CREATE TABLE `role_purview`  (
   `permissionIds` char(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '操作权限，非数据库外键，在业务层写死',
   `createTime` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 71 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 72 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of role_purview
@@ -494,10 +508,9 @@ INSERT INTO `role_purview` VALUES (7, -99, 31, '1234', '2019-10-17 16:21:02');
 INSERT INTO `role_purview` VALUES (9, -99, 33, '1234', '2019-10-17 16:21:04');
 INSERT INTO `role_purview` VALUES (11, -99, 38, '1234', '2019-10-17 18:46:14');
 INSERT INTO `role_purview` VALUES (15, 3, 30, '1', '2019-10-19 01:36:02');
-INSERT INTO `role_purview` VALUES (25, -1, 34, '1234', '2019-10-19 08:11:25');
 INSERT INTO `role_purview` VALUES (26, -1, 38, '2341', '2019-10-19 08:12:10');
-INSERT INTO `role_purview` VALUES (27, -1, 33, '1234', '2019-10-19 08:12:58');
-INSERT INTO `role_purview` VALUES (30, -1, 32, '13', '2019-10-19 08:24:01');
+INSERT INTO `role_purview` VALUES (27, -1, 33, '1', '2019-10-19 08:12:58');
+INSERT INTO `role_purview` VALUES (30, -1, 32, '1324', '2019-10-19 08:24:01');
 INSERT INTO `role_purview` VALUES (31, 3, 31, '1', '2019-10-19 08:26:02');
 INSERT INTO `role_purview` VALUES (32, 3, 32, '1', '2019-10-19 08:26:03');
 INSERT INTO `role_purview` VALUES (33, 3, 33, '1', '2019-10-19 08:26:04');
@@ -517,7 +530,7 @@ INSERT INTO `role_purview` VALUES (57, 7, 39, '1', '2019-10-21 10:53:12');
 INSERT INTO `role_purview` VALUES (58, 7, 40, '1', '2019-10-21 10:53:12');
 INSERT INTO `role_purview` VALUES (59, 7, 32, '1', '2019-10-21 10:53:26');
 INSERT INTO `role_purview` VALUES (60, 7, 34, '1', '2019-10-21 10:53:26');
-INSERT INTO `role_purview` VALUES (61, -1, 39, '21', '2019-10-24 20:14:58');
+INSERT INTO `role_purview` VALUES (61, -1, 39, '2134', '2019-10-24 20:14:58');
 INSERT INTO `role_purview` VALUES (62, -1, 40, '12', '2019-10-24 20:14:59');
 INSERT INTO `role_purview` VALUES (63, 12, 30, '1', '2019-10-24 20:16:02');
 INSERT INTO `role_purview` VALUES (64, 12, 31, '1', '2019-10-24 20:16:02');
@@ -527,5 +540,6 @@ INSERT INTO `role_purview` VALUES (67, 12, 34, '1234', '2019-10-24 20:16:02');
 INSERT INTO `role_purview` VALUES (68, 12, 38, '1', '2019-10-24 20:16:02');
 INSERT INTO `role_purview` VALUES (69, 12, 39, '1', '2019-10-24 20:16:02');
 INSERT INTO `role_purview` VALUES (70, 12, 40, '1', '2019-10-24 20:16:02');
+INSERT INTO `role_purview` VALUES (71, -1, 34, '1', '2019-11-12 09:44:54');
 
 SET FOREIGN_KEY_CHECKS = 1;
