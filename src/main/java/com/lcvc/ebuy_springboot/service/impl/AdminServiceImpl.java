@@ -183,6 +183,7 @@ public class AdminServiceImpl implements  AdminService,UserDetailsService{
             if(adminDao.countUsername(admin.getUsername())==0){
                 admin.setId(null);//主键自增
                 admin.setPassword(SHA.getResult("123456"));
+                admin.setUnLocked(true);//默认是不锁定的
                 admin.setCreateTime(Calendar.getInstance().getTime());//获取当前时间为创建时间
                 adminDao.save(admin);
                 //添加账户和角色的关系
