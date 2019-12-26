@@ -39,7 +39,7 @@ public class AdminLogoutHandler implements LogoutHandler,LogoutSuccessHandler {
     //处理注销请求
     @Override
     public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
-        System.out.println("执行注销操作");
+        //System.out.println("执行注销操作");
        /* Assert.notNull(request, "HttpServletRequest required");
         HttpSession session = request.getSession(false);
         if (session != null) {

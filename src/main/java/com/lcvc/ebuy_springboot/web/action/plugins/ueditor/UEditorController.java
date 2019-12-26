@@ -3,6 +3,8 @@ package com.lcvc.ebuy_springboot.web.action.plugins.ueditor;
 import com.baidu.ueditor.ActionEnter;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -54,6 +56,8 @@ import java.io.PrintWriter;
 @Controller
 @RequestMapping(value="/api/backstage")
 public class UEditorController {
+    public static final Log log= LogFactory.getLog(UEditorController.class);
+
     @Value("${myFile.uploadFolder}")
     private String uploadFolder;//上传路径（物理路径）
 
@@ -74,6 +78,8 @@ public class UEditorController {
         //response.setContentType("text/html; charset=UTF-8");
         response.setContentType("application/json;charset=UTF-8");//上传文件用这个
         String rootPath=uploadFolder;
+        System.out.println(action);
+        System.out.println(rootPath);
         try {
             String exec = new ActionEnter(request, rootPath).exec();
             if(action!= null) {
@@ -85,7 +91,7 @@ public class UEditorController {
                      *  故手动指定Content-Type为Javascript类型（"application/ecmascript"，"application/javascript"，"application/x-javascript"，"text/ecmascript"，"text/javascript"，"text/jscript"，"text/x-javascript"，"text/vbs"，"text/vbscript"）的一种即可
                      *  建议后期：跨域的数据请求转到本站服务器（用Node.js），由本站服务器去做跨域请求，即跳过浏览器同源策略的限制
                      */
-                    response.setContentType("text/javascript;charset=UTF-8");//必须用
+                    response.setContentType("application/ecmascript;charset=UTF-8");//必须用
                 }else if(action.startsWith("list")){
                     response.setContentType("text/javascript;charset=UTF-8");//加载图片列表用这个
                     String root=new String(rootPath);
@@ -101,6 +107,7 @@ public class UEditorController {
             //
             PrintWriter writer = response.getWriter();
             writer.write(exec);
+            System.out.println(exec);
             writer.flush();
             writer.close();
         } catch (IOException e) {

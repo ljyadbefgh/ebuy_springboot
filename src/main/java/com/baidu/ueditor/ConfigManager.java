@@ -1,17 +1,25 @@
 package com.baidu.ueditor;
 
 import com.baidu.ueditor.define.ActionMap;
+import com.lcvc.ebuy_springboot.util.file.MyFileOperator;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.boot.system.ApplicationHome;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.util.FileCopyUtils;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * 配置管理器
- * 说明：修改了getConfigPath方法，重新指向config.json
+ * 说明：
+ * 1.修改了getConfigPath方法，重新指向config.json
+ * 2. 20191226编写：修改1的方法，不再重新指向，因为spring boot打包为jar后内部路径已经改变，推荐使用spring boot自带的ClassPathResource类来读取内部文件，但是使用该类也无法获取文件的真实路径（会出错），故废弃路径，直接读取文件
  * @author ljy
  *
  */
@@ -164,13 +172,25 @@ public final class ConfigManager {
 		}
 		
 	}
-	
+
+	//20191226本方法暂时废弃，因为spring boot打包为jar后内部路径已经改变，推荐使用spring boot自带的ClassPathResource类来读取内部文件，但是使用该类也无法获取文件的真实路径（会出错），故废弃路径，直接读取文件内容
 	private String getConfigPath () {
 		//return this.parentPath + File.separator + ConfigManager.configFileName;
 		/*此部分为手动修改*/
 		try {
 			// 需要先转为URI再getPath()，否则项目路径带空格或者带中文则无法读取到文件
-			return this.getClass().getClassLoader().getResource("static/server/plugins/ueditor/config.json").toURI().getPath();
+			String path=this.getClass().getClassLoader().getResource("static/server/plugins/ueditor/config.json").toURI().getPath();
+			if(path==null){//如果项目打包为jar，这里会为null；但是如果项目打包为war则没有问题
+				//根据项目打包后的jar路径获取项目的物理路径，废弃，无法获取正确路径
+				ApplicationHome home = new ApplicationHome(getClass());
+				File jarFile = home.getSource();
+				path=jarFile.getPath();
+				path=path+"static/server/plugins/ueditor/config.json";
+				//
+
+			}
+			//System.out.println(path);
+			return path;
 		} catch (URISyntaxException e) {
 			return null;
 		}
@@ -190,25 +210,35 @@ public final class ConfigManager {
 	}
 	
 	private String readFile ( String path ) throws IOException {
-		
 		StringBuilder builder = new StringBuilder();
-		
+
+		//ljy增加代码，因为spring  boot打包为jar后，无法用传统类读取内部文件内容，因此使用spring boot自带的类读取
+		ClassPathResource cpr=new ClassPathResource("static/server/plugins/ueditor/config.json");
 		try {
-			
-			InputStreamReader reader = new InputStreamReader( new FileInputStream( path ), "UTF-8" );
-			BufferedReader bfReader = new BufferedReader( reader );
-			
-			String tmpContent = null;
-			
-			while ( ( tmpContent = bfReader.readLine() ) != null ) {
-				builder.append( tmpContent );
-			}
-			
-			bfReader.close();
-			
-		} catch ( UnsupportedEncodingException e ) {
-			// 忽略
+			byte[] fileContent= FileCopyUtils.copyToByteArray(cpr.getInputStream());
+			builder.append(MyFileOperator.readFile(fileContent));
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
+		
+
+		
+//		try {
+//
+//			InputStreamReader reader = new InputStreamReader( new FileInputStream( path ), "UTF-8" );
+//			BufferedReader bfReader = new BufferedReader( reader );
+//
+//			String tmpContent = null;
+//
+//			while ( ( tmpContent = bfReader.readLine() ) != null ) {
+//				builder.append( tmpContent );
+//			}
+//
+//			bfReader.close();
+//
+//		} catch ( UnsupportedEncodingException e ) {
+//			// 忽略
+//		}
 		
 		return this.filter( builder.toString() );
 		

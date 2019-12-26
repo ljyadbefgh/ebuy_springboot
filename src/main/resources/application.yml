@@ -1,8 +1,8 @@
 #服务端配置
 server:
-  port: 8088   #端口号
+  port: 8081   #端口号
   servlet:
-    context-path: /ebuy_springboot  #在项目路径上加项目名，注意，spring boot2和spring boot1不同
+    #context-path: /ebuy_springboot  #在项目路径上加项目名，注意，spring boot2和spring boot1不同
     session:
       timeout: 60m #设置过期时间为60分钟
 
@@ -17,6 +17,8 @@ spring:
   devtools:
     restart:
       enabled: true  #开启自动启动
+#  mvc:
+#    static-path-pattern: /static/**
   thymeleaf:
     cache: false #缓存（开发时设置为false）
   #jdbc配置，springboot默认会把spring.datasource开头的信息收纳，进行DataSource对象的配置，进而进行sqlSessionFactory的配置等相关数据库连接的配置，从而省略了application.xml中的相关

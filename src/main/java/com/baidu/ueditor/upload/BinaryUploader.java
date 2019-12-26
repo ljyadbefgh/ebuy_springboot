@@ -21,6 +21,7 @@ import java.util.Map;
  * 特别注明：
  * 1.BinaryUploader类无法获取到字节流，导致ueditor上传时会出错（上传图片时提示未找到上传数据）
  * 原因：因为SpringMVC框架对含字节流的request进行了处理，此处传的是处理过的request，故获取不到字节流。此时采用SpringMVC框架的解析器multipartResolver。
+
  */
 public class BinaryUploader {
 

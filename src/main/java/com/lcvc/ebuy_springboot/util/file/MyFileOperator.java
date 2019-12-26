@@ -4,6 +4,52 @@ import java.io.*;
 
 public class MyFileOperator {
 
+
+
+	/**
+	 * 读取文件内容
+	 * @param filePath
+	 */
+	public static String readFile(String filePath){
+		String encoding = "UTF-8";
+		File file = new File(filePath);
+		Long filelength = file.length();
+		byte[] fileContent = new byte[filelength.intValue()];
+		try {
+			FileInputStream in = new FileInputStream(file);
+			in.read(fileContent);
+			in.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		try {
+			return new String(fileContent, encoding);
+		} catch (UnsupportedEncodingException e) {
+			System.err.println("The OS does not support " + encoding);
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	/**
+	 * 读取文件内容
+	 * 针对spring boot打包为jar后，读取自身文件设计
+	 * ClassPathResource类
+	 *
+	 */
+	public static String readFile(byte[] fileContent){
+		String encoding = "UTF-8";
+		try {
+			return new String(fileContent, encoding);
+		} catch (UnsupportedEncodingException e) {
+			System.err.println("The OS does not support " + encoding);
+			e.printStackTrace();
+			return null;
+		}
+	}
+
 	/**
 	 * 按照路径创建一个目录
 	 * @param dirPath 上传路径
