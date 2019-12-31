@@ -1,10 +1,12 @@
 package com.lcvc.ebuy_springboot.service;
 
 import com.lcvc.ebuy_springboot.model.AdminRole;
+import com.lcvc.ebuy_springboot.model.Role;
 
 import java.util.List;
 
 public interface AdminRoleService {
+
 
     /**
      * 获取指定账户与所有角色的关系
@@ -14,16 +16,26 @@ public interface AdminRoleService {
      * @param adminId
      * @return
      */
-    List<AdminRole> getAdminRoleByAdminId(Integer adminId);
+    List<AdminRole> getAllAdminRoleByAdminId(Integer adminId);
+
+
 
     /**
-     * 为指定账户添加和指定角色的关系
-     * 说明：同一个账户不能拥有相同的两个角色
+     * 为指定的一个账户添加指定的多个角色
+     * 说明：
+     * 同一个账户不能拥有相同的两个角色，如果有重复关系，则不进行添加
      * @param adminId
-     * @param roleId
-     * @return null表示没有添加任何关系
+     * @param roleIds 多个角色
      */
-    AdminRole addAdminRole(Integer adminId,Integer roleId);
+    void addAdminRoles(Integer adminId,Integer[] roleIds);
+
+    /**
+     * 为指定账户移除多个角色的关系
+     * @param adminId
+     * @param roleIds 多个角色
+     */
+    void removeAdminRoles(Integer adminId,Integer[] roleIds);
+
 
     /**
      * 为指定的多个账户添加指定的多个角色
@@ -43,12 +55,7 @@ public interface AdminRoleService {
      */
     void addAllAdminRoleForAdmin(Integer adminId);
 
-    /**
-     * 为指定账户移除相应角色的关系
-     * @param adminId
-     * @param roleId
-     */
-    void removeAdminRole(Integer adminId,Integer roleId);
+
 
     /**
      * 为指定的多个账户移除指定的多个角色
@@ -72,5 +79,44 @@ public interface AdminRoleService {
      */
     void removeAdminRoles(Integer[] adminIds,Integer roleId);
 
+
+
+    /**
+     * 获取指定账户拥有的角色集合
+     * 说明：
+     * 1.返回的是账户与数据库中角色的关系
+     * @param adminId
+     * @return
+     */
+    List<Role> getRolesByAdminId(Integer adminId);
+
+
+
+
+
+
+
+
+
+
+
+
+    /**
+     * ************20191231说明 当前端完全过度到vue后，移除该方法
+     * 为指定账户添加和指定角色的关系
+     * 说明：同一个账户不能拥有相同的两个角色
+     * @param adminId
+     * @param roleId
+     * @return null表示没有添加任何关系
+     */
+    AdminRole addAdminRole(Integer adminId,Integer roleId);
+
+    /**
+     * ************20191231说明 当前端完全过度到vue后，移除该方法
+     * 为指定账户移除相应角色的关系
+     * @param adminId
+     * @param roleId
+     */
+    void removeAdminRole(Integer adminId,Integer roleId);
 
 }

@@ -2,7 +2,7 @@
 //设置远程访问的服务器路径
 //const WEBURL = "http://127.0.0.1:8088/ebuy_springboot/";
 const WEBURL = "http://127.0.0.1:8081/";
-//const WEBURL = "http://120.76.118.101:8080/ebuy_springboot/";
+//const WEBURL = "http://120.76.118.101:8081/";
 const WEBURL_API = WEBURL+"api/";//专门访问api接口
 //设置状态码
 const code_success=0;//设置状态码，表示成功，应与服务端保持一致

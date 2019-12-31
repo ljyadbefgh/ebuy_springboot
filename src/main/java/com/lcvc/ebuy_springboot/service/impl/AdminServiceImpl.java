@@ -313,6 +313,10 @@ public class AdminServiceImpl implements  AdminService,UserDetailsService{
         Admin admin=adminDao.getAdminByUsername(username);//根据账户名查找指定账户信息
         if(admin!=null){
             admin.setRoles(roleDao.getRolesByAdminId(admin.getId()));//获取该账户的角色集合
+            //发布过产品的数量
+            ProductQuery productQuery=new ProductQuery();
+            productQuery.setCreator(admin);
+            admin.setSaveProductNumber(productDao.querySize(productQuery));
         }else{
             throw new UsernameNotFoundException("该账户不存在");
         }

@@ -23,6 +23,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,7 +51,7 @@ public class AdminManageController {
 			@ApiImplicitParam(name = "limit", value = "每页最多展示的记录数", required = false, dataType = "int",example="20")
 	})
 	@GetMapping
-	public Map<String, Object> toManageAdmin(Integer page, Integer limit, AdminQuery adminQuery){
+	public Map<String, Object> toManageAdmin(Integer page, Integer limit, AdminQuery adminQuery, HttpServletRequest request){
         Map<String, Object> map=new HashMap<String, Object>();
 		PageObject pageObject =adminService.searchAdmins(page,limit,adminQuery);
 		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
@@ -120,24 +121,50 @@ public class AdminManageController {
 	@GetMapping("/{id}/adminRoleRelationManage")
 	public Map<String, Object>  getRolesByAdmin(@PathVariable Integer id){
 		Map<String, Object> map=new HashMap<String, Object>();
-		List<AdminRole> list=adminRoleService.getAdminRoleByAdminId(id);
+		List<AdminRole> list=adminRoleService.getAllAdminRoleByAdminId(id);
 		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
 		map.put(Constant.JSON_DATA,list);
 		map.put(Constant.JSON_TOTAL,list.size());
+		//map.put("roles", roleService.getAllRoles());//获取所有角色集合
+		//map.put("roleIds",adminRoleService.getRolesByAdminId(id));//获取拥有的角色集合
 		return map;
 	}
 
-	@ApiOperation(value = "为指定账户赋予和指定角色的关系", notes = "为指定账户赋予和指定角色的关系")
+	@ApiOperation(value = "为指定账户赋予多个角色的关系", notes = "为指定账户赋予多个角色的关系")
 	@ApiImplicitParams({
 			@ApiImplicitParam(name = "adminId", value = "指定账户的id", paramType = "path", required = true,example="1"),
-			@ApiImplicitParam(name = "roleId", value = "指定角色的id", paramType = "path", required = true,example="1")
+			@ApiImplicitParam(name = "roleIds", value = "多个角色的id", paramType = "path", required = true,example="1,2")
 	})
-	@PostMapping("/{adminId}/adminRoleRelationManage/{roleId}")
-	public Map<String, Object>  addRoleForAdmin(@PathVariable("adminId") Integer adminId,@PathVariable("roleId") Integer roleId){
+	@PostMapping("/{adminId}/adminRoleRelationManage/roles/{roleIds}")
+	public Map<String, Object>  addRolesForAdmin(@PathVariable("adminId") Integer adminId,@PathVariable("roleIds") Integer[] roleIds){
 		Map<String, Object> map=new HashMap<String, Object>();
-		AdminRole adminRole=adminRoleService.addAdminRole(adminId,roleId);
+		adminRoleService.addAdminRoles(adminId,roleIds);
 		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
-		map.put(Constant.JSON_DATA,adminRole);
+		return map;
+	}
+
+	@ApiOperation(value = "从指定账户移除和多个角色的关系", notes = "从指定账户移除和多个角色的关系")
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "adminId", value = "指定账户的id", paramType = "path", required = true,example="1"),
+			@ApiImplicitParam(name = "roleIds", value = "多个角色的id", paramType = "path", required = true,example="1,2")
+	})
+	@DeleteMapping("/{adminId}/adminRoleRelationManage/roles/{roleIds}")
+	public Map<String, Object>  removeRolesFromAdmin(@PathVariable("adminId") Integer adminId,@PathVariable("roleIds") Integer[] roleIds){
+		Map<String, Object> map=new HashMap<String, Object>();
+		adminRoleService.removeAdminRoles(adminId,roleIds);
+		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
+		return map;
+	}
+
+
+
+	@ApiOperation(value = "从多个账户中移除多个角色的身份", notes = "从多个账户中移除多个角色的身份")
+	@ApiImplicitParam(name = "adminIdsAndRoleIdsForm", value = "封装的用于接收adminIds[]和roleIds[]的表单对象", paramType = "body", dataType="AdminIdsAndRoleIdsForm",required = true)
+	@DeleteMapping("/adminRoleRelationManage/removeRolesFromAdmins")
+	public Map<String, Object>  removeRolesFromAdmins(@RequestBody AdminIdsAndRoleIdsForm adminIdsAndRoleIdsForm){
+		Map<String, Object> map=new HashMap<String, Object>();
+		adminRoleService.removeAdminRoles(adminIdsAndRoleIdsForm.getAdminIds(),adminIdsAndRoleIdsForm.getRoleIds());
+		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
 		return map;
 	}
 
@@ -151,28 +178,8 @@ public class AdminManageController {
 		return map;
 	}
 
-	@ApiOperation(value = "从多个账户中移除多个角色的身份", notes = "从多个账户中移除多个角色的身份")
-	@ApiImplicitParam(name = "adminIdsAndRoleIdsForm", value = "封装的用于接收adminIds[]和roleIds[]的表单对象", paramType = "body", dataType="AdminIdsAndRoleIdsForm",required = true)
-	@DeleteMapping("/adminRoleRelationManage/removeRolesFromAdmins")
-	public Map<String, Object>  removeRolesFromAdmins(@RequestBody AdminIdsAndRoleIdsForm adminIdsAndRoleIdsForm){
-		Map<String, Object> map=new HashMap<String, Object>();
-		adminRoleService.removeAdminRoles(adminIdsAndRoleIdsForm.getAdminIds(),adminIdsAndRoleIdsForm.getRoleIds());
-		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
-		return map;
-	}
 
-	@ApiOperation(value = "从指定账户移除和指定角色的关系", notes = "从指定账户移除和指定角色的关系")
-	@ApiImplicitParams({
-			@ApiImplicitParam(name = "adminId", value = "指定账户的id", paramType = "path", required = true,example="1"),
-			@ApiImplicitParam(name = "roleId", value = "指定角色的id", paramType = "path", required = true,example="1")
-	})
-	@DeleteMapping("/{adminId}/adminRoleRelationManage/{roleId}")
-	public Map<String, Object>  removeRoleFromAdmin(@PathVariable("adminId") Integer adminId,@PathVariable("roleId") Integer roleId){
-		Map<String, Object> map=new HashMap<String, Object>();
-		adminRoleService.removeAdminRole(adminId,roleId);
-		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
-		return map;
-	}
+
 
 	@ApiOperation(value = "为指定账户赋予和所有角色的关系", notes = "为指定账户赋予和所有角色的关系")
 	@ApiImplicitParams({
@@ -194,6 +201,55 @@ public class AdminManageController {
 	public Map<String, Object>  removeAllRoleFromAdmin(@PathVariable("adminId") Integer adminId){
 		Map<String, Object> map=new HashMap<String, Object>();
 		adminRoleService.removeAllAdminRoleFromAdmin(adminId);
+		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
+		return map;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	@ApiOperation(value = "为指定账户赋予和指定角色的关系", notes = "为指定账户赋予和指定角色的关系")
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "adminId", value = "指定账户的id", paramType = "path", required = true,example="1"),
+			@ApiImplicitParam(name = "roleId", value = "指定角色的id", paramType = "path", required = true,example="1")
+	})
+	@PostMapping("/{adminId}/adminRoleRelationManage/{roleId}")
+	public Map<String, Object>  addRoleForAdmin(@PathVariable("adminId") Integer adminId,@PathVariable("roleId") Integer roleId){
+		Map<String, Object> map=new HashMap<String, Object>();
+		AdminRole adminRole=adminRoleService.addAdminRole(adminId,roleId);
+		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
+		map.put(Constant.JSON_DATA,adminRole);
+		return map;
+	}
+
+
+	@ApiOperation(value = "从指定账户移除和指定角色的关系", notes = "从指定账户移除和指定角色的关系")
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "adminId", value = "指定账户的id", paramType = "path", required = true,example="1"),
+			@ApiImplicitParam(name = "roleId", value = "指定角色的id", paramType = "path", required = true,example="1")
+	})
+	@DeleteMapping("/{adminId}/adminRoleRelationManage/{roleId}")
+	public Map<String, Object>  removeRoleFromAdmin(@PathVariable("adminId") Integer adminId,@PathVariable("roleId") Integer roleId){
+		Map<String, Object> map=new HashMap<String, Object>();
+		adminRoleService.removeAdminRole(adminId,roleId);
 		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
 		return map;
 	}

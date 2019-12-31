@@ -15,7 +15,7 @@ public class AdminRoleServiceImplTest extends EbuySpringbootApplicationTests {
 
     @Test
     public void testSearchAdmins() {
-        List<AdminRole> adminRoles=adminRoleService.getAdminRoleByAdminId(1);
+        List<AdminRole> adminRoles=adminRoleService.getAllAdminRoleByAdminId(1);
         for(AdminRole adminRole:adminRoles){
             System.out.println(adminRole.getId());
             System.out.println(adminRole.getAdmin().getName());

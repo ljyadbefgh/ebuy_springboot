@@ -58,6 +58,7 @@ public interface AdminService {
     void deleteAdmins(Admin admin,Integer[] ids);
 
     /**
+     *
      * 添加管理员
      * 说明：
      * 1.账户名和姓名不能为空

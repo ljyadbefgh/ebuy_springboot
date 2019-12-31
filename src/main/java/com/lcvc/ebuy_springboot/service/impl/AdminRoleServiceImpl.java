@@ -32,7 +32,7 @@ public class AdminRoleServiceImpl implements AdminRoleService {
     private AdminDao adminDao;
 
     @Override
-    public List<AdminRole> getAdminRoleByAdminId(Integer adminId) {
+    public List<AdminRole> getAllAdminRoleByAdminId(Integer adminId) {
         List<AdminRole> adminRoles=new ArrayList<AdminRole>();//定义所有角色信息
         Admin admin=adminDao.get(adminId);//获取指定账户信息
         if(admin!=null){
@@ -75,6 +75,67 @@ public class AdminRoleServiceImpl implements AdminRoleService {
         adminRole.setCreateTime(Calendar.getInstance().getTime());
         adminRoleDao.save(adminRole);
         return adminRole;
+    }
+
+    @Override
+    public void addAdminRoles(Integer adminId, Integer[] roleIds) {
+        if(adminId==null||roleIds==null){
+            throw new MyWebException("操作失败：非法参数");
+        }
+        Admin admin=adminDao.get(adminId);
+        if(admin==null){
+            throw new MyWebException("操作失败：相关账户不存在");
+        }
+        if(roleIds.length==0){
+            throw new MyWebException("操作失败：请选择要赋予的角色");
+        }
+        List<AdminRole> adminRoleList=new ArrayList<AdminRole>();//将要添加的关系存储到此集合中
+        AdminRole adminRole=null;
+        for(Integer roleId:roleIds){//遍历多个角色
+            if(roleId==null){
+                throw new MyWebException("操作失败：非法参数（角色id为空）");
+            }
+            Role role=roleDao.get(roleId);
+            if(role==null){
+                throw new MyWebException("操作失败：相关角色不存在");
+            }
+            if(adminRoleDao.getAdminAndRoleRelationNumber(adminId,roleId)==0){//只有当不存在这个关系时才添加
+                adminRole=new AdminRole();
+                adminRole.setAdmin(admin);
+                adminRole.setRole(role);
+                adminRole.setCreateTime(Calendar.getInstance().getTime());
+                adminRoleList.add(adminRole);
+            }
+        }
+        if(adminRoleList.size()>0){//只有集合大于0才执行保存
+            adminRoleDao.saves(adminRoleList);
+        }
+    }
+
+    @Override
+    public void removeAdminRoles(Integer adminId, Integer[] roleIds) {
+        if(adminId==null||roleIds==null){
+            throw new MyWebException("操作失败：非法参数");
+        }
+        if(roleIds.length==0){
+            throw new MyWebException("操作失败：请选择要移除的角色");
+        }
+        List<Integer> idsList=new ArrayList<Integer>();//要删除的id集合
+        AdminRole adminRole=null;
+        for(Integer roleId:roleIds){//遍历多个角色
+            if(roleId==null){
+                throw new MyWebException("操作失败：非法参数（角色id为空）");
+            }
+            Object idObject=adminRoleDao.getId(adminId,roleId);//获取关系的id值
+            if(idObject!=null){//只有当存在这个关系时才进行删除
+                idsList.add((Integer)idObject);
+            }
+        }
+        if(idsList.size()>0){//只有集合大于0才执行删除
+            //将集合转换为数组再删除
+            Integer[] ids = new Integer[idsList.size()];
+            adminRoleDao.deletes(idsList.toArray(ids));
+        }
     }
 
     @Override
@@ -210,6 +271,11 @@ public class AdminRoleServiceImpl implements AdminRoleService {
             Integer[] ids = new Integer[idsList.size()];
             adminRoleDao.deletes(idsList.toArray(ids));
         }
+    }
+
+    @Override
+    public List<Role> getRolesByAdminId(Integer adminId) {
+        return roleDao.getRolesByAdminId(adminId);
     }
 
 }
