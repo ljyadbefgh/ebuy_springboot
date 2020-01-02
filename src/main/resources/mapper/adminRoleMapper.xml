@@ -36,9 +36,9 @@
 
     <insert id="saves"  useGeneratedKeys="true" keyProperty="id">
         <choose>
-            <when test="list.size()>0">
+            <when test="collection.size()>0">
                 insert into admin_role(id,adminId,roleId,createTime) values
-                <foreach collection="list" item="item" index="index" separator=",">
+                <foreach collection="collection" item="item" index="index" separator=",">
                     (null,#{item.admin.id},#{item.role.id},#{item.createTime})
                 </foreach>
             </when>

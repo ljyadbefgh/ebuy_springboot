@@ -15,9 +15,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
+import java.util.*;
 
 @Transactional(propagation = Propagation.REQUIRED,isolation = Isolation.DEFAULT,timeout=36000,rollbackFor=Exception.class)
 @Validated//表示开启sprint的校检框架，会自动扫描方法里的@Valid（@Valid注解一般写在接口即可）
@@ -120,7 +118,7 @@ public class AdminRoleServiceImpl implements AdminRoleService {
         if(roleIds.length==0){
             throw new MyWebException("操作失败：请选择要移除的角色");
         }
-        List<Integer> idsList=new ArrayList<Integer>();//要删除的id集合
+        Set<Integer> idsList=new HashSet<>();//要删除的id集合
         AdminRole adminRole=null;
         for(Integer roleId:roleIds){//遍历多个角色
             if(roleId==null){
@@ -152,7 +150,7 @@ public class AdminRoleServiceImpl implements AdminRoleService {
         if(adminIds.length*roleIds.length>100){//批量赋予账户和角色的数量，避免数据库性能问题
             throw new MyWebException("操作失败：一次赋予的账户和角色关系总数不能超过100个");
         }
-        List<AdminRole> adminRoleList=new ArrayList<AdminRole>();//将要添加的关系存储到此集合中
+        Set<AdminRole> adminRoleList=new HashSet<>();//将要添加的关系存储到此集合中，用set是避免重复操作——但必须是已经对集合内对象的相等进行重写
         AdminRole adminRole=null;
         for(Integer adminId:adminIds){
             if(adminId==null){
@@ -179,7 +177,7 @@ public class AdminRoleServiceImpl implements AdminRoleService {
                 }
             }
         }
-        if(adminRoleList.size()>0){//只有集合大于0才执行保存
+        if(adminRoleList.size()>0){//只有集合大于0才执行保存。存在缺陷，如果前端在批量操作时重复传值，会导致一次出现多条记录的情况
             adminRoleDao.saves(adminRoleList);
         }
     }
@@ -223,7 +221,7 @@ public class AdminRoleServiceImpl implements AdminRoleService {
         if(roleIds.length==0){
             throw new MyWebException("操作失败：请选择要移除的角色");
         }
-        List<Integer> idsList=new ArrayList<Integer>();//要删除的id集合
+        Set<Integer> idsList=new HashSet<>();//要删除的id集合
         AdminRole adminRole=null;
         for(Integer adminId:adminIds){
             if(adminId==null){

@@ -78,8 +78,6 @@ public class UEditorController {
         //response.setContentType("text/html; charset=UTF-8");
         response.setContentType("application/json;charset=UTF-8");//上传文件用这个
         String rootPath=uploadFolder;
-        System.out.println(action);
-        System.out.println(rootPath);
         try {
             String exec = new ActionEnter(request, rootPath).exec();
             if(action!= null) {

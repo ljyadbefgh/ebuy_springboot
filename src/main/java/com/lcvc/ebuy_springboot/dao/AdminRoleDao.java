@@ -4,6 +4,7 @@ import com.lcvc.ebuy_springboot.model.AdminRole;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.List;
 
 @Repository//为了不让idea报错加上
@@ -57,10 +58,10 @@ public interface AdminRoleDao{
     /**
      * 一次插入多条记录：将账户和角色关系的多条记录同时插入
      * 说明：集合为空则不插入任何记录
-     * @param adminRoles 不能为Null
+     * @param adminRoles 不能为Null，并且建议是set
      * @return 返回插入的记录数
      */
-    int saves(List<AdminRole> adminRoles);
+    int saves(Collection<AdminRole> adminRoles);
 
     /**
      * 删除指定账户的所有角色关系信息
