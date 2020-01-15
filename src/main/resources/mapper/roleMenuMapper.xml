@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 为这个mapper指定一个唯一的namespace，namespace的值习惯上设置成包名+sql映射文件名，这样就能够保证namespace的值是唯一的
+例如namespace="com.cn.mybatis.test1.dao.userMapper"就是com.cn.mybatis.test1.dao(包名)+userMapper(userMapper.xml文件去除后缀)
+ -->
+<mapper namespace="com.lcvc.ebuy_springboot.dao.RoleMenuDao">
+
+    <select id="getMenusCountByRoleId" resultType="Integer">
+        SELECT count(id) from role_menu WHERE roleId=#{roleId}
+    </select>
+
+    <select id="getMenusIdByRoleId" resultType="Integer">
+        SELECT menuId from role_menu WHERE roleId=#{roleId}
+    </select>
+
+    <insert id="addMenusForRoleId">
+        INSERT INTO role_menu(roleId,menuId) VALUES
+        <foreach collection="menuIds" item="menuId" separator=",">
+            (#{roleId},#{menuId})
+        </foreach>
+    </insert>
+
+    <delete id="deleteMenusByRoleId">
+        delete from role_menu where roleId=#{roleId}
+    </delete>
+
+    <delete id="deleteRoleMenusByMenuIds">
+        delete from role_menu where menuId in
+        <foreach item="menuId" collection="array" open="(" separator="," close=")">
+            #{menuId}
+        </foreach>
+    </delete>
+
+
+</mapper>

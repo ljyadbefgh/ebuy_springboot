@@ -26,6 +26,9 @@ public class AdminDaoTest  extends EbuySpringbootApplicationTests {
         System.out.println(adminDao.delete(2));
     }
 
+    /**
+     * 20200114 17：00 张峰测试
+     */
     @Test
     public void testDeletes(){
         System.out.println(adminDao.deletes(new Integer[]{85,87}));

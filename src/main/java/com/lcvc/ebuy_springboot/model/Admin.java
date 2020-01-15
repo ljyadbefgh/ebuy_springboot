@@ -48,6 +48,7 @@ public class Admin implements UserDetails {
 	private List<Role> roles;//账户拥有的角色集合
 	@ApiModelProperty(hidden = true)
 	private Integer roleNumber;//角色数量
+	private Integer menuNumber;//菜单数量
 
 	private Integer[] roleIds;//用于接收前端传递过来的角色集合id。说明：接收“1,3,5”这样的类型（如果是js数组可以用tostring转换为这个类型），否则spring mvc数组参数无法接受
 
@@ -109,6 +110,14 @@ public class Admin implements UserDetails {
 
 	public void setCreateTime(Date createTime) {
 		this.createTime = createTime;
+	}
+
+	public Integer getMenuNumber() {
+		return menuNumber;
+	}
+
+	public void setMenuNumber(Integer menuNumber) {
+		this.menuNumber = menuNumber;
 	}
 
 	public Integer getSex() {

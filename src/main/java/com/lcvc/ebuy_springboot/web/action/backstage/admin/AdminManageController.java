@@ -3,11 +3,13 @@ package com.lcvc.ebuy_springboot.web.action.backstage.admin;
 
 import com.lcvc.ebuy_springboot.model.Admin;
 import com.lcvc.ebuy_springboot.model.AdminRole;
+import com.lcvc.ebuy_springboot.model.Menu;
 import com.lcvc.ebuy_springboot.model.base.Constant;
 import com.lcvc.ebuy_springboot.model.base.JsonCode;
 import com.lcvc.ebuy_springboot.model.base.PageObject;
 import com.lcvc.ebuy_springboot.model.form.admin.AdminIdsAndRoleIdsForm;
 import com.lcvc.ebuy_springboot.model.query.AdminQuery;
+import com.lcvc.ebuy_springboot.service.AdminMenuService;
 import com.lcvc.ebuy_springboot.service.AdminRoleService;
 import com.lcvc.ebuy_springboot.service.AdminService;
 import com.lcvc.ebuy_springboot.service.RoleService;
@@ -43,6 +45,8 @@ public class AdminManageController {
 
 	@Autowired
 	private AdminRoleService adminRoleService;
+	@Autowired
+	private AdminMenuService adminMenuService;
 
 
 	@ApiOperation(value = "分页读取管理账户信息", notes = "如果page为空则默认是第一页;如果limit为空则采用服务器的默认数值")
@@ -205,6 +209,18 @@ public class AdminManageController {
 		return map;
 	}
 
+
+	//===================================菜单操作============================================
+	@ApiOperation(value = "根据账户id获取指定账户的树形菜单", notes = "根据账户id获取指定账户的树形菜单")
+	@ApiImplicitParam(name = "id", value = "要读取的账户id", paramType = "path", required = true,example="1")
+	@GetMapping("/{id}/treeMenu")
+	public Map<String, Object>  getMenusByAdmin(@PathVariable Integer id){
+		Map<String, Object> map=new HashMap<String, Object>();
+		List<Menu> list=adminMenuService.getTreeMenusByAdminId(id);//读取账户对应的树形菜单
+		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
+		map.put(Constant.JSON_DATA,list);
+		return map;
+	}
 
 
 

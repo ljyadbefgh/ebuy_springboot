@@ -2,6 +2,7 @@ package com.lcvc.ebuy_springboot.service.impl;
 
 import com.lcvc.ebuy_springboot.dao.AdminRoleDao;
 import com.lcvc.ebuy_springboot.dao.RoleDao;
+import com.lcvc.ebuy_springboot.dao.RoleMenuDao;
 import com.lcvc.ebuy_springboot.dao.RolePurviewDao;
 import com.lcvc.ebuy_springboot.model.Role;
 import com.lcvc.ebuy_springboot.model.base.PageObject;
@@ -29,6 +30,8 @@ public class RoleServiceImpl implements RoleService {
     private AdminRoleDao adminRoleDao;
     @Autowired
     private RolePurviewDao rolePurviewDao;
+    @Autowired
+    private RoleMenuDao roleMenuDao;
 
     /**
      * 是否是系统角色
@@ -66,6 +69,8 @@ public class RoleServiceImpl implements RoleService {
             role.setAdminNumber(adminNumber);
             //获取该角色对应的权限数量
             role.setPurviewNumber(rolePurviewDao.getRolePurviewNumberByRoleId(role.getId()));
+            //获取该角色对应的菜单数量
+            role.setMenuNumber(roleMenuDao.getMenusCountByRoleId(role.getId()));
         }
         return pageObject;
     }
@@ -122,6 +127,11 @@ public class RoleServiceImpl implements RoleService {
                 int adminNumber=adminRoleDao.getAdminNumberByRoleId(role.getId());
                 if(adminNumber>0){
                     throw new MyServiceException("角色删除失败：角色"+role.getName()+"拥有"+adminNumber+"个管理账户，请先移除管理账户的角色关系再删除");
+                }
+                //获取该角色拥有的菜单数量
+                int menuNumber=roleMenuDao.getMenusCountByRoleId(role.getId());
+                if(menuNumber>0){
+                    throw new MyServiceException("角色删除失败：角色"+role.getName()+"拥有"+menuNumber+"个菜单，请先移除和菜单的关联再删除");
                 }
                 //如果有账户信息
             }

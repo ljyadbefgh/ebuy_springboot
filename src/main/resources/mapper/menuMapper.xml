@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 为这个mapper指定一个唯一的namespace，namespace的值习惯上设置成包名+sql映射文件名，这样就能够保证namespace的值是唯一的
+例如namespace="com.cn.mybatis.test1.dao.userMapper"就是com.cn.mybatis.test1.dao(包名)+userMapper(userMapper.xml文件去除后缀)
+ -->
+<mapper namespace="com.lcvc.ebuy_springboot.dao.MenuDao">
+
+    <!-- 初始化菜单树 -->
+    <!-- 这里的id的值作为下面的查询返回结果resultMap的值 -->
+    <!-- collection中的column属性可以为多个值，这里只有一个，它作为下面递归查询传递进去的参数 -->
+    <!-- ofType和javaType属性正好联合构成了数据Bean类Category中的childrenList属性的数据类型 -->
+    <!-- select的值为下面递归查询的select标签的id值 -->
+    <resultMap id="menuTree" type="Menu">
+        <!--定义主键-->
+        <id   property="id" column="id" javaType="java.lang.Integer"/>
+        <!--这里递归查询子菜单-->
+        <collection column="id" property="children" ofType="Menu" javaType="java.util.ArrayList" select="getChildrenMenById"/>
+    </resultMap>
+
+    <!-- 再利用上次查询结果colliection中column的值id做递归查询，查出所有子菜单 -->
+    <!-- 这里的返回结果必须为resultMap，并且值为上面构建的resultMap的id的值 -->
+    <select id="getChildrenMenById" resultMap="menuTree" parameterType="Integer">
+        select * from menu where parentId=#{id} order by orderNum asc
+    </select>
+
+
+    <select id="get" resultType="Menu">
+        select * from menu where id=#{id}
+    </select>
+
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="id">
+        insert into menu(id,parentId,name,orderNum,enabled,url,path,route,component,iconCls,requireAuth,display)
+        values(null,#{parentId},#{name},#{orderNum},#{enabled},#{url},#{path},#{route},#{component},#{iconCls},#{requireAuth},#{display})
+    </insert>
+
+    <update id="update" parameterType="Menu">
+        update menu
+        <!--set标签可以剔除末尾的,-->
+        <set>
+            parentId=#{parentId},
+            <if test="name!=null and name.length()>0">name=#{name},</if>
+            <if test="orderNum!=null">orderNum=#{orderNum},</if>
+            <if test="enabled!=null">enabled=#{enabled},</if>
+            <if test="url!=null">url=#{url},</if>
+            <if test="path!=null">path=#{path},</if>
+            <if test="route!=null">route=#{route},</if>
+            <if test="component!=null">component=#{component},</if>
+            <if test="iconCls!=null">iconCls=#{iconCls},</if>
+            <if test="requireAuth!=null">requireAuth=#{requireAuth},</if>
+            <if test="display!=null">display=#{display},</if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <delete id="delete">
+        delete from menu where id=#{id}
+    </delete>
+
+    <delete id="deletes" >
+        delete from menu where id in
+        <foreach item="item" collection="array" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+
+    <select id="getTreeMenu" resultMap="menuTree">
+        select * from menu where parentId is null order by orderNum asc
+    </select>
+
+    <select id="getTreeMenuById" resultMap="menuTree">
+        select * from menu where id=#{id}
+    </select>
+
+
+
+
+
+    <select id="readAll" resultMap="menuTree">
+        select * from role
+        <if test="objectQuery!=null">
+            <where>
+            <if test="objectQuery.enabled!=null">
+                and enabled=#{objectQuery.enabled}
+            </if>
+            </where>
+        </if>
+         order by level asc
+    </select>
+
+    <select id="total" resultType="int">
+       select count(1) from role
+    </select>
+
+    <select id="query" resultType="Role">
+        select * from role order by level asc limit #{offset},#{length}
+    </select>
+
+    <select id="querySize" resultType="int">
+        select count(1) from role order by level asc
+    </select>
+
+
+
+
+</mapper>

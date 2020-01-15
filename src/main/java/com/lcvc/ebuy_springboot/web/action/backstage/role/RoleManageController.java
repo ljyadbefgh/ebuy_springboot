@@ -7,10 +7,7 @@ import com.lcvc.ebuy_springboot.model.base.Constant;
 import com.lcvc.ebuy_springboot.model.base.JsonCode;
 import com.lcvc.ebuy_springboot.model.base.PageObject;
 import com.lcvc.ebuy_springboot.model.query.AdminQuery;
-import com.lcvc.ebuy_springboot.service.AdminRoleService;
-import com.lcvc.ebuy_springboot.service.AdminService;
-import com.lcvc.ebuy_springboot.service.RolePurviewService;
-import com.lcvc.ebuy_springboot.service.RoleService;
+import com.lcvc.ebuy_springboot.service.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -39,6 +36,10 @@ public class RoleManageController {
 	private AdminRoleService adminRoleService;
 	@Autowired
 	private RolePurviewService rolePurviewService;
+	@Autowired
+	private MenuService menuService;
+	@Autowired
+	private RoleMenuService roleMenuService;
 
 
 	@ApiOperation(value = "读取所有角色信息", notes = "读取所有角色信息")
@@ -106,6 +107,34 @@ public class RoleManageController {
 		map.put(Constant.JSON_DATA,roleService.getRole(id));
 		return map;
 	}
+
+
+
+	//======================================菜单操作=====================================================
+	@ApiOperation(value = "以树形方式读取所有菜单信息", notes = "以树形方式读取所有菜单信息")
+	@GetMapping("/menu/{roleId}")
+	public Map<String, Object> toManageMenu(@PathVariable Integer roleId){
+		Map<String, Object> map=new HashMap<String, Object>();
+		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
+		map.put(Constant.JSON_DATA,roleMenuService.getMenusIdByRoleId(roleId));
+		map.put("menus",menuService.getTreeMenu());
+		return map;
+	}
+
+	@ApiOperation(value = "以树形方式读取所有菜单信息", notes = "以树形方式读取所有菜单信息")
+	@PutMapping("/menu/{roleId}")
+	public Map<String, Object> updateRoleMenu(@PathVariable Integer roleId,@RequestBody Integer[] menuIds){
+		Map<String, Object> map=new HashMap<String, Object>();
+		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
+		roleMenuService.updateRoleMenu(roleId,menuIds);
+		map.put(Constant.JSON_MESSAGE, "操作成功");
+		return map;
+	}
+
+
+
+
+
 
 	@ApiOperation(value = "分页读取指定角色对应的管理账户信息", notes = "如果page为空则默认是第一页;如果limit为空则采用服务器的默认数值")
 	@ApiImplicitParams({

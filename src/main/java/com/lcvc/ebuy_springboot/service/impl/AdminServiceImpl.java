@@ -1,9 +1,6 @@
 package com.lcvc.ebuy_springboot.service.impl;
 
-import com.lcvc.ebuy_springboot.dao.AdminDao;
-import com.lcvc.ebuy_springboot.dao.AdminRoleDao;
-import com.lcvc.ebuy_springboot.dao.ProductDao;
-import com.lcvc.ebuy_springboot.dao.RoleDao;
+import com.lcvc.ebuy_springboot.dao.*;
 import com.lcvc.ebuy_springboot.model.Admin;
 import com.lcvc.ebuy_springboot.model.AdminRole;
 import com.lcvc.ebuy_springboot.model.Role;
@@ -40,6 +37,8 @@ public class AdminServiceImpl implements  AdminService,UserDetailsService{
     private ProductDao productDao;
     @Autowired
     private AdminRoleDao adminRoleDao;
+    @Autowired
+    private AdminMenuDao adminMenuDao;
 
     /**
      * 是否是系统管理员
@@ -88,6 +87,8 @@ public class AdminServiceImpl implements  AdminService,UserDetailsService{
             ProductQuery productQuery=new ProductQuery();
             productQuery.setCreator(admin);
             admin.setSaveProductNumber(productDao.querySize(productQuery));
+            //获取该账户拥有的菜单数量
+            admin.setMenuNumber(adminMenuDao.getMenuIdsByAdminId(admin.getId()).length);
             //将密码清空，不返回给前端
 
         }
@@ -127,6 +128,8 @@ public class AdminServiceImpl implements  AdminService,UserDetailsService{
         adminDao.delete(id);
     }
 
+    /**
+     */
     @Override
     public void deleteAdmins(Admin admin,Integer[] ids) {
         //先进行验证

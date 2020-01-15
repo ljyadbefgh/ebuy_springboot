@@ -12,12 +12,13 @@ public class Role implements java.io.Serializable{
     private String nameZH;//角色中文名称
     private Integer level;//角色级别
     private String description;//角色说明
-    private Boolean enabled;//是否启用
-    private Boolean defaultRole;//是否为默认角色，方便用户创建时的选择，如果是，则在创建账户时默认选择（也可自行取消）
+    private Boolean enabled;//是否启用,true表示启用
+    private Boolean defaultRole;//是否为默认角色（true表示是），方便用户创建时的选择，如果是，则在创建账户时默认选择（也可自行取消）
 
     //非数据库字段
     private Integer adminNumber;//该角色对应的账户数量
     private Integer purviewNumber;//该角色对应的权限数量
+    private Integer menuNumber;//该角色对应的菜单数量
 
     public Role() {
     }
@@ -88,6 +89,14 @@ public class Role implements java.io.Serializable{
 
     public void setPurviewNumber(Integer purviewNumber) {
         this.purviewNumber = purviewNumber;
+    }
+
+    public Integer getMenuNumber() {
+        return menuNumber;
+    }
+
+    public void setMenuNumber(Integer menuNumber) {
+        this.menuNumber = menuNumber;
     }
 
     public Boolean getEnabled() {
