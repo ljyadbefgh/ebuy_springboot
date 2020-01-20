@@ -172,7 +172,8 @@ public class RolePurviewServiceImpl implements RolePurviewService {
         rolePurview.setPermissionIds(Constant.DEFAULTPERMISSIONIDS);//默认拥有的权限
         rolePurview.setCreateTime(Calendar.getInstance().getTime());
         rolePurviewDao.save(rolePurview);//保存新的关系进入数据库，并获取到Id
-        rolePurview.setPermissions(this.getPermissions(rolePurview.getPermissionIds()));
+        rolePurview.setPermissions(this.getAllPermissions(rolePurview.getPermissionIds()));//获取所有操作方法
+        //rolePurview.setPermissions(this.getPermissions(rolePurview.getPermissionIds()));//获取当前权限拥有的操作方法
         return rolePurview;
     }
 

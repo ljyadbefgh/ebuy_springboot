@@ -12,7 +12,7 @@ public class AdminMenuDaoTest extends EbuySpringbootApplicationTests {
 
     @Test
     public void testGetRolesByPurviewId(){
-        Integer[] array=adminMenuDao.getMenuIdsByAdminId(-99);
+        Integer[] array=adminMenuDao.getMenuIdsByAdminId(-99,true,true);
         System.out.println("总数："+array.length);
         for(int id:array){
             System.out.println(id);

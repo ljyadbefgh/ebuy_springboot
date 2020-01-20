@@ -41,6 +41,13 @@ public interface AdminRoleDao{
     List<AdminRole> getAdminRoleByAdminId(int adminId);
 
     /**
+     * 获取指定角色和所有账户的关系集合
+     * @param roleId
+     * @return
+     */
+    List<AdminRole> getAdminRoleByRoleId(int roleId);
+
+    /**
      * 获取指定角色拥有的账户数量
      * @param roleId
      * @return
@@ -84,4 +91,11 @@ public interface AdminRoleDao{
      * @return
      */
     int  deletes(java.io.Serializable[] ids);
+
+    /**
+     * 批量删除账户和角色的关系集合，长度不能为0
+     * @param adminRoles 集合中每个关系的id不能为Null
+     * @return
+     */
+    int  deletesAdminRole(Collection<AdminRole> adminRoles);
 }

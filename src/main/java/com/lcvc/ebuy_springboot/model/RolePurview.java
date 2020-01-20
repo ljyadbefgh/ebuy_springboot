@@ -5,7 +5,8 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * 角色关系表
+ * 角色权限关系类
+ * 说明：负责记录该角色拥有哪些权限，并且相关权限的增删改查功能如何
  */
 public class RolePurview implements java.io.Serializable{
     private Integer id;

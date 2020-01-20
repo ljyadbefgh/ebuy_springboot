@@ -6,10 +6,10 @@
 <mapper namespace="com.lcvc.ebuy_springboot.dao.AdminMenuDao">
 
     <select id="getMenuIdsByAdminId" resultType="Integer">
-       select menu.id from menu,role_menu where menu.id=role_menu.menuId and menu.enabled=true and role_menu.roleId in (
+       select menu.id from menu,role_menu where menu.id=role_menu.menuId and menu.enabled=#{menuEnabled} and role_menu.roleId in (
           select roleId from admin_role where adminId=#{adminId} and roleId in(
-					select id from role where enabled=true))
-       GROUP BY menu.id
+					select id from role where enabled=#{roleEnabled}))
+       GROUP BY menu.id  order by menu.orderNum asc
     </select>
 
 

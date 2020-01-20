@@ -149,7 +149,7 @@ public class AdminMenuServiceImpl implements AdminMenuService {
     @Override
     public List<Menu> getTreeMenusByAdminId(@Valid @NotNull Integer adminId) {
         List<Menu> menuList=menuDao.getTreeMenu();//获取数据库原生树形菜单
-        Integer[] menuIdArray=adminMenuDao.getMenuIdsByAdminId(adminId);//获得管理员拥有的菜单id集合
+        Integer[] menuIdArray=adminMenuDao.getMenuIdsByAdminId(adminId,true,true);//获得管理员拥有的菜单id集合
         List<Integer> menuIdList = Arrays.asList(menuIdArray);//注意这样转换的集合不是真正的集合，无法使用add和remove方法
         menuIdList=new CopyOnWriteArrayList<Integer>(menuIdList);//数组直接转换的集合如果用add和remove会出现异常，因为
         try {

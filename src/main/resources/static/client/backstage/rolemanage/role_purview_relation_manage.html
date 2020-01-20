@@ -15,9 +15,9 @@
 		<!--导入自己插件：前端基础设置-->
 		<script src="../../js/my_base_js.js"></script>
 
-		
+
 		<script type="text/html" id="methodsTemplet">
-			{{# layui.each(d.permissions, function(key, value){ }}			
+			{{# layui.each(d.permissions, function(key, value){ }}
 				<!-- <button class="layui-btn layui-btn-sm">{{value.name}}</button> -->
 				<input type="checkbox" id="method_{{d.purview.id}}_{{value.id}}" name="{{d.purview.id}}" value="{{value.id}}" title="{{value.name}}" lay-filter="permissionMethodCheckBoxFilter" {{ value.selected ==true ? 'checked' : '' }}>
 			{{# }); }}
@@ -46,21 +46,21 @@
 							field: 'role_nameZH'
 							,title: '角色中文名'
 							,templet:function(d){
-								return d.role.nameZH					   	
+								return d.role.nameZH
 							}
 						}
 						, {
 							field: 'purview_name'
 							,title: '权限名'
 							,templet:function(d){
-								return d.purview.name					   	
+								return d.purview.name
 						  	}
-						}				
+						}
 						, {
 							field: 'purview_url'
 							,title: '路径权限'
 							,templet:function(d){
-								return d.purview.url					   	
+								return d.purview.url
 							}
 						}
 						, {
@@ -71,7 +71,7 @@
 									return '<span class="layui-icon layui-icon-ok-circle" style="color:green;">启用中</span>';
 						   	 	}else{
 									return '<span class="layui-icon layui-icon-close-fill" style="color:red;">未启用</span>';
-						   		}				   	
+						   		}
 							}
 						}
 						, {
@@ -99,7 +99,7 @@
 									//var index= res.data[i]['LAY_TABLE_INDEX'];
 									//$('tr[data-index=' + index + '] input[type="checkbox"]').prop('checked', true);
 									//$('tr[data-index=' + index + '] input[type="checkbox"]').next().addClass('layui-form-checked');
-								}								
+								}
 							}
 						}
 					}
@@ -112,35 +112,37 @@
 					if(obj.type=="all"){//如果是点击的全选按钮
 						if(obj.checked){//如果是选中状态，则为账户添加所有角色
 							$.postRestful(WEBURL_API + "backstage/rolemanage/" + parent.rowId+"/rolePurviewRelationManage", function(msg) {
-									if(msg.code == code_success) {			
-										layer.msg("成功赋予所有角色");							
+									if(msg.code == code_success) {
+										layer.msg("成功赋予所有角色");
 									}else{//如果关系添加失败
 										layer.msg(msg.msg);
-									} 
+									}
 									table.reload('role_purview_relation_table');//重新刷新表格数据
 							});
 						}else{//如果是点击的全部取消状态
 							$.deleteRestful(WEBURL_API + "backstage/rolemanage/" + parent.rowId+"/rolePurviewRelationManage", function(msg) {
-									if(msg.code == code_success) {			
-										layer.msg("成功移除所有角色关系");							
+									if(msg.code == code_success) {
+										layer.msg("成功移除所有角色关系");
 									}else{//如果关系添加失败
 										layer.msg(msg.msg);
-									} 
+									}
 									table.reload('role_purview_relation_table');//重新刷新表格数据
 							});
 						}
 					}else{//如果点击的是每一行的按钮
 						if(obj.checked){//如果是选中状态，则添加该关系
 							$.postRestful(WEBURL_API + "backstage/rolemanage/" + obj.data.role.id+"/rolePurviewRelationManage/"+obj.data.purview.id, function(msg) {
-									if(msg.code == code_success) {										
+									if(msg.code == code_success) {
 										//更新表格数据，缓存对应的值
 										var rolePurview=msg.data;
 										$.each(rolePurview.permissions,function(index,item){//对于java的list集合转换为的json格式的遍历
 											//如果添加成功，则将相应的所有操作权限复选框都开始勾选状态
-											var methodId="method_"+obj.data.purview.id+"_"+item.id;//获取复选框的id
-											var $checkBox = $("input[id^='"+methodId+"']");//获取指定的复选框对象(),以methodId开头的文件
-											$checkBox.prop("checked", true);//让复选框默认勾选状态
-										})										
+											if(item.selected==true){//如果是勾选状态
+												var methodId="method_"+obj.data.purview.id+"_"+item.id;//获取复选框的id
+												var $checkBox = $("input[id^='"+methodId+"']");//获取指定的复选框对象(),以methodId开头的文件
+												$checkBox.prop("checked", true);//让复选框默认勾选状态
+											}
+										})
 										form.render('checkbox'); //刷新表单checkbox渲染，让重新赋值生效
 										obj.update({
 											createTime: rolePurview.createTime
@@ -150,7 +152,7 @@
 										$(obj.tr.selector).find('input[name="layTableCheckbox"]').prop("checked", false);
 										form.render('checkbox');
 										layer.msg(msg.msg);
-									} 
+									}
 							});
 						}else{//如果是未选中状态，则移除该关系
 							$.deleteRestful(WEBURL_API + "backstage/rolemanage/" + obj.data.role.id+"/rolePurviewRelationManage/"+obj.data.purview.id, function(msg) {
@@ -169,7 +171,7 @@
 										$(obj.tr.selector).find('input[name="layTableCheckbox"]').prop("checked", true);
 										form.render('checkbox');
 										layer.msg(msg.msg);
-									} 
+									}
 							});
 						}
 					}
@@ -189,7 +191,7 @@
 									$checkBox.prop("checked", !obj.elem.checked);//让复选框回到勾选前的状态
 									form.render('checkbox'); //刷新表单checkbox渲染，让重新赋值生效
 									layer.msg(msg.msg);
-								}	
+								}
 							}
 						);
 					}else{
@@ -203,12 +205,12 @@
 									$checkBox.prop("checked", !obj.elem.checked);//让复选框回到勾选前的状态
 									form.render('checkbox'); //刷新表单checkbox渲染，让重新赋值生效
 									layer.msg(msg.msg);
-								}	
+								}
 							}
 						);
 					}
-					
-				
+
+
 				});
 			});
 		</script>

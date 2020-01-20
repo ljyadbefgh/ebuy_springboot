@@ -167,11 +167,12 @@ public class RoleManageController {
 		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
 		return map;
 	}
-
+	//======================================权限操作=====================================================
 	@ApiOperation(value = "根据角色id获取指定角色的权限关系列表", notes = "根据角色id获取指定角色的权限关系列表")
 	@ApiImplicitParam(name = "id", value = "要读取的角色id", paramType = "path", required = true,example="1")
 	@GetMapping("/{id}/rolePurviewRelationManage")
 	public Map<String, Object>  getPurviewsByRoleId(@PathVariable Integer id){
+		System.out.println("获取所有权限");
 		Map<String, Object> map=new HashMap<String, Object>();
 		List<RolePurview> list=rolePurviewService.getAllRolePurviewsByRoleId(id);
 		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
@@ -241,6 +242,7 @@ public class RoleManageController {
 	})
 	@PostMapping("/{roleId}/rolePurviewRelationManage")
 	public Map<String, Object>  addAllPurviewForRole(@PathVariable("roleId") Integer roleId){
+		System.out.println("赋予所有权限");
 		Map<String, Object> map=new HashMap<String, Object>();
 		rolePurviewService.addAllRolePurviewForRole(roleId);
 		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
@@ -253,6 +255,7 @@ public class RoleManageController {
 	})
 	@DeleteMapping("/{roleId}/rolePurviewRelationManage")
 	public Map<String, Object>  removeAllPurviewfromRole(@PathVariable("roleId") Integer roleId){
+		System.out.println("移除所有权限");
 		Map<String, Object> map=new HashMap<String, Object>();
 		rolePurviewService.removeAllRolePurviewForRole(roleId);
 		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());

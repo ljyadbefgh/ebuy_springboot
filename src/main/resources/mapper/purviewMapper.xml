@@ -17,8 +17,8 @@
     </select>
 
     <insert id="save" useGeneratedKeys="true" keyProperty="id">
-        insert into purview(id,name,url,path,enabled,description)
-        values(null,#{name},#{url},#{path},#{enabled},#{description})
+        insert into purview(id,name,url,path,enabled,orderNum,description)
+        values(null,#{name},#{url},#{path},#{enabled},#{orderNum},#{description})
     </insert>
 
     <update id="update" parameterType="Purview">
@@ -29,7 +29,8 @@
             <if test="url!=null">url=#{url},</if>
             <if test="path!=null">path=#{path},</if>
             <if test="enabled!=null">enabled=#{enabled},</if>
-            <if test="enabled!=null">description=#{description},</if>
+            <if test="orderNum!=null">orderNum=#{orderNum},</if>
+            <if test="description!=null">description=#{description},</if>
         </set>
         where id=#{id}
     </update>
@@ -59,7 +60,7 @@
                 </if>
             </where>
         </if>
-        order by id asc
+        order by orderNum asc,id asc
     </select>
 
     <select id="total" resultType="int">
@@ -100,7 +101,7 @@
                 </if>
             </where>
         </if>
-        limit #{offset},#{length}
+        order by orderNum asc,id asc limit #{offset},#{length}
     </select>
 
     <select id="getSimple" resultType="Purview">

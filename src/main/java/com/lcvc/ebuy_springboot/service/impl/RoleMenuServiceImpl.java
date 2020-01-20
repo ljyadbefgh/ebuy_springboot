@@ -44,7 +44,10 @@ public class RoleMenuServiceImpl implements RoleMenuService {
         for(int i = 0; i < menuIdArray.length; i ++){
             menuIdArray[i]=menuIdList.get(i).intValue();
         }
-       roleMenuDao.addMenusForRoleId(roleId,menuIdArray);//将菜单批量添加
+        if(menuIdArray.length>0){//只有有菜单时才执行添加
+            roleMenuDao.addMenusForRoleId(roleId,menuIdArray);//将菜单批量添加
+        }
+
     }
 
     @Override

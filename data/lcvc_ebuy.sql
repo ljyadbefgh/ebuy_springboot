@@ -11,7 +11,7 @@
  Target Server Version : 80016
  File Encoding         : 65001
 
- Date: 16/01/2020 00:45:07
+ Date: 21/01/2020 00:09:29
 */
 
 SET NAMES utf8mb4;
@@ -38,7 +38,7 @@ CREATE TABLE `admin`  (
 INSERT INTO `admin` VALUES (-99, 'admin', '-fe2nispc28dcddckd443jdmhnl8l9bjv', '管理员', 2, b'1', '2013-08-23 15:33:01');
 INSERT INTO `admin` VALUES (-1, 'user', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '演示账户', 1, b'1', '2013-08-23 15:33:01');
 INSERT INTO `admin` VALUES (19, 'student', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '学生', 1, b'1', '2013-10-15 17:30:27');
-INSERT INTO `admin` VALUES (23, 'ruanjian', '-dtop9rm0u7k6k29espbkk07p12f6ch9p', '软件教研员', 1, b'1', '2013-10-15 17:38:10');
+INSERT INTO `admin` VALUES (23, 'teacher', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '软件教研员', 1, b'1', '2013-10-15 17:38:10');
 INSERT INTO `admin` VALUES (25, 'dfdsfsdf1', 'e10adc3949ba59abbe56e057f20f883e', '6656563', 1, b'1', '2013-10-15 17:38:34');
 INSERT INTO `admin` VALUES (31, '67457464', 'e10adc3949ba59abbe56e057f20f883e', '6464565', 1, b'1', '2013-10-15 17:39:50');
 INSERT INTO `admin` VALUES (42, '1213df', 'e10adc3949ba59abbe56e057f20f883e', '85445', 1, b'1', '2013-10-16 09:14:26');
@@ -95,23 +95,21 @@ CREATE TABLE `admin_role`  (
   `roleId` int(11) NULL DEFAULT NULL COMMENT 'role主键',
   `createTime` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 224 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 225 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of admin_role
 -- ----------------------------
 INSERT INTO `admin_role` VALUES (81, -99, -99, '2019-10-14 18:19:38');
 INSERT INTO `admin_role` VALUES (101, 0, 3, '2019-10-21 10:54:40');
-INSERT INTO `admin_role` VALUES (114, 103, -1, '2019-12-28 23:22:27');
 INSERT INTO `admin_role` VALUES (115, 103, 12, '2019-12-28 23:22:27');
 INSERT INTO `admin_role` VALUES (137, 25, 14, '2019-12-31 21:22:45');
-INSERT INTO `admin_role` VALUES (138, 25, 13, '2019-12-31 21:23:17');
 INSERT INTO `admin_role` VALUES (140, 104, 14, '2020-01-01 23:28:16');
-INSERT INTO `admin_role` VALUES (141, 104, 15, '2020-01-01 23:28:16');
 INSERT INTO `admin_role` VALUES (142, 104, -1, '2020-01-01 23:28:16');
-INSERT INTO `admin_role` VALUES (220, 19, -1, '2020-01-11 17:20:14');
-INSERT INTO `admin_role` VALUES (222, -1, 12, '2020-01-15 13:54:52');
-INSERT INTO `admin_role` VALUES (223, -1, -1, '2020-01-15 13:55:49');
+INSERT INTO `admin_role` VALUES (226, 19, 12, '2020-01-20 23:54:36');
+INSERT INTO `admin_role` VALUES (227, 23, 14, '2020-01-20 23:54:43');
+INSERT INTO `admin_role` VALUES (228, -1, -1, '2020-01-20 23:57:47');
+INSERT INTO `admin_role` VALUES (229, 97, 3, '2020-01-20 23:58:30');
 
 -- ----------------------------
 -- Table structure for customer
@@ -215,30 +213,25 @@ CREATE TABLE `menu`  (
 -- ----------------------------
 -- Records of menu
 -- ----------------------------
-INSERT INTO `menu` VALUES (2, NULL, '管理员模块', 10, b'1', '/', 'Home', '/home', NULL, 'fa fa-user-circle-o', b'1', b'1');
-INSERT INTO `menu` VALUES (3, NULL, '客户管理', 20, b'1', '/', 'Home', '/home', NULL, 'fa fa-address-card-o', b'1', b'1');
-INSERT INTO `menu` VALUES (4, NULL, '产品模块', 100, b'1', '/', 'Home', '/home', NULL, 'fa fa-money', b'1', b'1');
-INSERT INTO `menu` VALUES (5, NULL, '订单管理', 100, b'1', '/', 'Home', '/home', NULL, 'fa fa-bar-chart', b'1', b'1');
-INSERT INTO `menu` VALUES (6, NULL, '系统管理', 100, b'1', '/', 'Home', '/home', NULL, 'fa fa-windows', b'1', b'1');
-INSERT INTO `menu` VALUES (7, 2, '个人信息', 10, b'1', '/employee/basic/**', 'EmpBasic', '/emp/basic', NULL, NULL, b'1', b'1');
-INSERT INTO `menu` VALUES (8, 2, '权限管理', 100, b'1', '/employee/advanced/**', 'EmpAdv', '/emp/adv', NULL, NULL, b'1', b'1');
-INSERT INTO `menu` VALUES (9, 3, '客户添加', 20, b'1', '/personnel/emp/**', 'PerEmp', '/per/emp', NULL, NULL, b'1', b'1');
-INSERT INTO `menu` VALUES (10, 3, '客户管理', 10, b'1', '/personnel/ec/**', 'PerEc', '/per/ec', NULL, NULL, b'1', b'1');
-INSERT INTO `menu` VALUES (11, 3, '员工培训', 100, b'1', '/personnel/train/**', 'PerTrain', '/per/train', NULL, NULL, b'1', b'1');
-INSERT INTO `menu` VALUES (12, 3, '员工调薪', 100, b'1', '/personnel/salary/**', 'PerSalary', '/per/salary', NULL, NULL, b'1', b'1');
-INSERT INTO `menu` VALUES (13, 3, '员工调动', 100, b'1', '/personnel/remove/**', 'PerMv', '/per/mv', NULL, NULL, b'1', b'1');
-INSERT INTO `menu` VALUES (14, 4, '产品类别管理', 100, b'1', '/salary/sob/**', 'SalSob', '/sal/sob', NULL, NULL, b'1', b'1');
-INSERT INTO `menu` VALUES (15, 4, '产品管理', 100, b'1', '/salary/sobcfg/**', 'SalSobCfg', '/sal/sobcfg', NULL, NULL, b'1', b'1');
-INSERT INTO `menu` VALUES (23, 6, '基础信息设置', 100, b'1', '/system/basic/**', 'SysBasic', '/sys/basic', NULL, NULL, b'1', b'1');
-INSERT INTO `menu` VALUES (24, 6, '系统管理', 100, b'1', '/system/cfg/**', 'SysCfg', '/sys/cfg', NULL, NULL, b'1', b'1');
-INSERT INTO `menu` VALUES (25, 6, '操作日志管理', 100, b'1', '/system/log/**', 'SysLog', '/sys/log', NULL, NULL, b'1', b'1');
-INSERT INTO `menu` VALUES (29, 7, '密码修改', 100, b'1', NULL, NULL, '/emp/basic/passowrd', NULL, NULL, b'1', b'1');
-INSERT INTO `menu` VALUES (30, 7, '基本信息修改', 100, b'1', NULL, NULL, '/emp/basic/information', NULL, NULL, b'1', b'1');
-INSERT INTO `menu` VALUES (32, 2, '角色管理', 100, b'1', NULL, NULL, NULL, NULL, NULL, b'1', b'1');
-INSERT INTO `menu` VALUES (33, 2, '账户管理', 100, b'1', NULL, NULL, NULL, NULL, NULL, b'1', b'1');
-INSERT INTO `menu` VALUES (49, 3, 'test1', 100, b'1', 'a', 'b', 'd', NULL, NULL, b'1', b'1');
-INSERT INTO `menu` VALUES (53, 2, '菜单管理', 20, b'1', '/menumanage', '', '', '', NULL, b'1', b'1');
-INSERT INTO `menu` VALUES (54, 3, 'test2', 100, b'1', 'fasd', '', '', '', NULL, b'1', b'1');
+INSERT INTO `menu` VALUES (2, NULL, '管理员模块', 10, b'1', '/', 'Home', '/home', '', 'el-icon-user-solid', b'1', b'1');
+INSERT INTO `menu` VALUES (3, NULL, '客户模块', 20, b'1', '/', 'Home', '/home', 'D', 'el-icon-s-custom', b'1', b'1');
+INSERT INTO `menu` VALUES (4, NULL, '产品模块', 100, b'1', '/', 'Home', '/home', 'DD', 'el-icon-fork-spoon\r\nel-icon-fork-spoon\r\nel-icon-food', b'1', b'1');
+INSERT INTO `menu` VALUES (5, NULL, '订单管理', 100, b'1', '/', 'Home', '/home', 'D', 'el-icon-s-goods', b'1', b'1');
+INSERT INTO `menu` VALUES (6, NULL, '系统管理', 100, b'1', '/', 'Home', '/home', 'C', 'el-icon-s-tools', b'1', b'1');
+INSERT INTO `menu` VALUES (7, NULL, '个人信息', 5, b'1', '/employee/basic/**', 'EmpBasic', '/emp/basic', '', 'el-icon-user', b'1', b'1');
+INSERT INTO `menu` VALUES (8, 2, '权限管理', 100, b'1', '/employee/advanced/**', 'PurviewManage', '/emp/adv', '/admin/PurviewManage', NULL, b'1', b'1');
+INSERT INTO `menu` VALUES (9, 10, '客户添加', 20, b'1', '/personnel/emp/**', 'PerEmp', '/per/emp', 'a\'aaa', NULL, b'1', b'1');
+INSERT INTO `menu` VALUES (10, 3, '客户管理', 10, b'1', '/personnel/ec/**', 'CustomerManage', '/per/ec', 'A', NULL, b'1', b'1');
+INSERT INTO `menu` VALUES (14, 4, '产品类别管理', 100, b'1', '/salary/sob/**', 'SalSob', '/sal/sob', 'AA', NULL, b'1', b'1');
+INSERT INTO `menu` VALUES (15, 4, '产品管理', 100, b'1', '/salary/sobcfg/**', 'SalSobCfg', '/sal/sobcfg', 'BB', NULL, b'1', b'1');
+INSERT INTO `menu` VALUES (23, 6, '基础信息设置', 100, b'1', '/system/basic/**', 'SysBasic', '/sys/basic', 'A', NULL, b'1', b'1');
+INSERT INTO `menu` VALUES (24, 6, '系统管理', 100, b'1', '/system/cfg/**', 'SysCfg', '/sys/cfg', 'B', NULL, b'1', b'1');
+INSERT INTO `menu` VALUES (25, 6, '操作日志管理', 100, b'1', '/system/log/**', 'SysLog', '/sys/log', 'C', NULL, b'1', b'1');
+INSERT INTO `menu` VALUES (29, 7, '密码修改', 100, b'1', '12', NULL, '/emp/basic/passowrd', '/password', NULL, b'1', b'1');
+INSERT INTO `menu` VALUES (30, 7, '基本信息修改', 100, b'1', '1', NULL, '/emp/basic/information', '/adf', NULL, b'1', b'1');
+INSERT INTO `menu` VALUES (32, 2, '角色管理', 100, b'1', '/rolemanage', '', NULL, '/admin/RoleManage', NULL, b'1', b'1');
+INSERT INTO `menu` VALUES (33, 2, '账户管理', 100, b'1', '/adminmanage', 'AdminManage', NULL, '/admin/AdminManage', NULL, b'1', b'1');
+INSERT INTO `menu` VALUES (53, 2, '菜单管理', 20, b'1', '/menumanage', 'MenuManage', '', '/admin/MenuManage', NULL, b'1', b'1');
 
 -- ----------------------------
 -- Table structure for order_detail
@@ -456,21 +449,22 @@ CREATE TABLE `purview`  (
   `path` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `enabled` bit(1) NULL DEFAULT NULL COMMENT '是否可用',
   `description` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '权限的描述',
+  `orderNum` int(11) NULL DEFAULT NULL COMMENT '优先级',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 42 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 48 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of purview
 -- ----------------------------
-INSERT INTO `purview` VALUES (30, '权限管理', '/api/backstage/purviewmanage/**', '/purview', b'1', NULL);
-INSERT INTO `purview` VALUES (31, '角色管理', '/api/backstage/rolemanage/**', '/rolemanage', b'1', '');
-INSERT INTO `purview` VALUES (32, '个人资料编辑', '/api/backstage/admin/**', '/admin', b'1', '');
-INSERT INTO `purview` VALUES (33, '管理员管理', '/api/backstage/adminmanage/**', '/adminmanage', b'1', '');
-INSERT INTO `purview` VALUES (34, '客户模块管理', '/api/backstage/customermanage/**', '/customermanage/', b'1', '');
-INSERT INTO `purview` VALUES (38, '产品类别模块', '/api/backstage/producttype/**', '/producttype/', b'1', '');
-INSERT INTO `purview` VALUES (39, '产品模块', '/api/backstage/product/**', '/product', b'1', '');
-INSERT INTO `purview` VALUES (40, '富文本操作权限', '/api/backstage/ueditor/**', NULL, b'1', NULL);
-INSERT INTO `purview` VALUES (41, '菜单模块', '/api/backstage/menumanage/**', '/menumanage', b'1', '');
+INSERT INTO `purview` VALUES (30, '权限管理', '/api/backstage/purviewmanage/**', '/purview', b'1', NULL, 20);
+INSERT INTO `purview` VALUES (31, '角色管理', '/api/backstage/rolemanage/**', '/rolemanage', b'1', '', 30);
+INSERT INTO `purview` VALUES (32, '个人资料编辑', '/api/backstage/admin/**', '/admin', b'1', '', 5);
+INSERT INTO `purview` VALUES (33, '管理员管理', '/api/backstage/adminmanage/**', '/adminmanage', b'1', '', 40);
+INSERT INTO `purview` VALUES (34, '客户模块管理', '/api/backstage/customermanage/**', '/customermanage/', b'1', '', 60);
+INSERT INTO `purview` VALUES (38, '产品类别模块', '/api/backstage/producttype/**', '/producttype/', b'1', NULL, 70);
+INSERT INTO `purview` VALUES (39, '产品模块', '/api/backstage/product/**', '/product', b'1', '', 80);
+INSERT INTO `purview` VALUES (40, '富文本操作权限', '/api/backstage/ueditor/**', NULL, b'1', '', 900);
+INSERT INTO `purview` VALUES (41, '菜单模块', '/api/backstage/menumanage/**', '/menumanage', b'1', NULL, 10);
 
 -- ----------------------------
 -- Table structure for role
@@ -491,18 +485,10 @@ CREATE TABLE `role`  (
 -- Records of role
 -- ----------------------------
 INSERT INTO `role` VALUES (-99, 'ROLE_admin', '系统管理员', -99, b'0', b'1', '系统自带管理员，最高权限');
-INSERT INTO `role` VALUES (-1, 'ROLE_user', '普通管理员', 20, b'1', b'1', '系统自带管理员，基本角色');
-INSERT INTO `role` VALUES (3, 'ROLE_visitor', '观光管理员', 100, b'0', b'1', '只拥有查询权限');
+INSERT INTO `role` VALUES (-1, 'ROLE_user', '普通管理员', 20, b'0', b'1', '系统自带管理员，基本角色');
+INSERT INTO `role` VALUES (3, 'ROLE_visitor', '观光员', 100, b'0', b'1', '只拥有查询权限');
 INSERT INTO `role` VALUES (12, 'ROLE_student', '学生', 100, b'1', b'1', '给学生操作的角色');
-INSERT INTO `role` VALUES (13, 'test11', '测试11', 1001, b'1', b'0', '111');
-INSERT INTO `role` VALUES (14, 'test2', '测试2', 100, b'1', b'0', '');
-INSERT INTO `role` VALUES (15, 'test3', '测试3', 100, b'1', b'0', '');
-INSERT INTO `role` VALUES (16, 'test4', '测试4', 100, b'0', b'0', '');
-INSERT INTO `role` VALUES (17, 'test5', '测试5', 100, b'0', b'0', '');
-INSERT INTO `role` VALUES (18, 'test6', '测试6', 100, b'0', b'1', '');
-INSERT INTO `role` VALUES (21, 'test9', '测试9', 100, b'0', b'1', '');
-INSERT INTO `role` VALUES (22, 'aaaaaaaaaaaaaa1', '谁发的发', 100, b'1', b'0', '阿斯顿发');
-INSERT INTO `role` VALUES (23, 'adfadfdasfa', '发的', 100, b'1', b'1', '阿萨德');
+INSERT INTO `role` VALUES (14, 'ROLE_teacher', '老师', 100, b'0', b'1', '');
 
 -- ----------------------------
 -- Table structure for role_menu
@@ -514,30 +500,94 @@ CREATE TABLE `role_menu`  (
   `menuId` int(11) NULL DEFAULT NULL COMMENT 'menu主键',
   `createTime` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 91 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 213 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of role_menu
 -- ----------------------------
-INSERT INTO `role_menu` VALUES (18, 14, 7, NULL);
-INSERT INTO `role_menu` VALUES (19, 14, 29, NULL);
-INSERT INTO `role_menu` VALUES (20, 14, 30, NULL);
-INSERT INTO `role_menu` VALUES (73, 3, 7, NULL);
-INSERT INTO `role_menu` VALUES (74, 3, 29, NULL);
-INSERT INTO `role_menu` VALUES (75, 3, 30, NULL);
-INSERT INTO `role_menu` VALUES (76, 3, 9, NULL);
-INSERT INTO `role_menu` VALUES (90, 21, 29, NULL);
-INSERT INTO `role_menu` VALUES (92, -1, 7, NULL);
-INSERT INTO `role_menu` VALUES (93, -1, 29, NULL);
-INSERT INTO `role_menu` VALUES (94, -1, 32, NULL);
-INSERT INTO `role_menu` VALUES (95, -1, 33, NULL);
-INSERT INTO `role_menu` VALUES (96, -1, 3, NULL);
-INSERT INTO `role_menu` VALUES (97, -1, 9, NULL);
-INSERT INTO `role_menu` VALUES (98, -1, 10, NULL);
-INSERT INTO `role_menu` VALUES (99, -1, 11, NULL);
-INSERT INTO `role_menu` VALUES (100, -1, 12, NULL);
-INSERT INTO `role_menu` VALUES (101, -1, 13, NULL);
-INSERT INTO `role_menu` VALUES (102, -1, 49, NULL);
+INSERT INTO `role_menu` VALUES (103, -99, 2, NULL);
+INSERT INTO `role_menu` VALUES (104, -99, 7, NULL);
+INSERT INTO `role_menu` VALUES (105, -99, 29, NULL);
+INSERT INTO `role_menu` VALUES (106, -99, 30, NULL);
+INSERT INTO `role_menu` VALUES (107, -99, 53, NULL);
+INSERT INTO `role_menu` VALUES (108, -99, 8, NULL);
+INSERT INTO `role_menu` VALUES (109, -99, 32, NULL);
+INSERT INTO `role_menu` VALUES (110, -99, 33, NULL);
+INSERT INTO `role_menu` VALUES (111, -99, 3, NULL);
+INSERT INTO `role_menu` VALUES (112, -99, 10, NULL);
+INSERT INTO `role_menu` VALUES (113, -99, 9, NULL);
+INSERT INTO `role_menu` VALUES (119, -99, 4, NULL);
+INSERT INTO `role_menu` VALUES (120, -99, 14, NULL);
+INSERT INTO `role_menu` VALUES (121, -99, 15, NULL);
+INSERT INTO `role_menu` VALUES (122, -99, 5, NULL);
+INSERT INTO `role_menu` VALUES (123, -99, 6, NULL);
+INSERT INTO `role_menu` VALUES (124, -99, 23, NULL);
+INSERT INTO `role_menu` VALUES (125, -99, 24, NULL);
+INSERT INTO `role_menu` VALUES (126, -99, 25, NULL);
+INSERT INTO `role_menu` VALUES (130, -1, 7, NULL);
+INSERT INTO `role_menu` VALUES (131, -1, 29, NULL);
+INSERT INTO `role_menu` VALUES (132, -1, 30, NULL);
+INSERT INTO `role_menu` VALUES (133, -1, 2, NULL);
+INSERT INTO `role_menu` VALUES (134, -1, 53, NULL);
+INSERT INTO `role_menu` VALUES (135, -1, 8, NULL);
+INSERT INTO `role_menu` VALUES (136, -1, 32, NULL);
+INSERT INTO `role_menu` VALUES (137, -1, 33, NULL);
+INSERT INTO `role_menu` VALUES (138, -1, 3, NULL);
+INSERT INTO `role_menu` VALUES (139, -1, 10, NULL);
+INSERT INTO `role_menu` VALUES (140, -1, 9, NULL);
+INSERT INTO `role_menu` VALUES (141, -1, 4, NULL);
+INSERT INTO `role_menu` VALUES (142, -1, 14, NULL);
+INSERT INTO `role_menu` VALUES (143, -1, 15, NULL);
+INSERT INTO `role_menu` VALUES (144, -1, 5, NULL);
+INSERT INTO `role_menu` VALUES (145, -1, 6, NULL);
+INSERT INTO `role_menu` VALUES (146, -1, 23, NULL);
+INSERT INTO `role_menu` VALUES (147, -1, 24, NULL);
+INSERT INTO `role_menu` VALUES (148, -1, 25, NULL);
+INSERT INTO `role_menu` VALUES (149, 3, 7, NULL);
+INSERT INTO `role_menu` VALUES (150, 3, 29, NULL);
+INSERT INTO `role_menu` VALUES (151, 3, 30, NULL);
+INSERT INTO `role_menu` VALUES (152, 3, 2, NULL);
+INSERT INTO `role_menu` VALUES (153, 3, 53, NULL);
+INSERT INTO `role_menu` VALUES (154, 3, 8, NULL);
+INSERT INTO `role_menu` VALUES (155, 3, 32, NULL);
+INSERT INTO `role_menu` VALUES (156, 3, 33, NULL);
+INSERT INTO `role_menu` VALUES (157, 3, 3, NULL);
+INSERT INTO `role_menu` VALUES (158, 3, 10, NULL);
+INSERT INTO `role_menu` VALUES (159, 3, 9, NULL);
+INSERT INTO `role_menu` VALUES (160, 3, 4, NULL);
+INSERT INTO `role_menu` VALUES (161, 3, 14, NULL);
+INSERT INTO `role_menu` VALUES (162, 3, 15, NULL);
+INSERT INTO `role_menu` VALUES (163, 3, 5, NULL);
+INSERT INTO `role_menu` VALUES (164, 3, 6, NULL);
+INSERT INTO `role_menu` VALUES (165, 3, 23, NULL);
+INSERT INTO `role_menu` VALUES (166, 3, 24, NULL);
+INSERT INTO `role_menu` VALUES (167, 3, 25, NULL);
+INSERT INTO `role_menu` VALUES (187, 12, 7, NULL);
+INSERT INTO `role_menu` VALUES (188, 12, 29, NULL);
+INSERT INTO `role_menu` VALUES (189, 12, 30, NULL);
+INSERT INTO `role_menu` VALUES (190, 12, 3, NULL);
+INSERT INTO `role_menu` VALUES (191, 12, 10, NULL);
+INSERT INTO `role_menu` VALUES (192, 12, 9, NULL);
+INSERT INTO `role_menu` VALUES (193, 12, 4, NULL);
+INSERT INTO `role_menu` VALUES (194, 12, 14, NULL);
+INSERT INTO `role_menu` VALUES (195, 12, 15, NULL);
+INSERT INTO `role_menu` VALUES (196, 12, 5, NULL);
+INSERT INTO `role_menu` VALUES (197, 14, 7, NULL);
+INSERT INTO `role_menu` VALUES (198, 14, 29, NULL);
+INSERT INTO `role_menu` VALUES (199, 14, 30, NULL);
+INSERT INTO `role_menu` VALUES (200, 14, 2, NULL);
+INSERT INTO `role_menu` VALUES (201, 14, 33, NULL);
+INSERT INTO `role_menu` VALUES (202, 14, 3, NULL);
+INSERT INTO `role_menu` VALUES (203, 14, 10, NULL);
+INSERT INTO `role_menu` VALUES (204, 14, 9, NULL);
+INSERT INTO `role_menu` VALUES (205, 14, 4, NULL);
+INSERT INTO `role_menu` VALUES (206, 14, 14, NULL);
+INSERT INTO `role_menu` VALUES (207, 14, 15, NULL);
+INSERT INTO `role_menu` VALUES (208, 14, 5, NULL);
+INSERT INTO `role_menu` VALUES (209, 14, 6, NULL);
+INSERT INTO `role_menu` VALUES (210, 14, 23, NULL);
+INSERT INTO `role_menu` VALUES (211, 14, 24, NULL);
+INSERT INTO `role_menu` VALUES (212, 14, 25, NULL);
 
 -- ----------------------------
 -- Table structure for role_purview
@@ -550,7 +600,7 @@ CREATE TABLE `role_purview`  (
   `permissionIds` char(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '操作权限，非数据库外键，在业务层写死',
   `createTime` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 73 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 310 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of role_purview
@@ -585,7 +635,6 @@ INSERT INTO `role_purview` VALUES (58, 7, 40, '1', '2019-10-21 10:53:12');
 INSERT INTO `role_purview` VALUES (59, 7, 32, '1', '2019-10-21 10:53:26');
 INSERT INTO `role_purview` VALUES (60, 7, 34, '1', '2019-10-21 10:53:26');
 INSERT INTO `role_purview` VALUES (61, -1, 39, '2134', '2019-10-24 20:14:58');
-INSERT INTO `role_purview` VALUES (62, -1, 40, '12', '2019-10-24 20:14:59');
 INSERT INTO `role_purview` VALUES (63, 12, 30, '1', '2019-10-24 20:16:02');
 INSERT INTO `role_purview` VALUES (64, 12, 31, '1', '2019-10-24 20:16:02');
 INSERT INTO `role_purview` VALUES (65, 12, 32, '1', '2019-10-24 20:16:02');
@@ -594,7 +643,20 @@ INSERT INTO `role_purview` VALUES (67, 12, 34, '1234', '2019-10-24 20:16:02');
 INSERT INTO `role_purview` VALUES (68, 12, 38, '1', '2019-10-24 20:16:02');
 INSERT INTO `role_purview` VALUES (69, 12, 39, '1', '2019-10-24 20:16:02');
 INSERT INTO `role_purview` VALUES (70, 12, 40, '1', '2019-10-24 20:16:02');
-INSERT INTO `role_purview` VALUES (71, -1, 34, '1', '2019-11-12 09:44:54');
-INSERT INTO `role_purview` VALUES (72, -99, 41, '1234', '2020-01-03 14:52:38');
+INSERT INTO `role_purview` VALUES (71, -1, 34, '1234', '2019-11-12 09:44:54');
+INSERT INTO `role_purview` VALUES (85, 12, 41, '1', '2020-01-20 00:49:07');
+INSERT INTO `role_purview` VALUES (86, 14, 30, '1', '2020-01-20 00:53:19');
+INSERT INTO `role_purview` VALUES (89, 14, 31, '1', '2020-01-20 01:04:12');
+INSERT INTO `role_purview` VALUES (91, -1, 40, '1234', '2020-01-20 01:04:59');
+INSERT INTO `role_purview` VALUES (92, 14, 32, '1', '2020-01-20 01:05:25');
+INSERT INTO `role_purview` VALUES (93, 14, 33, '1', '2020-01-20 01:05:55');
+INSERT INTO `role_purview` VALUES (302, -99, 41, '1234', '2020-01-20 22:38:55');
+INSERT INTO `role_purview` VALUES (303, -1, 41, '1', '2020-01-20 23:48:59');
+INSERT INTO `role_purview` VALUES (304, 3, 41, '1', '2020-01-20 23:50:11');
+INSERT INTO `role_purview` VALUES (305, 14, 41, '1', '2020-01-20 23:52:53');
+INSERT INTO `role_purview` VALUES (306, 14, 34, '1234', '2020-01-20 23:52:53');
+INSERT INTO `role_purview` VALUES (307, 14, 38, '1234', '2020-01-20 23:52:53');
+INSERT INTO `role_purview` VALUES (308, 14, 39, '1234', '2020-01-20 23:52:53');
+INSERT INTO `role_purview` VALUES (309, 14, 40, '12', '2020-01-20 23:52:53');
 
 SET FOREIGN_KEY_CHECKS = 1;

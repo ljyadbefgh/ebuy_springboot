@@ -49,11 +49,19 @@ public class PurviewServiceImpl implements PurviewService {
         if(purview.getEnabled()==null){
             throw new MyWebException("保存失败：必须确定权限是否启用");
         }
+        if(purview.getOrderNum()==null){//如果没有存入优先级
+            purview.setOrderNum(100);//默认100
+        }
         purviewDao.save(purview);
     }
 
     @Override
     public void deletePurviews(Integer[] ids) {
+        for(Integer id:ids){
+            if(rolePurviewDao.getRolePurviewNumberByPurviewId(id)>0){
+                throw new MyWebException("删除失败：必须先移除所有权限角色关系才能删除");
+            }
+        }
         purviewDao.deletes(ids);
     }
 

@@ -2,14 +2,17 @@ package com.lcvc.ebuy_springboot.web.action.backstage.admin;
 
 
 import com.lcvc.ebuy_springboot.model.Admin;
+import com.lcvc.ebuy_springboot.model.Menu;
 import com.lcvc.ebuy_springboot.model.base.Constant;
 import com.lcvc.ebuy_springboot.model.base.JsonCode;
 import com.lcvc.ebuy_springboot.model.form.admin.AdminPasswordEditForm;
+import com.lcvc.ebuy_springboot.service.AdminMenuService;
 import com.lcvc.ebuy_springboot.service.AdminService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Api(tags = "后台管理员个人信息管理模块")
@@ -30,6 +34,8 @@ public class AdminController {
 
 	@Resource
 	private AdminService adminService;
+	@Autowired
+	private AdminMenuService adminMenuService;
 
 
 	//@AuthenticationPrincipal,直接将Spring security中SecurityContextHolder的Authentication注入进来
@@ -68,6 +74,19 @@ public class AdminController {
 		adminService.updatePassword(admin.getUsername(),adminPasswordEditForm.getPassword(),adminPasswordEditForm.getNewPass(),adminPasswordEditForm.getRePass());
 		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
 		map.put(Constant.JSON_MESSAGE, "密码修改成功");
+		return map;
+	}
+
+	//===================================菜单操作============================================
+	@ApiOperation(value = "获取当前账户的树形菜单", notes = "获取当前账户的树形菜单")
+	@GetMapping("/treeMenu")
+	public Map<String, Object>  getTreeMenus(){
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();//获取当前登陆账户
+		Admin admin=(Admin)authentication.getPrincipal();
+		Map<String, Object> map=new HashMap<String, Object>();
+		List<Menu> list=adminMenuService.getTreeMenusByAdminId(admin.getId());//读取账户对应的树形菜单
+		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
+		map.put(Constant.JSON_DATA,list);
 		return map;
 	}
 

@@ -53,8 +53,8 @@
                         <dd><a name="openAtMainLayout" href="purviewmanage/purviewmanage.html">管理权限列表</a></dd>
                         <dd><a name="openAtMainLayout" href="rolemanage/rolemanage.html">管理角色列表</a></dd>
                         <dd><a name="openAtMainLayout" href="adminmanage/adminmanage.html">管理账户列表</a></dd>
-                        
-                        
+
+
                     </dl>
                 </li>
                 <li class="layui-nav-item">
@@ -67,7 +67,7 @@
                 <li class="layui-nav-item layui-nav-itemed">
                     <a href="javascript:;">产品管理</a>
                     <dl class="layui-nav-child">
-                    	<dd><a name="openAtMainLayout" href="producttype/producttypemanage.html">产品类别管理</a></dd>                       
+                    	<dd><a name="openAtMainLayout" href="producttype/producttypemanage.html">产品类别管理</a></dd>
                         <dd><a name="openAtMainLayout" href="product/productmanage.html">管理产品列表</a></dd>
                     </dl>
                 </li>
@@ -93,7 +93,7 @@
     layui.use('layer', function(){
         var layer = layui.layer;
         var timestamp = Date.parse(new Date());//获得时间戳配合地址传给服务器，这样可以不缓存随时刷新
-        
+
         //读取当前用户信息
 		$.getJSON(
 			WEBURL_API + "backstage/admin",
@@ -104,15 +104,15 @@
                     sessionStorage.setItem("JSESSIONID",msg.JSESSIONID);//将客户端的session对象保存下来，只用于ueditor
 		    	}else{
 					layer.msg(msg.msg);
-				}				    	
+				}
 		    }
 		)
-				
-				
+
+
         $("#logout").click(function (e) {
             $.get(WEBURL_API+"backstage/logout",
                 function (data) {
-                    if(data.code == 0) { //如果注销成功                    	
+                    if(data.code == 0) { //如果注销成功
                         layer.open({
                             btnAlign: 'c', //按钮居中
                             content: '成功注销用户，欢迎下次光临',

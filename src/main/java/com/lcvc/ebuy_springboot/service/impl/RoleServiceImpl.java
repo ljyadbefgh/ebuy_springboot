@@ -4,6 +4,7 @@ import com.lcvc.ebuy_springboot.dao.AdminRoleDao;
 import com.lcvc.ebuy_springboot.dao.RoleDao;
 import com.lcvc.ebuy_springboot.dao.RoleMenuDao;
 import com.lcvc.ebuy_springboot.dao.RolePurviewDao;
+import com.lcvc.ebuy_springboot.model.AdminRole;
 import com.lcvc.ebuy_springboot.model.Role;
 import com.lcvc.ebuy_springboot.model.base.PageObject;
 import com.lcvc.ebuy_springboot.model.exception.MyServiceException;
@@ -17,7 +18,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Transactional(propagation = Propagation.REQUIRED,isolation = Isolation.DEFAULT,timeout=36000,rollbackFor=Exception.class)
 @Validated//表示开启sprint的校检框架，会自动扫描方法里的@Valid（@Valid注解一般写在接口即可）
@@ -117,6 +120,7 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public void deleteRoles(Integer[] ids) {
+        Set<AdminRole> adminRoles=new HashSet<AdminRole>();//定义账户和角色的关系集合，用于后面批量删除
         for(Integer id:ids){
             Role role=roleDao.get(id);
             if(role!=null){
@@ -124,18 +128,30 @@ public class RoleServiceImpl implements RoleService {
                     throw new MyServiceException("角色删除失败：系统固定角色不允许删除");
                 }
                 //获取该角色拥有的账户数量
-                int adminNumber=adminRoleDao.getAdminNumberByRoleId(role.getId());
+                /*int adminNumber=adminRoleDao.getAdminNumberByRoleId(role.getId());
                 if(adminNumber>0){
                     throw new MyServiceException("角色删除失败：角色"+role.getName()+"拥有"+adminNumber+"个管理账户，请先移除管理账户的角色关系再删除");
-                }
+                }*/
                 //获取该角色拥有的菜单数量
                 int menuNumber=roleMenuDao.getMenusCountByRoleId(role.getId());
                 if(menuNumber>0){
                     throw new MyServiceException("角色删除失败：角色"+role.getName()+"拥有"+menuNumber+"个菜单，请先移除和菜单的关联再删除");
                 }
-                //如果有账户信息
+                //如果有权限信息
+                int purviewNumber=rolePurviewDao.getRolePurviewNumberByRoleId(role.getId());
+                if(purviewNumber>0){
+                    throw new MyServiceException("角色删除失败：角色"+role.getName()+"拥有"+purviewNumber+"个权限，请先移除和权限的关联再删除");
+                }
+                //获取该角色和所有账户的关系集合
+                adminRoles.addAll(adminRoleDao.getAdminRoleByRoleId(role.getId()));
             }
         }
-        roleDao.deletes(ids);
+        if(adminRoles.size()>0){//移除所有账户和角色关系
+            adminRoleDao.deletesAdminRole(adminRoles);
+        }
+        if(ids.length>0){//移除所有角色
+            roleDao.deletes(ids);
+        }
+
     }
 }

@@ -88,7 +88,7 @@ public class AdminServiceImpl implements  AdminService,UserDetailsService{
             productQuery.setCreator(admin);
             admin.setSaveProductNumber(productDao.querySize(productQuery));
             //获取该账户拥有的菜单数量
-            admin.setMenuNumber(adminMenuDao.getMenuIdsByAdminId(admin.getId()).length);
+            admin.setMenuNumber(adminMenuDao.getMenuIdsByAdminId(admin.getId(),true,true).length);
             //将密码清空，不返回给前端
 
         }
