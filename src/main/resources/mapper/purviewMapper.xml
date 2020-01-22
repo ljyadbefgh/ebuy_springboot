@@ -4,13 +4,8 @@
 例如namespace="com.cn.mybatis.test1.dao.userMapper"就是com.cn.mybatis.test1.dao(包名)+userMapper(userMapper.xml文件去除后缀)
  -->
 <mapper namespace="com.lcvc.ebuy_springboot.dao.PurviewDao">
-    <!--自定义返回的类型-->
-    <!--<resultMap id="product" type="Product">
-        <association property="productType" javaType="ProductType" column="productTypeId" select="com.lcvc.ebuy_springboot.dao.ProductTypeDao.getForCascade">
-        </association>
-        <association property="creator" javaType="Admin" column="creatorId" select="com.lcvc.ebuy_springboot.dao.AdminDao.get">
-        </association>
-    </resultMap>-->
+
+    <!--==================================基本查询============================-->
 
     <select id="get" resultType="Purview">
         select * from purview where id=#{id}
@@ -40,11 +35,19 @@
     </delete>
 
     <delete id="deletes" >
-        delete from purview where id in
-        <foreach item="item" collection="array" open="(" separator="," close=")">
-            #{item}
-        </foreach>
+        delete from purview where 1=0
+        <if test="array != null and array.length> 0">
+            OR id in
+            <foreach item="item" collection="array" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
     </delete>
+
+    <select id="total" resultType="int">
+        select count(id) from purview
+    </select>
+
 
     <select id="readAll" resultType="Purview">
         select * from purview
@@ -63,9 +66,6 @@
         order by orderNum asc,id asc
     </select>
 
-    <select id="total" resultType="int">
-        select count(id) from purview
-    </select>
 
     <select id="querySize" resultType="int">
         select count(1) from purview
@@ -104,17 +104,12 @@
         order by orderNum asc,id asc limit #{offset},#{length}
     </select>
 
-    <select id="getSimple" resultType="Purview">
+    <!--==================================定制查询============================-->
+
+    <!--没有关联信息，提供给其他模块在xml中调用-->
+    <!--<select id="getSimple" resultType="Purview">
         select * from purview where id=#{id}
-    </select>
-
-    <!--<select id="getNewTopProductList" resultType="Product">-->
-        <!--select * from product order by createTime desc limit 0,#{pageSize}-->
-    <!--</select>-->
-
-
-
-
+    </select>-->
 
 
 

@@ -30,7 +30,7 @@ public class MenuServiceImpl implements MenuService {
     private RoleMenuDao roleMenuDao;
 
     /**
-     * 递归
+     * 递归处理菜单的子菜单信息
      * 如果菜单的子菜单集合为空，则设置为null
      * @param menus 当前菜单
      */
@@ -41,22 +41,6 @@ public class MenuServiceImpl implements MenuService {
             }else{
                 setChildrenMenuForNULL(menu.getChildren());
             }
-        }
-    }
-
-    /**
-     * 递归
-     * 如果菜单的子菜单集合为空，则设置为null
-     * @param menu 当前菜单
-     */
-    private void setNULL_ChildrenMenu(Menu menu){
-        List<Menu> childrens=menu.getChildren();//获取子目录
-        if(childrens.size()>0){
-            for(Menu menuChildren:menu.getChildren()){  //遍历子目录
-                setNULL_ChildrenMenu(menuChildren);
-            }
-        }else{
-            menu.setChildren(null);
         }
     }
 
@@ -125,17 +109,15 @@ public class MenuServiceImpl implements MenuService {
     public void deleteMenu(@NotNull Integer id) {
         Menu menu=menuDao.getTreeMenuById(id);//获取该目录及其所有子目录（递归）
         List<Menu> menus=new ArrayList<Menu>();//创建一个集合用于把递归树形菜单用集合方式排列
-        this.setMenuList(menu,menus);
-        Collections.reverse(menus);//将集合反转，使得后面的处理可以从最低级目录开始
+        this.setMenuList(menu,menus);//获取该菜单及所有子目录，按照父目录-子目录的形式
+        Collections.reverse(menus);//将集合反转，使得后面的处理可以从最低层目录开始
         Integer[] ids=new Integer[menus.size()];//创建数组
         for(int i=0;i<menus.size();i++){
             Menu menuOfEach=menus.get(i);
             ids[i]=menuOfEach.getId();
         }
-        if(ids.length>0){
-            roleMenuDao.deleteRoleMenusByMenuIds(ids);//删除角色关系
-            menuDao.deletes(ids);//执行批量删除
-        }
+        roleMenuDao.deleteRoleMenusByMenuIds(ids);//删除角色关系
+        menuDao.deletes(ids);//执行批量删除
     }
 
 

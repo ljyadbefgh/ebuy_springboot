@@ -2,15 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <!-- 指明这个映射文件adminMapper.xml的逻辑路径,如果与接口建立映射，那么逻辑路径应该与接口的物理路径一致-->
 <mapper namespace="com.lcvc.ebuy_springboot.dao.RolePurviewDao">
-    <!-- parameterType表示要传入的参数的类型 ，resultType表示要返回的数据的类型-->
-    <!--自定义返回的类型-->
-   <!-- <resultMap id="adminSearch" type="Admin">
-        <collection property="roles" javaType="List" ofType="Admin" >
-            <collection property="roles" javaType="List" ofType="Student">
-                <result property="name" column="role.name"/>
-            </collection>
-        </collection>
-    </resultMap>-->
 
     <!--自定义返回的类型-->
     <resultMap id="rolePurview" type="RolePurview">
@@ -20,6 +11,7 @@
         </association>
     </resultMap>
 
+    <!--==================================基本查询============================-->
     <select id="get"  resultMap="rolePurview">
         select * from role_purview where id=#{id}
     </select>
@@ -30,19 +22,12 @@
     </insert>
 
     <insert id="saves"  useGeneratedKeys="true" keyProperty="id">
-        <choose>
-            <when test="list.size()>0">
-                insert into role_purview(id,roleId,purviewId,permissionIds,createTime) values
-                <foreach collection="list" item="item" index="index" separator=",">
-                    (null,#{item.role.id},#{item.purview.id},#{item.permissionIds},#{item.createTime})
-                </foreach>
-            </when>
-            <otherwise>
-                <!--执行一个空的begin语句，否则如果是空的代码会报错-->
-                begin
-               /* ;end;*/
-            </otherwise>
-        </choose>
+        <if test="list.size()>0">
+            insert into role_purview(id,roleId,purviewId,permissionIds,createTime) values
+            <foreach collection="list" item="item" index="index" separator=",">
+                (null,#{item.role.id},#{item.purview.id},#{item.permissionIds},#{item.createTime})
+            </foreach>
+        </if>
     </insert>
 
     <update id="update" parameterType="Role">
@@ -59,14 +44,17 @@
     </delete>
 
     <delete id="deletes" >
-        delete from role_purview where id in
-        <foreach item="item" collection="array" open="(" separator="," close=")">
-            #{item}
-        </foreach>
+        delete from role_purview where 1=0
+        <if test="array != null and array.length> 0">
+            OR id in
+            <foreach item="item" collection="array" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
     </delete>
 
 
-
+    <!--==================================定制查询============================-->
 
     <!--再返回id的时候，要用Integer而不是int，以免找不到对象无法返回空记录信息-->
     <select id="getId" resultType="Integer">
@@ -98,7 +86,7 @@
         select role.* from role,role_purview where role.id=role_purview.roleId and purviewId=#{purviewId}
     </select>
 
-    <select id="getEnabledRolesByPurview"  resultType="Role">
+    <select id="getEnabledRolesByPurviewId"  resultType="Role">
         select role.* from role,role_purview where role.id=role_purview.roleId and purviewId=#{purviewId} and role.enabled=true
     </select>
 

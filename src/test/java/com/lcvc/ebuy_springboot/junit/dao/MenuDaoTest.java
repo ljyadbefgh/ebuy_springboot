@@ -63,18 +63,19 @@ public class MenuDaoTest extends EbuySpringbootApplicationTests {
      */
     @Test
     public void testGetTreeMenuById(){
-        Menu menu=menuDao.getTreeMenuById(39);
+        Menu menu=menuDao.getTreeMenuById(4);
         readMenu(menu,1);//1表示当前目录的层次，模拟
     }
-
-
-
-
-
 
     @Test
     public void testGet(){
         System.out.println("读取菜单："+menuDao.get(2));
+    }
+
+    @Test
+    public void testDeletes(){
+        Integer[] ids=new Integer[]{53};
+        menuDao.deletes(ids);
     }
 
 

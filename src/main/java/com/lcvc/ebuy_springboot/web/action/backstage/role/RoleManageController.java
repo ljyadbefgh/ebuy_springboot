@@ -6,6 +6,7 @@ import com.lcvc.ebuy_springboot.model.RolePurview;
 import com.lcvc.ebuy_springboot.model.base.Constant;
 import com.lcvc.ebuy_springboot.model.base.JsonCode;
 import com.lcvc.ebuy_springboot.model.base.PageObject;
+import com.lcvc.ebuy_springboot.model.form.role_menu.MenuByRoleReturn;
 import com.lcvc.ebuy_springboot.model.query.AdminQuery;
 import com.lcvc.ebuy_springboot.service.*;
 import io.swagger.annotations.Api;
@@ -110,14 +111,16 @@ public class RoleManageController {
 
 
 
-	//======================================菜单操作=====================================================
-	@ApiOperation(value = "以树形方式读取所有菜单信息", notes = "以树形方式读取所有菜单信息")
+	//======================================菜单操作=====================================================//
+	@ApiOperation(value = "读取指定角色拥有的树形菜单", notes = "读取指定角色拥有的树形菜单（含系统拥有的所有树形菜单）")
 	@GetMapping("/menu/{roleId}")
 	public Map<String, Object> toManageMenu(@PathVariable Integer roleId){
 		Map<String, Object> map=new HashMap<String, Object>();
 		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
-		map.put(Constant.JSON_DATA,roleMenuService.getMenusIdByRoleId(roleId));
-		map.put("menus",menuService.getTreeMenu());
+		MenuByRoleReturn menuByRoleReturn=new MenuByRoleReturn();
+		menuByRoleReturn.setMenusId(roleMenuService.getMenusIdByRoleId(roleId));//读取该角色拥有的所有菜单id，
+		menuByRoleReturn.setTreeMenu(menuService.getTreeMenu());//系统的所有菜单，树形方式
+		map.put(Constant.JSON_DATA,menuByRoleReturn);
 		return map;
 	}
 
@@ -131,10 +134,7 @@ public class RoleManageController {
 		return map;
 	}
 
-
-
-
-
+	//======================================管理员操作=====================================================//
 
 	@ApiOperation(value = "分页读取指定角色对应的管理账户信息", notes = "如果page为空则默认是第一页;如果limit为空则采用服务器的默认数值")
 	@ApiImplicitParams({
@@ -167,12 +167,12 @@ public class RoleManageController {
 		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
 		return map;
 	}
+
 	//======================================权限操作=====================================================
-	@ApiOperation(value = "根据角色id获取指定角色的权限关系列表", notes = "根据角色id获取指定角色的权限关系列表")
+	@ApiOperation(value = "根据角色id获取指定角色的权限关系列表", notes = "根据角色id获取指定角色的权限关系列表，该关系列表包含获取指定角色与所有权限的关系，如果存在的关系则有详细的信息（如id,createTime）；反之则没有")
 	@ApiImplicitParam(name = "id", value = "要读取的角色id", paramType = "path", required = true,example="1")
 	@GetMapping("/{id}/rolePurviewRelationManage")
 	public Map<String, Object>  getPurviewsByRoleId(@PathVariable Integer id){
-		System.out.println("获取所有权限");
 		Map<String, Object> map=new HashMap<String, Object>();
 		List<RolePurview> list=rolePurviewService.getAllRolePurviewsByRoleId(id);
 		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
@@ -222,7 +222,7 @@ public class RoleManageController {
 		return map;
 	}
 
-	@ApiOperation(value = "为指定角色权限关系赋予相应的操作权限", notes = "为指定角色权限关系赋予相应的操作权限")
+	@ApiOperation(value = "从指定角色权限关系移除相应的操作权限", notes = "从指定角色权限关系移除相应的操作权限")
 	@ApiImplicitParams({
 			@ApiImplicitParam(name = "roleId", value = "指定角色的id", paramType = "path", required = true,example="1"),
 			@ApiImplicitParam(name = "purviewId", value = "指定权限的id", paramType = "path", required = true,example="1"),

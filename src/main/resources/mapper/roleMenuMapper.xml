@@ -5,7 +5,9 @@
  -->
 <mapper namespace="com.lcvc.ebuy_springboot.dao.RoleMenuDao">
 
-    <select id="getMenusCountByRoleId" resultType="Integer">
+    <!--==================================定制查询============================-->
+
+    <select id="getMenuNumberByRoleId" resultType="Integer">
         SELECT count(id) from role_menu WHERE roleId=#{roleId}
     </select>
 
@@ -13,11 +15,13 @@
         SELECT menuId from role_menu WHERE roleId=#{roleId}
     </select>
 
-    <insert id="addMenusForRoleId">
-        INSERT INTO role_menu(roleId,menuId) VALUES
-        <foreach collection="menuIds" item="menuId" separator=",">
-            (#{roleId},#{menuId})
-        </foreach>
+    <insert id="addMenusIdForRoleId">
+        <if test="menuIds.length>0">
+            INSERT INTO role_menu(roleId,menuId) VALUES
+            <foreach collection="menuIds" item="menuId" separator=",">
+                (#{roleId},#{menuId})
+            </foreach>
+        </if>
     </insert>
 
     <delete id="deleteMenusByRoleId">
@@ -25,10 +29,13 @@
     </delete>
 
     <delete id="deleteRoleMenusByMenuIds">
-        delete from role_menu where menuId in
-        <foreach item="menuId" collection="array" open="(" separator="," close=")">
-            #{menuId}
-        </foreach>
+        delete from role_menu where 1=0
+        <if test="array != null and array.length> 0">
+            OR menuId in
+            <foreach item="menuId" collection="array" open="(" separator="," close=")">
+                #{menuId}
+            </foreach>
+        </if>
     </delete>
 
 

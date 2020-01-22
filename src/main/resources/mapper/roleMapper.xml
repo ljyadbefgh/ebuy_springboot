@@ -4,6 +4,8 @@
 例如namespace="com.cn.mybatis.test1.dao.userMapper"就是com.cn.mybatis.test1.dao(包名)+userMapper(userMapper.xml文件去除后缀)
  -->
 <mapper namespace="com.lcvc.ebuy_springboot.dao.RoleDao">
+
+    <!--==================================基本查询============================-->
     <select id="get" resultType="Role">
         select * from role where id=#{id}
     </select>
@@ -35,10 +37,13 @@
     </delete>
 
     <delete id="deletes" >
-        delete from role where id in
-        <foreach item="item" collection="array" open="(" separator="," close=")">
-            #{item}
-        </foreach>
+        delete from role where 1=0
+        <if test="array != null and array.length> 0">
+            OR id in
+            <foreach item="item" collection="array" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
     </delete>
 
 
@@ -65,6 +70,8 @@
     <select id="querySize" resultType="int">
         select count(1) from role order by level asc
     </select>
+
+    <!--==================================定制查询============================-->
 
     <select id="getRolesByAdminId" resultType="Role">
        select Role.* from Role role,admin_role ar where role.id=ar.roleId and ar.adminId=#{id}

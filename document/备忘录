@@ -45,3 +45,8 @@ update product set content=REPLACE(content,'http://120.76.118.101:8080/ebuy_spri
 （1）搭建比较好的文章：
 https://www.jianshu.com/p/24c6a65c3913
 
+6.mybatis
+（1）切记：如果在代码中用了
+begin--end
+这类事务处理代码，则项目中配置的事务无效，即无法回滚。
+

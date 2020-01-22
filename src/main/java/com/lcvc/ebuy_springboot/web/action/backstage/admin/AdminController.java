@@ -65,8 +65,8 @@ public class AdminController {
 	}
 
 	@ApiOperation(value = "修改密码", notes = "修改密码")
-	@PatchMapping
-	public Map<String, Object> updateAdmin(@RequestBody @Validated AdminPasswordEditForm adminPasswordEditForm, HttpSession session) {
+	@PatchMapping("/password")
+	public Map<String, Object> updatePassword(@RequestBody @Validated AdminPasswordEditForm adminPasswordEditForm, HttpSession session) {
 		//String username = ((Admin) session.getAttribute("admin")).getUsername();
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		Admin admin=(Admin)authentication.getPrincipal();
@@ -77,7 +77,7 @@ public class AdminController {
 		return map;
 	}
 
-	//===================================菜单操作============================================
+	//===================================菜单操作============================================//
 	@ApiOperation(value = "获取当前账户的树形菜单", notes = "获取当前账户的树形菜单")
 	@GetMapping("/treeMenu")
 	public Map<String, Object>  getTreeMenus(){

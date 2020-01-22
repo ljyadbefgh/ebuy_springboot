@@ -73,7 +73,7 @@ public class RoleServiceImpl implements RoleService {
             //获取该角色对应的权限数量
             role.setPurviewNumber(rolePurviewDao.getRolePurviewNumberByRoleId(role.getId()));
             //获取该角色对应的菜单数量
-            role.setMenuNumber(roleMenuDao.getMenusCountByRoleId(role.getId()));
+            role.setMenuNumber(roleMenuDao.getMenuNumberByRoleId(role.getId()));
         }
         return pageObject;
     }
@@ -133,7 +133,7 @@ public class RoleServiceImpl implements RoleService {
                     throw new MyServiceException("角色删除失败：角色"+role.getName()+"拥有"+adminNumber+"个管理账户，请先移除管理账户的角色关系再删除");
                 }*/
                 //获取该角色拥有的菜单数量
-                int menuNumber=roleMenuDao.getMenusCountByRoleId(role.getId());
+                int menuNumber=roleMenuDao.getMenuNumberByRoleId(role.getId());
                 if(menuNumber>0){
                     throw new MyServiceException("角色删除失败：角色"+role.getName()+"拥有"+menuNumber+"个菜单，请先移除和菜单的关联再删除");
                 }

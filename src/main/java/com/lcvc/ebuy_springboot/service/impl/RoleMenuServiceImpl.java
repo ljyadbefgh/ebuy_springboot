@@ -29,7 +29,7 @@ public class RoleMenuServiceImpl implements RoleMenuService {
     private RoleMenuDao roleMenuDao;
 
     public void updateRoleMenu(Integer roleId, Integer[] menuIds) {
-        List<Integer> menuIdList=new ArrayList<Integer>();//获取实际存在的id集合
+        List<Integer> menuIdList=new ArrayList<Integer>();//获取实际存在的菜单d集合
         for(Integer menuId:menuIds){
             Menu menu=menuDao.get(menuId);
             if(menu!=null){
@@ -44,10 +44,9 @@ public class RoleMenuServiceImpl implements RoleMenuService {
         for(int i = 0; i < menuIdArray.length; i ++){
             menuIdArray[i]=menuIdList.get(i).intValue();
         }
-        if(menuIdArray.length>0){//只有有菜单时才执行添加
-            roleMenuDao.addMenusForRoleId(roleId,menuIdArray);//将菜单批量添加
+        if(menuIdArray.length>0){
+            roleMenuDao.addMenusIdForRoleId(roleId,menuIdArray);//将菜单批量添加
         }
-
     }
 
     @Override

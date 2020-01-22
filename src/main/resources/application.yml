@@ -41,8 +41,11 @@ spring:
   session:
     store-type: redis #指定Session 的存储方式为redis
   jackson:    #设置全局json格式
-    date-format: yyyy-MM-dd HH:mm   #将日期类型设置为字符串表示
+    date-format: yyyy-MM-dd HH:mm:ss   #将日期类型设置为字符串表示
     time-zone: GMT+8
+
+  mvc: #针对form表单格式
+    dateFormat: yyyy-MM-dd HH:mm:ss #将日期类型设置为字符串表示
   servlet:
     multipart:
       maxFileSize: 100MB #单个上传文件的最大限制

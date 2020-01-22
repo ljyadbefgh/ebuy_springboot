@@ -23,6 +23,8 @@
         select * from menu where parentId=#{id} order by orderNum asc
     </select>
 
+    <!--==================================基本查询============================-->
+
 
     <select id="get" resultType="Menu">
         select * from menu where id=#{id}
@@ -57,12 +59,17 @@
         delete from menu where id=#{id}
     </delete>
 
-    <delete id="deletes" >
-        delete from menu where id in
-        <foreach item="item" collection="array" open="(" separator="," close=")">
-            #{item}
-        </foreach>
+    <delete id="deletes">
+        delete from menu where 1=0
+        <if test="array != null and array.length> 0">
+            OR id in
+            <foreach item="item" collection="array" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
     </delete>
+
+    <!--==================================定制查询============================-->
 
     <select id="getTreeMenu" resultMap="menuTree">
         select * from menu where parentId is null order by orderNum asc
@@ -71,36 +78,5 @@
     <select id="getTreeMenuById" resultMap="menuTree">
         select * from menu where id=#{id}
     </select>
-
-
-
-
-
-    <select id="readAll" resultMap="menuTree">
-        select * from role
-        <if test="objectQuery!=null">
-            <where>
-            <if test="objectQuery.enabled!=null">
-                and enabled=#{objectQuery.enabled}
-            </if>
-            </where>
-        </if>
-         order by level asc
-    </select>
-
-    <select id="total" resultType="int">
-       select count(1) from role
-    </select>
-
-    <select id="query" resultType="Role">
-        select * from role order by level asc limit #{offset},#{length}
-    </select>
-
-    <select id="querySize" resultType="int">
-        select count(1) from role order by level asc
-    </select>
-
-
-
 
 </mapper>

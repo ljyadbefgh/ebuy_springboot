@@ -21,7 +21,7 @@ import java.util.List;
 @Service
 public class RolePurviewServiceImpl implements RolePurviewService {
     /**
-     * 权限配置
+     * 权限动作配置
      */
     private final List<Permission> PERMISSIONS = new ArrayList<Permission>() {{//可以忽略的url的地址，即不要进行权限验证
         add(new Permission(1,"查看","GET"));
@@ -42,9 +42,9 @@ public class RolePurviewServiceImpl implements RolePurviewService {
     private RolePurviewDao rolePurviewDao;
 
     /**
-     *根据所有操作权限的id集合，获取相应的方法集合
-     * @param permissionIds 角色和权限的集合
-     * @return
+     *根据权限操作类的id集合，获取相应权限操作类的方法集合
+     * @param permissionIds 权限操作类id集合的字符串形式
+     * @return 返回对应的，如GET，POST，PATCH，PUT，DELETE的集合
      */
     private List<String> getPermissionMethods(String permissionIds) {
         List<String> methodList=new ArrayList<String>();//定义方法集合
@@ -54,7 +54,7 @@ public class RolePurviewServiceImpl implements RolePurviewService {
             if(index!=-1){//如果该id有效
                 Permission permission=PERMISSIONS.get(index);
                 String methods=permission.getMethods();//获取允许的方法集合
-                String[] methodArray=methods.split("\\|");//如果该操作权限有多个方法，则进行切割
+                String[] methodArray=methods.split("\\|");//如果该操作权限动作有多个方法（例如PATCH|PUT），则进行切割
                 for(String method:methodArray){
                     methodList.add(method);
                 }
@@ -67,9 +67,9 @@ public class RolePurviewServiceImpl implements RolePurviewService {
 
 
     /**
-     *根据所有操作权限的id集合，获取相应的方法对象集合
-     * @param permissionIds 角色和权限的集合
-     * @return
+     * 根据权限操作类的id集合，获取相应权限操作类的集合
+     * @param permissionIds 权限操作类id集合的字符串形式
+     * @return 权限操作类的集合
      */
     private List<Permission> getPermissions(String permissionIds) {
         if(permissionIds==null){
@@ -90,11 +90,12 @@ public class RolePurviewServiceImpl implements RolePurviewService {
     }
 
     /**
-     *根据所有操作权限的id集合，获取所有的方法对象集合
+     * 重要方法：根据权限操作类的id集合，获取所有权限操作类的集合
      * 说明：
-     * 如果没有关系，则将selected字段设置为false
+     * 1.如果要获取所有权限类，并且有是否选中字段，则必须通过该方法调用，避免污染本类的数据源PERMISSIONS
+     * 2.如果没有关系，则将selected字段设置为false；如果有关系，则设置为true
      * @param permissionIds 角色和权限的集合
-     * @return
+     * @return 返回所有操作权限类，并为每个权限操作类的赋值
      */
     private List<Permission> getAllPermissions(String permissionIds) {
         if(permissionIds==null){
@@ -139,14 +140,6 @@ public class RolePurviewServiceImpl implements RolePurviewService {
         return rolePurviews;
     }
 
-    @Override
-    public RolePurview getRolePurview(Integer roleId, Integer purviewId) {
-        if(roleId==null||purviewId==null){
-            throw new MyWebException("操作失败：非法参数");
-        }
-        return rolePurviewDao.getRolePurviewByRoleIdAndPurviewId(roleId,purviewId);
-    }
-
 
 
     @Override
@@ -172,7 +165,7 @@ public class RolePurviewServiceImpl implements RolePurviewService {
         rolePurview.setPermissionIds(Constant.DEFAULTPERMISSIONIDS);//默认拥有的权限
         rolePurview.setCreateTime(Calendar.getInstance().getTime());
         rolePurviewDao.save(rolePurview);//保存新的关系进入数据库，并获取到Id
-        rolePurview.setPermissions(this.getAllPermissions(rolePurview.getPermissionIds()));//获取所有操作方法
+        rolePurview.setPermissions(this.getAllPermissions(rolePurview.getPermissionIds()));//获取所有操作方法，返回前端
         //rolePurview.setPermissions(this.getPermissions(rolePurview.getPermissionIds()));//获取当前权限拥有的操作方法
         return rolePurview;
     }
@@ -233,7 +226,7 @@ public class RolePurviewServiceImpl implements RolePurviewService {
     public List<Role> getEnabledRolesByPurview(Integer purviewId) {
         List<Role> roles=new ArrayList<Role>();
         if(purviewId!=null){
-            roles.addAll(rolePurviewDao.getEnabledRolesByPurview(purviewId));
+            roles.addAll(rolePurviewDao.getEnabledRolesByPurviewId(purviewId));
         }
         return roles;
     }

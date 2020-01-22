@@ -22,6 +22,11 @@ public class RoleDaoTest extends EbuySpringbootApplicationTests {
         System.out.println("指定账户的角色总数："+roleDao.getRolesByAdminId(2).size());
     }
 
+    @Test
+    public void testDeletes(){
+        Integer[] ids=new Integer[]{};
+        roleDao.deletes(ids);
+    }
 
 
 

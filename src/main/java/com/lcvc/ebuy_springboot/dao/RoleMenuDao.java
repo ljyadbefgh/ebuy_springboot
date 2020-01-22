@@ -13,7 +13,7 @@ public interface RoleMenuDao{
      * @param roleId
      * @return
      */
-    int getMenusCountByRoleId(int roleId);
+    int getMenuNumberByRoleId(int roleId);
 
 
     /**
@@ -26,9 +26,9 @@ public interface RoleMenuDao{
     /**
      * 将菜单批量赋给角色
      * @param roleId 指定角色
-     * @param menuIds 菜单集合，长度不能为0，否则会出现异常
+     * @param menuIds 菜单集合不能为空
      */
-    void addMenusForRoleId(@Param(value = "roleId")int roleId, @Param(value = "menuIds")int[] menuIds);
+    void addMenusIdForRoleId(@Param(value = "roleId")int roleId, @Param(value = "menuIds")int[] menuIds);
 
 
     /**

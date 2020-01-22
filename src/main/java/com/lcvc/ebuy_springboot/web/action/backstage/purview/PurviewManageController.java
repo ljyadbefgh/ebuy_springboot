@@ -14,7 +14,6 @@ import io.swagger.annotations.ApiOperation;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -29,9 +28,6 @@ public class PurviewManageController {
 
 	@Autowired
 	private PurviewService purviewService;
-
-	@Value("${myFile.uploadFolder}")
-	private String uploadFolder;//上传路径
 
 
 	@ApiOperation(value = "分页读取权限信息", notes = "如果page为空则默认是第一页;如果limit为空则采用服务器的默认数值")
@@ -85,7 +81,7 @@ public class PurviewManageController {
 	@ApiOperation(value = "批量删除指定的多个权限", notes = "批量删除指定的多个权限")
 	@ApiImplicitParam(name = "ids", value = "要删除的权限id集合", required = true,paramType = "path",example ="15,25,74" )
 	@DeleteMapping("/{ids}")
-	public Map<String, Object> deleteRoles(@PathVariable("ids")Integer[] ids){
+	public Map<String, Object> deletePurviews(@PathVariable("ids")Integer[] ids){
 		Map<String, Object> map=new HashMap<String, Object>();
 		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
 		purviewService.deletePurviews(ids);

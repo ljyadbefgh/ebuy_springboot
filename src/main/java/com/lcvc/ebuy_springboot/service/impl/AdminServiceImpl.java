@@ -103,7 +103,7 @@ public class AdminServiceImpl implements  AdminService,UserDetailsService{
         }
         Admin adminDelete=new Admin(id);
         if(this.isSystemAdmin(adminDelete)){
-            throw new MyServiceException("操作失败：超级用户不允许删除");
+            throw new MyServiceException("操作失败：系统用户不允许删除");
         }
         if(admin.getId()==id.intValue()) {//如果登录账户的id与被删除账户的id一致
             throw new MyServiceException("删除失败：不允许删除自己的账户");
@@ -137,7 +137,7 @@ public class AdminServiceImpl implements  AdminService,UserDetailsService{
             for(Integer id:ids){
                 Admin adminDelete=new Admin(id);
                 if(this.isSystemAdmin(adminDelete)){
-                    throw new MyServiceException("超级用户不允许删除");
+                    throw new MyServiceException("系统用户不允许删除");
                 }
                 if(admin.getId()==id.intValue()) {//如果登录账户的id与被删除账户的id一致
                     throw new MyServiceException("删除失败：不允许删除自己的账户");

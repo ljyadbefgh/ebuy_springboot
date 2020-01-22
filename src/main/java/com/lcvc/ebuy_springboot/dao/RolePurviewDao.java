@@ -43,14 +43,14 @@ public interface RolePurviewDao extends IBaseDao<RolePurview>{
     List<RolePurview> getRolePurviewsByRoleId(int roleId);
 
     /**
-     * 获取指定权限对应的角色而关系数量
+     * 获取指定角色的所有权限关系数量
      * @param roleId
      * @return
      */
     int getRolePurviewNumberByRoleId(int roleId);
 
     /**
-     * 获取指定权限对应的角色而关系数量
+     * 获取指定权限对应的角色关系数量
      * @param purviewId
      * @return
      */
@@ -69,7 +69,7 @@ public interface RolePurviewDao extends IBaseDao<RolePurview>{
      * @param purviewId
      * @return
      */
-    List<Role> getEnabledRolesByPurview(int purviewId);
+    List<Role> getEnabledRolesByPurviewId(int purviewId);
 
     /**
      * 删除指定角色的所有权限关系

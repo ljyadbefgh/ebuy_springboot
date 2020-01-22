@@ -25,10 +25,4 @@ public interface MenuDao  extends IBaseDao<Menu>{
      */
     Menu getTreeMenuById(Integer id);
 
-    /**
-     * 获取所有根目录
-     * @return
-     */
-    //List<Menu> getRootMenu();
-
 }

@@ -2,6 +2,7 @@ package com.lcvc.ebuy_springboot.dao;
 
 import org.apache.ibatis.annotations.Param;
 
+import java.util.Collection;
 import java.util.List;
 
 public interface IBaseDao<T>{
@@ -29,10 +30,10 @@ public interface IBaseDao<T>{
 	/**
 	 * 一次插入多条记录：将账户和角色关系的多条记录同时插入
 	 * 说明：集合为空则不插入任何记录
-	 * @param list 不能为Null
+	 * @param collection 不能为Null,且集合不能为空
 	 * @return 返回插入的记录数
 	 */
-	int saves(List<T> list);
+	int saves(Collection<T> collection);
 	
 	/**
 	 * 编辑指定记录
@@ -49,7 +50,7 @@ public interface IBaseDao<T>{
 	int delete(java.io.Serializable id);
 
 	/**
-	 * 根据标志符集合删除对应的记录信息集合。注意：长度不能为0
+	 * 根据标志符集合删除对应的记录信息集合，长度如果为0则不进行任何处理
 	 * @param ids id集合
 	 * @return  删除的记录数，>=1表示删除成功，0表示删除失败
 	 */

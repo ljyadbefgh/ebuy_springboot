@@ -29,7 +29,7 @@ public interface RoleMenuService {
     void updateRoleMenu(@Valid @NotNull Integer roleId,@Valid @NotNull Integer[] menuIds);
 
     /**
-     * 读取该角色拥有的所有菜单id，可以用于提供给前端的树形菜单已选列表
+     * 读取该角色拥有的所有菜单id，可以用于提供给前端的树形菜单作为已选列表
      * @param roleId
      * @return
      */

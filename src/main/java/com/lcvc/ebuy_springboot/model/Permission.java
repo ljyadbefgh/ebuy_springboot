@@ -3,13 +3,13 @@ package com.lcvc.ebuy_springboot.model;
 import java.util.Objects;
 
 /**
- * 操作权限类：对应资源表的增删改查操作
+ * 权限操作类：对应资源表的增删改查操作
  * 设计说明：因为数据少且基本固定不变，所以选择在代码写死相关数据，不采用数据库表
  */
 public class Permission implements java.io.Serializable {
     private Integer id;//自定义主键
     private String name;//权限名：如增加、编辑
-    private String methods;//支持的restful方法，可以多些，用|分隔，如：patch|put
+    private String methods;//方法，支持的restful方法（如GET、DELETE等），可以多些，用|分隔，如：patch|put
 
     //非核心字段
     private Boolean selected;//是否选中。用于在展示所有操作权限数据时（配合前端）使用

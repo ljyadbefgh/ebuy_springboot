@@ -17,6 +17,12 @@ public class PurviewDaoTest extends EbuySpringbootApplicationTests {
         System.out.println("总数："+purviewDao.readAll(null).size());
     }
 
+    @Test
+    public void testDeletes(){
+        Integer[] ids=new Integer[]{};
+        purviewDao.deletes(ids);
+    }
+
 
 
 

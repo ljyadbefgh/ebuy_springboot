@@ -11,7 +11,7 @@
  Target Server Version : 80016
  File Encoding         : 65001
 
- Date: 21/01/2020 00:09:29
+ Date: 23/01/2020 00:46:26
 */
 
 SET NAMES utf8mb4;
@@ -35,10 +35,11 @@ CREATE TABLE `admin`  (
 -- ----------------------------
 -- Records of admin
 -- ----------------------------
-INSERT INTO `admin` VALUES (-99, 'admin', '-fe2nispc28dcddckd443jdmhnl8l9bjv', '管理员', 2, b'1', '2013-08-23 15:33:01');
-INSERT INTO `admin` VALUES (-1, 'user', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '演示账户', 1, b'1', '2013-08-23 15:33:01');
-INSERT INTO `admin` VALUES (19, 'student', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '学生', 1, b'1', '2013-10-15 17:30:27');
-INSERT INTO `admin` VALUES (23, 'teacher', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '软件教研员', 1, b'1', '2013-10-15 17:38:10');
+INSERT INTO `admin` VALUES (-99, 'admin', '-fe2nispc28dcddckd443jdmhnl8l9bjv', '超级管理员', 1, b'1', '2013-08-23 15:33:01');
+INSERT INTO `admin` VALUES (-9, 'user', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '普通管理员', 1, b'1', '2013-08-23 15:33:01');
+INSERT INTO `admin` VALUES (-3, 'vistor', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '演示账户', 1, b'1', '2013-10-15 17:30:01');
+INSERT INTO `admin` VALUES (-2, 'teacher', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '教师', 1, b'1', '2013-10-15 17:38:10');
+INSERT INTO `admin` VALUES (-1, 'student', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '学生', 1, b'1', '2013-10-15 17:30:27');
 INSERT INTO `admin` VALUES (25, 'dfdsfsdf1', 'e10adc3949ba59abbe56e057f20f883e', '6656563', 1, b'1', '2013-10-15 17:38:34');
 INSERT INTO `admin` VALUES (31, '67457464', 'e10adc3949ba59abbe56e057f20f883e', '6464565', 1, b'1', '2013-10-15 17:39:50');
 INSERT INTO `admin` VALUES (42, '1213df', 'e10adc3949ba59abbe56e057f20f883e', '85445', 1, b'1', '2013-10-16 09:14:26');
@@ -74,7 +75,6 @@ INSERT INTO `admin` VALUES (86, 'ljy', 'string', 'string', 0, b'1', '2019-08-05 
 INSERT INTO `admin` VALUES (89, 'ljy3', '111111', '张三', 1, b'1', '2019-09-01 16:13:43');
 INSERT INTO `admin` VALUES (95, 'user9', '13', '小红', 1, b'1', NULL);
 INSERT INTO `admin` VALUES (96, 'adfds', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '撒旦法', 2, b'1', '2019-10-15 08:40:06');
-INSERT INTO `admin` VALUES (97, 'vistor', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '观光管理员', 1, b'1', '2013-10-15 17:30:01');
 INSERT INTO `admin` VALUES (98, 'aaa1', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '撒旦法', 1, b'1', '2019-12-28 22:06:54');
 INSERT INTO `admin` VALUES (99, 'aaa2', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '发', 2, b'1', '2019-12-28 22:34:33');
 INSERT INTO `admin` VALUES (100, 'aaa3', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '地方', 2, b'1', '2019-12-28 22:38:18');
@@ -95,7 +95,7 @@ CREATE TABLE `admin_role`  (
   `roleId` int(11) NULL DEFAULT NULL COMMENT 'role主键',
   `createTime` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 225 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 230 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of admin_role
@@ -106,10 +106,10 @@ INSERT INTO `admin_role` VALUES (115, 103, 12, '2019-12-28 23:22:27');
 INSERT INTO `admin_role` VALUES (137, 25, 14, '2019-12-31 21:22:45');
 INSERT INTO `admin_role` VALUES (140, 104, 14, '2020-01-01 23:28:16');
 INSERT INTO `admin_role` VALUES (142, 104, -1, '2020-01-01 23:28:16');
-INSERT INTO `admin_role` VALUES (226, 19, 12, '2020-01-20 23:54:36');
-INSERT INTO `admin_role` VALUES (227, 23, 14, '2020-01-20 23:54:43');
-INSERT INTO `admin_role` VALUES (228, -1, -1, '2020-01-20 23:57:47');
-INSERT INTO `admin_role` VALUES (229, 97, 3, '2020-01-20 23:58:30');
+INSERT INTO `admin_role` VALUES (226, -1, 12, '2020-01-20 23:54:36');
+INSERT INTO `admin_role` VALUES (227, -2, 14, '2020-01-20 23:54:43');
+INSERT INTO `admin_role` VALUES (228, -9, -1, '2020-01-20 23:57:47');
+INSERT INTO `admin_role` VALUES (229, -3, 3, '2020-01-20 23:58:30');
 
 -- ----------------------------
 -- Table structure for customer
@@ -227,8 +227,8 @@ INSERT INTO `menu` VALUES (15, 4, '产品管理', 100, b'1', '/salary/sobcfg/**'
 INSERT INTO `menu` VALUES (23, 6, '基础信息设置', 100, b'1', '/system/basic/**', 'SysBasic', '/sys/basic', 'A', NULL, b'1', b'1');
 INSERT INTO `menu` VALUES (24, 6, '系统管理', 100, b'1', '/system/cfg/**', 'SysCfg', '/sys/cfg', 'B', NULL, b'1', b'1');
 INSERT INTO `menu` VALUES (25, 6, '操作日志管理', 100, b'1', '/system/log/**', 'SysLog', '/sys/log', 'C', NULL, b'1', b'1');
-INSERT INTO `menu` VALUES (29, 7, '密码修改', 100, b'1', '12', NULL, '/emp/basic/passowrd', '/password', NULL, b'1', b'1');
-INSERT INTO `menu` VALUES (30, 7, '基本信息修改', 100, b'1', '1', NULL, '/emp/basic/information', '/adf', NULL, b'1', b'1');
+INSERT INTO `menu` VALUES (29, 7, '密码修改', 100, b'1', '12', NULL, '/emp/basic/passowrd', '/admin/PasswordEdit', NULL, b'1', b'1');
+INSERT INTO `menu` VALUES (30, 7, '基本信息修改', 100, b'1', '1', NULL, '/emp/basic/information', '/admin/AdminEdit', NULL, b'1', b'1');
 INSERT INTO `menu` VALUES (32, 2, '角色管理', 100, b'1', '/rolemanage', '', NULL, '/admin/RoleManage', NULL, b'1', b'1');
 INSERT INTO `menu` VALUES (33, 2, '账户管理', 100, b'1', '/adminmanage', 'AdminManage', NULL, '/admin/AdminManage', NULL, b'1', b'1');
 INSERT INTO `menu` VALUES (53, 2, '菜单管理', 20, b'1', '/menumanage', 'MenuManage', '', '/admin/MenuManage', NULL, b'1', b'1');
@@ -500,7 +500,7 @@ CREATE TABLE `role_menu`  (
   `menuId` int(11) NULL DEFAULT NULL COMMENT 'menu主键',
   `createTime` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 213 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 224 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of role_menu
@@ -562,16 +562,6 @@ INSERT INTO `role_menu` VALUES (164, 3, 6, NULL);
 INSERT INTO `role_menu` VALUES (165, 3, 23, NULL);
 INSERT INTO `role_menu` VALUES (166, 3, 24, NULL);
 INSERT INTO `role_menu` VALUES (167, 3, 25, NULL);
-INSERT INTO `role_menu` VALUES (187, 12, 7, NULL);
-INSERT INTO `role_menu` VALUES (188, 12, 29, NULL);
-INSERT INTO `role_menu` VALUES (189, 12, 30, NULL);
-INSERT INTO `role_menu` VALUES (190, 12, 3, NULL);
-INSERT INTO `role_menu` VALUES (191, 12, 10, NULL);
-INSERT INTO `role_menu` VALUES (192, 12, 9, NULL);
-INSERT INTO `role_menu` VALUES (193, 12, 4, NULL);
-INSERT INTO `role_menu` VALUES (194, 12, 14, NULL);
-INSERT INTO `role_menu` VALUES (195, 12, 15, NULL);
-INSERT INTO `role_menu` VALUES (196, 12, 5, NULL);
 INSERT INTO `role_menu` VALUES (197, 14, 7, NULL);
 INSERT INTO `role_menu` VALUES (198, 14, 29, NULL);
 INSERT INTO `role_menu` VALUES (199, 14, 30, NULL);
@@ -588,6 +578,17 @@ INSERT INTO `role_menu` VALUES (209, 14, 6, NULL);
 INSERT INTO `role_menu` VALUES (210, 14, 23, NULL);
 INSERT INTO `role_menu` VALUES (211, 14, 24, NULL);
 INSERT INTO `role_menu` VALUES (212, 14, 25, NULL);
+INSERT INTO `role_menu` VALUES (213, 12, 7, NULL);
+INSERT INTO `role_menu` VALUES (214, 12, 29, NULL);
+INSERT INTO `role_menu` VALUES (215, 12, 30, NULL);
+INSERT INTO `role_menu` VALUES (216, 12, 33, NULL);
+INSERT INTO `role_menu` VALUES (217, 12, 3, NULL);
+INSERT INTO `role_menu` VALUES (218, 12, 10, NULL);
+INSERT INTO `role_menu` VALUES (219, 12, 9, NULL);
+INSERT INTO `role_menu` VALUES (220, 12, 4, NULL);
+INSERT INTO `role_menu` VALUES (221, 12, 14, NULL);
+INSERT INTO `role_menu` VALUES (222, 12, 15, NULL);
+INSERT INTO `role_menu` VALUES (223, 12, 5, NULL);
 
 -- ----------------------------
 -- Table structure for role_purview
@@ -635,8 +636,6 @@ INSERT INTO `role_purview` VALUES (58, 7, 40, '1', '2019-10-21 10:53:12');
 INSERT INTO `role_purview` VALUES (59, 7, 32, '1', '2019-10-21 10:53:26');
 INSERT INTO `role_purview` VALUES (60, 7, 34, '1', '2019-10-21 10:53:26');
 INSERT INTO `role_purview` VALUES (61, -1, 39, '2134', '2019-10-24 20:14:58');
-INSERT INTO `role_purview` VALUES (63, 12, 30, '1', '2019-10-24 20:16:02');
-INSERT INTO `role_purview` VALUES (64, 12, 31, '1', '2019-10-24 20:16:02');
 INSERT INTO `role_purview` VALUES (65, 12, 32, '1', '2019-10-24 20:16:02');
 INSERT INTO `role_purview` VALUES (66, 12, 33, '1', '2019-10-24 20:16:02');
 INSERT INTO `role_purview` VALUES (67, 12, 34, '1234', '2019-10-24 20:16:02');
@@ -658,5 +657,7 @@ INSERT INTO `role_purview` VALUES (306, 14, 34, '1234', '2020-01-20 23:52:53');
 INSERT INTO `role_purview` VALUES (307, 14, 38, '1234', '2020-01-20 23:52:53');
 INSERT INTO `role_purview` VALUES (308, 14, 39, '1234', '2020-01-20 23:52:53');
 INSERT INTO `role_purview` VALUES (309, 14, 40, '12', '2020-01-20 23:52:53');
+INSERT INTO `role_purview` VALUES (310, 12, 31, '1', '2020-01-22 20:34:05');
+INSERT INTO `role_purview` VALUES (311, 12, 30, '1', '2020-01-22 20:34:05');
 
 SET FOREIGN_KEY_CHECKS = 1;

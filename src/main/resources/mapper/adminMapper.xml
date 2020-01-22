@@ -12,10 +12,29 @@
         </collection>
     </resultMap>-->
 
-    <!-- 处理登录操作 -->
-    <select id="login" resultType="int">
-        select count(id) from admin where username=#{username} and password=#{password}
+    <!--==================================基本查询============================-->
+    <select id="get"  resultType="Admin">
+        select * from admin where id=#{id}
     </select>
+
+    <insert id="save"  useGeneratedKeys="true" keyProperty="id">
+          insert into admin(id,username,password,name,sex,unLocked,createTime)
+          values(null,#{username},#{password},#{name},#{sex},#{unLocked},#{createTime})
+    </insert>
+
+    <update id="update" parameterType="Admin">
+        update admin
+        <!-- 使用set标签可以将动态的配置SET 关键字，和剔除追加到条件末尾的任何不相关的逗号。 -->
+        <set>
+            <if test="username!=null and username.length()>0">username=#{username},</if>
+            <if test="name!=null and name.length()>0">name=#{name},</if>
+            <if test="password!=null and password.length()>0">password=#{password},</if>
+            <if test="sex!=null">sex=#{sex},</if>
+            <if test="unLocked!=null">unLocked=#{unLocked},</if>
+        </set>
+        where id=#{id}
+    </update>
+
 
     <delete id="delete" >
         delete from admin where id=#{id}
@@ -29,35 +48,12 @@
     </delete>
 
 
-    <select id="get"  resultType="Admin">
-        select * from admin where id=#{id}
-    </select>
-
-    <select id="getAdminByUsername"  resultType="Admin">
-        select * from admin where username=#{username}
-    </select>
-
-    <insert id="save"  useGeneratedKeys="true" keyProperty="id">
-          insert into admin(id,username,password,name,sex,unLocked,createTime)
-          values(null,#{username},#{password},#{name},#{sex},#{unLocked},#{createTime})
-    </insert>
-
     <select id="readAll" resultType="Admin">
         select * from admin order by id asc
     </select>
 
-    <!--<select id="query" resultType="Admin">
-        select * from admin order by id asc limit #{offset},#{length}
-    </select>
-
-
-    <select id="querySize" resultType="int">
-        select count(1) from admin
-    </select>
-    -->
-
-    <select id="query" resultType="Admin">
-        select admin.* from admin
+    <!--统一查询的条件，方便用于分页等查询，这里提供给query和querySize调用-->
+    <sql id="queryWhere">
         <if test="objectQuery!=null">
             <if test="objectQuery.roleId!=null or objectQuery.roleIds!=null">
                 left join admin_role on admin_role.adminId =admin.id
@@ -76,6 +72,23 @@
                 <if test="objectQuery.unLocked!=null">
                     and admin.unLocked=#{objectQuery.unLocked}
                 </if>
+                <bind name="createTimeQueryOfBegin" value="objectQuery.createTimeQueryOfBegin" />
+                <bind name="createTimeQueryOfEnd" value="objectQuery.createTimeQueryOfEnd" />
+                <choose>
+                    <when test="createTimeQueryOfBegin!= null and createTimeQueryOfEnd != null">
+                        AND admin.createTime BETWEEN #{createTimeQueryOfBegin} AND #{createTimeQueryOfEnd}
+                    </when>
+                    <when test="createTimeQueryOfBegin!=null">
+                        <![CDATA[
+                              AND admin.createTime>= #{createTimeQueryOfBegin}
+                        ]]>
+                    </when>
+                    <when test="createTimeQueryOfEnd!=null">
+                        <![CDATA[
+                             AND admin.createTime<= #{createTimeQueryOfEnd}
+                        ]]>
+                    </when>
+                </choose>
                 <if test="objectQuery.roleId!=null">
                     and admin_role.roleId=#{objectQuery.roleId}
                 </if>
@@ -91,10 +104,25 @@
             </where>
             group by admin.id
         </if>
+    </sql>
+
+
+    <select id="query" resultType="Admin">
+        select admin.* from admin
+        <include refid="queryWhere"></include>
         order by admin.id asc limit #{offset},#{length}
     </select>
 
     <select id="querySize" resultType="Integer">
+        select count(1) from (
+        select admin.id from admin
+        <include refid="queryWhere"></include>
+        ) u
+    </select>
+
+
+    <!--下面querySize代码作为案例留着，在20200122将查询条件统一为 <include refid="queryWhere"></include>后，精简了代码-->
+    <!--<select id="querySize" resultType="Integer">
         select count(1) from (
         select admin.id from admin
         <if test="objectQuery!=null">
@@ -103,18 +131,35 @@
             </if>
             <where>
                 <if test="objectQuery.username!=null and objectQuery.username.length()>0">
-                    <!-- bind，重新定义一个变量，可用于模糊查询等，并且可以直接覆盖原变量 -->
+                    &lt;!&ndash; bind，重新定义一个变量，可用于模糊查询等，并且可以直接覆盖原变量 &ndash;&gt;
                     <bind name="username" value="'%' + _parameter.objectQuery.username + '%'"/>
                     and admin.username like #{username}
                 </if>
                 <if test="objectQuery.name!=null and objectQuery.name.length()>0">
-                    <!-- bind，重新定义一个变量，可用于模糊查询等，并且可以直接覆盖原变量 -->
+                    &lt;!&ndash; bind，重新定义一个变量，可用于模糊查询等，并且可以直接覆盖原变量 &ndash;&gt;
                     <bind name="name" value="'%' + _parameter.objectQuery.name + '%'"/>
                     and admin.name like #{name}
                 </if>
                 <if test="objectQuery.unLocked!=null">
                     and admin.unLocked=#{objectQuery.unLocked}
                 </if>
+                <bind name="createTimeQueryOfBegin" value="objectQuery.createTimeQueryOfBegin" />
+                <bind name="createTimeQueryOfEnd" value="objectQuery.createTimeQueryOfEnd" />
+                <choose>
+                    <when test="createTimeQueryOfBegin!= null and createTimeQueryOfEnd != null">
+                        AND admin.createTime BETWEEN #{createTimeQueryOfBegin} AND #{createTimeQueryOfEnd}
+                    </when>
+                    <when test="createTimeQueryOfBegin!=null">
+                        <![CDATA[
+                              AND admin.createTime>= #{createTimeQueryOfBegin}
+                        ]]>
+                    </when>
+                    <when test="createTimeQueryOfEnd!=null">
+                        <![CDATA[
+                             AND admin.createTime<= #{createTimeQueryOfEnd}
+                        ]]>
+                    </when>
+                </choose>
                 <if test="objectQuery.roleId!=null">
                     and admin_role.roleId=#{objectQuery.roleId}
                 </if>
@@ -131,7 +176,20 @@
             group by admin.id
         </if>
         ) u
+    </select>-->
+
+    <!--==================================定制查询============================-->
+
+    <!-- 处理登录操作 -->
+    <select id="login" resultType="int">
+        select count(id) from admin where username=#{username} and password=#{password}
     </select>
+
+
+    <select id="getAdminByUsername"  resultType="Admin">
+        select * from admin where username=#{username}
+    </select>
+
 
     <select id="countUsername"  resultType="int">
         select count(id) from admin where username=#{username}
@@ -140,19 +198,6 @@
     <select id="countOtherUsername" resultType="int">
 		select count(id) from admin where username=#{username} and id!=#{id}
 	</select>
-
-    <update id="update" parameterType="Admin">
-        update admin
-        <!-- 使用set标签可以将动态的配置SET 关键字，和剔除追加到条件末尾的任何不相关的逗号。 -->
-        <set>
-            <if test="username!=null and username.length()>0">username=#{username},</if>
-            <if test="name!=null and name.length()>0">name=#{name},</if>
-            <if test="password!=null and password.length()>0">password=#{password},</if>
-            <if test="sex!=null">sex=#{sex},</if>
-            <if test="unLocked!=null">unLocked=#{unLocked},</if>
-        </set>
-        where id=#{id}
-    </update>
 
 
 </mapper>
