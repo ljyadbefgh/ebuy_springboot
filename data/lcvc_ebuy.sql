@@ -11,7 +11,7 @@
  Target Server Version : 80016
  File Encoding         : 65001
 
- Date: 23/01/2020 00:46:26
+ Date: 25/01/2020 02:22:51
 */
 
 SET NAMES utf8mb4;
@@ -129,7 +129,7 @@ CREATE TABLE `customer`  (
   `intro` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '客户信息备注，简介',
   `createTime` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 65 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 64 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of customer
@@ -219,7 +219,7 @@ INSERT INTO `menu` VALUES (4, NULL, '产品模块', 100, b'1', '/', 'Home', '/ho
 INSERT INTO `menu` VALUES (5, NULL, '订单管理', 100, b'1', '/', 'Home', '/home', 'D', 'el-icon-s-goods', b'1', b'1');
 INSERT INTO `menu` VALUES (6, NULL, '系统管理', 100, b'1', '/', 'Home', '/home', 'C', 'el-icon-s-tools', b'1', b'1');
 INSERT INTO `menu` VALUES (7, NULL, '个人信息', 5, b'1', '/employee/basic/**', 'EmpBasic', '/emp/basic', '', 'el-icon-user', b'1', b'1');
-INSERT INTO `menu` VALUES (8, 2, '权限管理', 100, b'1', '/employee/advanced/**', 'PurviewManage', '/emp/adv', '/admin/PurviewManage', NULL, b'1', b'1');
+INSERT INTO `menu` VALUES (8, 2, '权限管理', 100, b'1', '/employee/advanced/**', 'PurviewManage', '/emp/adv', '/admin/adminmanage/PurviewManage', NULL, b'1', b'1');
 INSERT INTO `menu` VALUES (9, 10, '客户添加', 20, b'1', '/personnel/emp/**', 'PerEmp', '/per/emp', 'a\'aaa', NULL, b'1', b'1');
 INSERT INTO `menu` VALUES (10, 3, '客户管理', 10, b'1', '/personnel/ec/**', 'CustomerManage', '/per/ec', 'A', NULL, b'1', b'1');
 INSERT INTO `menu` VALUES (14, 4, '产品类别管理', 100, b'1', '/salary/sob/**', 'SalSob', '/sal/sob', 'AA', NULL, b'1', b'1');
@@ -227,11 +227,11 @@ INSERT INTO `menu` VALUES (15, 4, '产品管理', 100, b'1', '/salary/sobcfg/**'
 INSERT INTO `menu` VALUES (23, 6, '基础信息设置', 100, b'1', '/system/basic/**', 'SysBasic', '/sys/basic', 'A', NULL, b'1', b'1');
 INSERT INTO `menu` VALUES (24, 6, '系统管理', 100, b'1', '/system/cfg/**', 'SysCfg', '/sys/cfg', 'B', NULL, b'1', b'1');
 INSERT INTO `menu` VALUES (25, 6, '操作日志管理', 100, b'1', '/system/log/**', 'SysLog', '/sys/log', 'C', NULL, b'1', b'1');
-INSERT INTO `menu` VALUES (29, 7, '密码修改', 100, b'1', '12', NULL, '/emp/basic/passowrd', '/admin/PasswordEdit', NULL, b'1', b'1');
-INSERT INTO `menu` VALUES (30, 7, '基本信息修改', 100, b'1', '1', NULL, '/emp/basic/information', '/admin/AdminEdit', NULL, b'1', b'1');
-INSERT INTO `menu` VALUES (32, 2, '角色管理', 100, b'1', '/rolemanage', '', NULL, '/admin/RoleManage', NULL, b'1', b'1');
-INSERT INTO `menu` VALUES (33, 2, '账户管理', 100, b'1', '/adminmanage', 'AdminManage', NULL, '/admin/AdminManage', NULL, b'1', b'1');
-INSERT INTO `menu` VALUES (53, 2, '菜单管理', 20, b'1', '/menumanage', 'MenuManage', '', '/admin/MenuManage', NULL, b'1', b'1');
+INSERT INTO `menu` VALUES (29, 7, '密码修改', 100, b'1', '12', NULL, '/emp/basic/passowrd', '/admin/admin/PasswordEdit', NULL, b'1', b'1');
+INSERT INTO `menu` VALUES (30, 7, '基本信息修改', 100, b'1', '1', NULL, '/emp/basic/information', '/admin/admin/AdminEdit', NULL, b'1', b'1');
+INSERT INTO `menu` VALUES (32, 2, '角色管理', 100, b'1', '/rolemanage', '', NULL, '/admin/adminmanage/RoleManage', NULL, b'1', b'1');
+INSERT INTO `menu` VALUES (33, 2, '账户管理', 100, b'1', '/adminmanage', 'AdminManage', NULL, '/admin/adminmanage/AdminManage', NULL, b'1', b'1');
+INSERT INTO `menu` VALUES (53, 2, '菜单管理', 20, b'1', '/menumanage', 'MenuManage', '', '/admin/adminmanage/MenuManage', NULL, b'1', b'1');
 
 -- ----------------------------
 -- Table structure for order_detail
@@ -426,7 +426,7 @@ CREATE TABLE `producttype`  (
   `intro` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '栏目简介（富文本）',
   `orderNum` int(11) NULL DEFAULT 0 COMMENT '排序（默认0，规则由前台决定，一般排序为最大）',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 52 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 49 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of producttype
@@ -601,7 +601,7 @@ CREATE TABLE `role_purview`  (
   `permissionIds` char(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '操作权限，非数据库外键，在业务层写死',
   `createTime` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 310 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 312 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of role_purview
