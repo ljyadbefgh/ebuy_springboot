@@ -8,6 +8,7 @@ import com.lcvc.ebuy_springboot.model.base.PageObject;
 import com.lcvc.ebuy_springboot.model.query.CustomerQuery;
 import com.lcvc.ebuy_springboot.service.CustomerService;
 import com.lcvc.ebuy_springboot.util.file.MyFileOperator;
+import com.lcvc.ebuy_springboot.util.file.MyFileUpload;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -70,10 +71,11 @@ public class CustomerManageController {
 	@ApiOperation(value = "读取指定客户信息", notes = "根据id的值读取指定客户信息")
 	@ApiImplicitParam(name = "id", value = "要读取的账户id", paramType = "path", required = true,example="1")
 	@GetMapping("/{id}")
-	public Map<String, Object>  getCustomer(@PathVariable Integer id){
+	public Map<String, Object>  getCustomer(@PathVariable Integer id, HttpServletRequest request){
 		Map<String, Object> map=new HashMap<String, Object>();
 		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
-		map.put(Constant.JSON_DATA,customerService.getCustomer(id));
+		String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+request.getContextPath()+"/";//获取项目根目录网址
+		map.put(Constant.JSON_DATA,customerService.getCustomer(id,basePath));
 		return map;
 	}
 
@@ -82,6 +84,7 @@ public class CustomerManageController {
 	@PutMapping
 	public Map<String, Object> updateCustomer(@RequestBody Customer customer){
 		Map<String, Object> map=new HashMap<String, Object>();
+		customer.setPassword(null);//将密码字段去除，不修改密码，也不加入验证
 		customerService.updateCustomer(customer);
 		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
 		map.put(Constant.JSON_MESSAGE, "账户信息修改成功");
@@ -90,7 +93,7 @@ public class CustomerManageController {
 
 	@ApiOperation(value = "批量移除客户头像", notes = "根据id的值删除客户头像")
 	@ApiImplicitParam(name = "ids", value = "要移除头像的客户id集合", required = true,paramType = "path",example ="15,25,74" )
-	@PatchMapping("/removeCustomersProfilePicture/{ids}")
+	@DeleteMapping("/customersProfilePicture/{ids}")
 	public Map<String, Object> removeCustomersProfilePicture(@PathVariable("ids")Integer[] ids){
 		Map<String, Object> map=new HashMap<String, Object>();
 		String basePath=uploadFolder;
@@ -126,11 +129,12 @@ public class CustomerManageController {
 			@ApiImplicitParam(name = "file", value = "要上传的头像", paramType = "form", dataType="__file",required = true)
 	})
 	@PostMapping("/uploadPhoto/{id}")
-	public Map<String, Object> uploadPhoto(@PathVariable Integer id,MultipartFile file) throws FileNotFoundException {
+	public Map<String, Object> uploadPhoto(@PathVariable Integer id,MultipartFile file, HttpServletRequest request) throws FileNotFoundException {
 		Map<String, Object> map=new HashMap<String, Object>();
 		map.put(Constant.JSON_CODE, JsonCode.ERROR.getValue());//默认失败
 		if(!file.isEmpty()){
-			Customer customer=customerService.getCustomer(id);//获取账户对象
+			String baseWebPath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+request.getContextPath()+"/";//获取项目根目录网址
+			Customer customer=customerService.getCustomer(id,baseWebPath);//获取账户对象
 			if(customer!=null){//如果该账户存在，则执行上传
 				//String basepath=ClassUtils.getDefaultClassLoader().getResource("").getPath();//获取项目的根目录(物理路径)，注意不能用JSP那套获取根目录，因为spring boot的tomcat为内置，每次都变
 				String basepath=uploadFolder;
@@ -138,6 +142,7 @@ public class CustomerManageController {
 				MyFileOperator.createDir(filePath);//创建存储目录
 				String fileName=file.getOriginalFilename();//获取文件名
 				String extensionName=MyFileOperator.getExtensionName(fileName);//获取文件扩展名
+				MyFileUpload.validateExtByDir(extensionName,null);// 验证上传图片后缀名是否符合网站要求
 				fileName=id+"."+extensionName;//根据id重新生成文件名
 				try {
 					file.transferTo(new File(filePath+fileName));

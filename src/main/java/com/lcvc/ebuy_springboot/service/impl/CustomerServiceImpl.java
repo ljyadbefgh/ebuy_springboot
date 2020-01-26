@@ -4,6 +4,7 @@ import com.lcvc.ebuy_springboot.dao.CustomerDao;
 import com.lcvc.ebuy_springboot.model.Customer;
 import com.lcvc.ebuy_springboot.model.base.Constant;
 import com.lcvc.ebuy_springboot.model.base.PageObject;
+import com.lcvc.ebuy_springboot.model.exception.MyDataException;
 import com.lcvc.ebuy_springboot.model.exception.MyServiceException;
 import com.lcvc.ebuy_springboot.model.exception.MyWebException;
 import com.lcvc.ebuy_springboot.model.query.CustomerQuery;
@@ -119,10 +120,18 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public Customer getCustomer(Integer id) {
+    public Customer getCustomer(Integer id,String basePath) {
         Customer customer=null;
         if(id!=null){
             customer=customerDao.get(id);
+            if(customer!=null){
+                //将头像网址进行处理，变为完整的地址
+                if(!StringUtils.isEmpty(customer.getPicUrl())){//只要有图片则加上绝对地址
+                    customer.setPicUrl(basePath+ Constant.CUSTOMER_PROFILE_PICTURE_URL+customer.getPicUrl());
+                }
+            }else{
+                throw new MyDataException("客户信息读取失败：找不到指定的客户信息");
+            }
         }
         return customer;
     }

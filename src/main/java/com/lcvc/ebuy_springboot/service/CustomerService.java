@@ -67,9 +67,10 @@ public interface CustomerService {
     /**
      * 根据id读取对象
      * @param id
+     * @param basePath 项目根目录网址，用于配合个人头像地址生成完整网址后传给前端
      * @return
      */
-    Customer getCustomer(Integer id);
+    Customer getCustomer(Integer id,String basePath);
 
 
     /**

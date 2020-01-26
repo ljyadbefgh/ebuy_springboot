@@ -47,8 +47,8 @@
        select count(1) from customer
     </select>
 
-	<select id="querySize" resultType="int">
-		select count(1) from customer
+	<!--统一查询的条件，方便用于分页等查询，这里提供给query和querySize调用-->
+	<sql id="queryWhere">
 		<if test="objectQuery!=null">
 			<where>
 				<if test="objectQuery.username!=null and objectQuery.username.length()>0">
@@ -85,46 +85,16 @@
 				</if>
 			</where>
 		</if>
+	</sql>
+
+	<select id="querySize" resultType="int">
+		select count(1) from customer
+		<include refid="queryWhere"></include>
     </select>
 
 	<select id="query" resultType="Customer">
         select * from customer
-		<if test="objectQuery!=null">
-			<where>
-				<if test="objectQuery.username!=null and objectQuery.username.length()>0">
-					<!-- bind，重新定义一个变量，可用于模糊查询等，并且可以直接覆盖原变量 -->
-					<bind name="username" value="'%' + _parameter.objectQuery.username + '%'" />
-					and username like #{username}
-				</if>
-				<if test="objectQuery.name!=null and objectQuery.name.length()>0">
-					<bind name="name" value="'%' + _parameter.objectQuery.name + '%'" />
-					and name like #{name}
-				</if>
-				<if test="objectQuery.sex!=null and  objectQuery.sex!=0">
-					and sex=#{objectQuery.sex}
-				</if>
-				<if test="objectQuery.changeInitialPassword!=null">
-					<choose>
-						<when test="objectQuery.changeInitialPassword==true">
-							and password!='${@com.lcvc.ebuy_springboot.util.SHA@getResult(123456)}'
-						</when>
-						<otherwise>
-							and password='${@com.lcvc.ebuy_springboot.util.SHA@getResult(123456)}'
-						</otherwise>
-					</choose>
-				</if>
-				<if test="objectQuery.uploadPhoto!=null">
-					<choose>
-						<when test="objectQuery.uploadPhoto==true">
-							and (picUrl!='' or picUrl!=null)
-						</when>
-						<otherwise>
-							and (picUrl='' or picUrl is null)
-						</otherwise>
-					</choose>
-				</if>
-			</where>
-		</if>
+		<include refid="queryWhere"></include>
 		order by id asc limit #{offset},#{length}
     </select>
 
