@@ -83,6 +83,9 @@ public class AdminServiceImpl implements  AdminService,UserDetailsService{
         for(Admin admin:(List<Admin>)pageObject.getList()){//遍历对象
             //角色数量
             admin.setRoleNumber(roleDao.getRoleNumberByAdminId(admin.getId()));
+            if(admin.getRoleNumber()>0){//如果有角色,获取角色集合
+                admin.setRoles(roleDao.getRolesByAdminId(admin.getId()));
+            }
             //发布过产品的数量
             ProductQuery productQuery=new ProductQuery();
             productQuery.setCreator(admin);

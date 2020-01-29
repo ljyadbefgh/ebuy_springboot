@@ -45,11 +45,10 @@ public class Constant {
     //产品优先级
     public final static HashMap<Integer,String> orderNumMapOfProduct = new LinkedHashMap<Integer,String>(){//产品优先级别
         {
-            put(110,"不推荐");
+            put(200,"垃圾");
             put(100,"普通");
             put(50,"精品");
-            put(20,"vip2");
-            put(10,"vip1");
+            put(20,"推荐");
             put(0,"置顶");
         }
     };

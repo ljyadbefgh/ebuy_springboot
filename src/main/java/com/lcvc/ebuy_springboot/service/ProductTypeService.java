@@ -1,7 +1,9 @@
 package com.lcvc.ebuy_springboot.service;
 
 import com.lcvc.ebuy_springboot.model.ProductType;
+import com.lcvc.ebuy_springboot.model.base.PageObject;
 import com.lcvc.ebuy_springboot.model.exception.MyWebException;
+import com.lcvc.ebuy_springboot.model.query.ProductTypeQuery;
 import org.springframework.stereotype.Service;
 
 import javax.validation.Valid;
@@ -17,6 +19,16 @@ public interface ProductTypeService {
      * @return
      */
     List<ProductType> getProductTypes(String basePath);
+
+    /**
+     * 根据查询条件，分页读取产品分类列表
+     * @param page 当前页面
+     * @param limit  每页最多显示的记录数
+     * @param productTypeQuery 查询条件类
+     *@param basePath 项目根目录网址，用于配合LOGO地址生成完整网址后传给前端
+     * @return
+     */
+    PageObject searchProductTypes(Integer page, Integer limit, ProductTypeQuery productTypeQuery, String basePath);
 
     /**
      * 批量删除指定的产品分类
@@ -36,12 +48,12 @@ public interface ProductTypeService {
     void saveProductType(@Valid @NotNull ProductType productType) throws MyWebException;
 
     /**
-     * 根据id获取产品分类对象
-     *
+     * 根据id获取产品分类对象     *
      * @param id
+     * @param basePath 项目根目录网址，用于配合LOGO地址生成完整网址后传给前端
      * @return null表示没有找到
      */
-    ProductType getProductType(Integer id);
+    ProductType getProductType(Integer id,String basePath);
 
     /**
      * 执行指定产品分类的编辑     *

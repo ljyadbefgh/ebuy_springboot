@@ -36,6 +36,16 @@
 				</div>
 			</div>-->
 			<div class="layui-form-item">
+				<label class="layui-form-label">*前台显示</label>
+				<div class="layui-input-inline">
+					<select id="display" name="display" lay-verify="required">
+						<option value="">请选择</option>
+						<option value="true">显示</option>
+						<option value="false">不显示</option>
+					</select>
+				</div>
+			</div>
+			<div class="layui-form-item">
 				<label class="layui-form-label">外部链接</label>
 				<div class="layui-input-block">
 					<input type="text" name="linkUrl" lay-verify="linkUrl" autocomplete="off" class="layui-input">
@@ -64,7 +74,7 @@
 		<script>
 			layui.use(['layedit','form'], function() { //表单插件初始化
 				var form = layui.form;//只有执行了这一步，部分表单元素才会自动修饰成功
-				
+
 				var layedit = layui.layedit;
   				//layedit.build('intro'); //建立编辑器
   				var index =layedit.build('intro', {
@@ -83,9 +93,9 @@
 					  //,'image' //插入图片
 					  ,'help' //帮助
 					]
-				});   
-				
-				
+				});
+
+
 				//读取当前记录
 				$.getJSON(
 					WEBURL_API + "backstage/producttype/"+parent.rowId,//parent.rowId,获取父窗口的变量
@@ -93,16 +103,18 @@
 				    	if(msg.code==code_success){
 				    		var productType=msg.data;
 				    		$('#LAY_layedit_1').contents().find('body').html(productType.intro);//给富文本框赋值
-				    		//var admin= $.parseJSON(msg.data); 
+				    		//var admin= $.parseJSON(msg.data);
 				    		form.val("myForm", {
-				    			"id":productType.id,	
+				    			"id":productType.id,
 								"name": productType.name,
+								"display": productType.display,
 								"linkUrl": productType.linkUrl,
 								"orderNum": productType.orderNum
 							});
+							form.render(); //更新全部表单内容
 				    	}else{
 							layer.msg(msg.msg);
-						}				    	
+						}
 				    }
 				)
 
@@ -115,17 +127,22 @@
 						if(value.length > 20) {
 							return '产品类别名称的长度不能超过20个字符';
 						}
+					},
+					display:function(value){
+						if(value==""){
+							return "必须选择是否显示";
+						}
 					}
 				});
 
 				//监听提交
 				form.on('submit(addProductType)', function(data) {
-					data.field.summary=layedit.getText(index);//获得编辑器的纯文本内容 
+					data.field.summary=layedit.getText(index);//获得编辑器的纯文本内容
 					data.field.intro=layedit.getContent(index);//将富文本的值手动赋给intro，不然富文本的值无法传递到表单
 					$.putRestful(WEBURL_API+"backstage/producttype"
 						,JSON.stringify(data.field)
 						,function(msg){
-							if(msg.code==code_success){								
+							if(msg.code==code_success){
 								layer.msg("产品类别信息修改成功");
 							}else{
 								layer.msg(msg.msg);
@@ -135,8 +152,8 @@
 					//layer.msg(JSON.stringify(data.field));
 					return false;//阻止表单跳转。如果需要表单跳转，去掉这段即可。
 				});
-				
-				
+
+
 			});
 		</script>
 	</body>

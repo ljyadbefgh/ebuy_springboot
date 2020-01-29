@@ -15,6 +15,8 @@ public class ProductType implements java.io.Serializable {
 	@Length(min = 2, max = 20, message = "产品类别的名称长度必须在 {min} - {max} 之间")
 	private String name;//产品类别名称
 
+	private Boolean display;//是否在前台显示，true表示显示，false表示不显示
+
 	@Length(max = 255, message = "产品类别的外部链接地址不能超过{max}个字符")
 	private String linkUrl;//转向链接地址（如果存在则直接转向链接地址，否则打开本网站栏目）
 
@@ -102,5 +104,13 @@ public class ProductType implements java.io.Serializable {
 
 	public void setSummary(String summary) {
 		this.summary = summary;
+	}
+
+	public Boolean getDisplay() {
+		return display;
+	}
+
+	public void setDisplay(Boolean display) {
+		this.display = display;
 	}
 }

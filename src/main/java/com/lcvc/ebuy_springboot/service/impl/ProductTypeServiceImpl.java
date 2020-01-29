@@ -4,9 +4,11 @@ import com.lcvc.ebuy_springboot.dao.ProductDao;
 import com.lcvc.ebuy_springboot.dao.ProductTypeDao;
 import com.lcvc.ebuy_springboot.model.ProductType;
 import com.lcvc.ebuy_springboot.model.base.Constant;
+import com.lcvc.ebuy_springboot.model.base.PageObject;
 import com.lcvc.ebuy_springboot.model.exception.MyServiceException;
 import com.lcvc.ebuy_springboot.model.exception.MyWebException;
 import com.lcvc.ebuy_springboot.model.query.ProductQuery;
+import com.lcvc.ebuy_springboot.model.query.ProductTypeQuery;
 import com.lcvc.ebuy_springboot.service.ProductTypeService;
 import com.lcvc.ebuy_springboot.util.file.MyFileOperator;
 import org.apache.commons.lang.StringUtils;
@@ -29,10 +31,23 @@ public class ProductTypeServiceImpl implements ProductTypeService {
     @Resource
     private ProductDao productDao;
 
-    public List<ProductType> getProductTypes(String basePath){
-        List<ProductType> productTypeList=productTypeDao.readAll(null);
+    @Override
+    public  List<ProductType> getProductTypes(String basePath) {
+        List<ProductType> productTypes=productTypeDao.readAll(null);
+        for(ProductType productType:productTypes){
+            //将头像网址进行处理，变为完整的地址
+            if(!StringUtils.isEmpty(productType.getImageUrl())){//只要有图片则加上绝对地址
+                productType.setImageUrl(basePath+ Constant.PRODUCTTYPE_PICTURE_URL+productType.getImageUrl());
+            }
+        }
+        return productTypes;
+    }
+
+    public PageObject searchProductTypes(Integer page, Integer limit, ProductTypeQuery productTypeQuery, String basePath){
+        PageObject pageObject = new PageObject(limit,page,productTypeDao.querySize(productTypeQuery));
+        pageObject.setList(productTypeDao.query(pageObject.getOffset(),pageObject.getLimit(),productTypeQuery));
         ProductQuery productQuery=null;//预设产品查询条件
-        for(ProductType productType:productTypeList){
+        for(ProductType productType:(List<ProductType>)pageObject.getList()){
             //将头像网址进行处理，变为完整的地址
             if(!StringUtils.isEmpty(productType.getImageUrl())){//只要有图片则加上绝对地址
                 productType.setImageUrl(basePath+ Constant.PRODUCTTYPE_PICTURE_URL+productType.getImageUrl());
@@ -43,7 +58,7 @@ public class ProductTypeServiceImpl implements ProductTypeService {
             int number=productDao.querySize(productQuery);
             productType.setProductNumber(number);
         }
-        return productTypeList;
+        return pageObject;
     }
 
     public void deleteProductTypes(Integer[] ids, String basePath) throws MyWebException, MyServiceException {
@@ -76,10 +91,16 @@ public class ProductTypeServiceImpl implements ProductTypeService {
         }
     }
 
-    public ProductType getProductType(Integer id){
+    public ProductType getProductType(Integer id,String basePath){
         ProductType productType=null;
         if(id!=null){
             productType=productTypeDao.get(id);
+            if(productType!=null){
+                //将头像网址进行处理，变为完整的地址
+                if(!StringUtils.isEmpty(productType.getImageUrl())){//只要有图片则加上绝对地址
+                    productType.setImageUrl(basePath+ Constant.PRODUCTTYPE_PICTURE_URL+productType.getImageUrl());
+                }
+            }
         }
         return productType;
     }

@@ -4,6 +4,7 @@ package com.lcvc.ebuy_springboot.model;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.Range;
 
+import javax.validation.constraints.Digits;
 import javax.validation.constraints.Min;
 import java.math.BigDecimal;
 
@@ -22,8 +23,11 @@ public class Product implements java.io.Serializable {
 	private String description;//产品描述
 	//@JsonIgnore
 	private String content;//产品详细描述
+	@Digits(integer=11, fraction=2,message = "产品现价的小数位数不能超过{fraction}位")
 	@Min(value = 0,message = "产品价格必须大于0")
 	private BigDecimal price;//产品现价。
+
+	@Digits(integer=11, fraction=2,message = "产品原价的小数位数不能超过{fraction}位")
 	@Range(min=0,message="产品原价不能为负数")
 	private BigDecimal originalPrice;//产品原价
 	@Length(max = 255, message = "产品的图片地址不能超过{max}个字符")

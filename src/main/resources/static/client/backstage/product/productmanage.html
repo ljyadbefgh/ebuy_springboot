@@ -18,7 +18,7 @@
 		<script type="text/html" id="toolbar">
 			<div class="layui-btn-container">
 				<button class="layui-btn layui-btn-sm" lay-event="createProduct">创建产品</button>
-				<button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="deleteProducts">批量删除产品</button>			
+				<button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="deleteProducts">批量删除产品</button>
 				<button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="updatePicUrls">变更产品所有图片为当前域名</button>
 			</div>
 		</script>
@@ -30,12 +30,12 @@
 		<script>
 			var rowId;//获取行的信息，此处设置的目的是为了在打开账户编辑窗口时，将账户id传递给子窗口（注：如果不是前后端分离，可以直接通过url将参数传递过去,不需要单独处理）
 			var dataSearchFrom;
-			
-			
+
+
 			var tableData=new Array(); // 用于存放表格数据
 
 			layui.use('table', function() {
-				var table = layui.table;				
+				var table = layui.table;
 
 				table.render({
 					id:'productmanage_table',
@@ -53,19 +53,19 @@
 					cols: [[
 						{type: 'checkbox'} //假如复选框，用于批量操作
 						, {
-							field: 'picUrl', 
-							title: '产品图片', 
+							field: 'picUrl',
+							title: '产品图片',
 							align: 'center',
 							event: 'showBigPic',//定义事件名称
 							templet:function(d){
-								return '<div><img style="height:30px;" src="'+d.picUrl+'"></div>'					   	
+								return '<div><img style="height:30px;" src="'+d.picUrl+'"></div>'
 						   }}
 						, {field: 'name',title: '产品名称',width:150}
 						, {
 							field: 'productType'
 							,title: '所属栏目'
 							,templet:function(d){
-								return d.productType.name					   	
+								return d.productType.name
 						  }}
 						, {field: 'orderNum',title: '优先级'}
 						, {field: 'price',title: '现价'}
@@ -81,13 +81,13 @@
 									return '已上架';
 						   	 	}else{
 						   	 		return '已下架';
-						   		}						   	
+						   		}
 						   }}
 						, {
 							field: 'creator'
 							,title: '发布人'
 							,templet:function(d){
-								return d.creator.username					   	
+								return d.creator.username
 						  }}
 						, {field: 'createTime',title: '发布时间',width:150,sort: true}
 						, {fixed: 'right',title: '操作',width: 100,toolbar: '#barDemo'}
@@ -116,10 +116,10 @@
 							var datas = checkStatus.data;//获取选中的数据
 							if(datas.length==0){
 								layer.msg('请先选择记录');
-							}else{								
+							}else{
 								var ids = "";//定义要批量删除的主键id
 								var names="";//定义名字集合
-								for(var i=0;i<datas.length;i++){//遍历数组，将id用","相隔									
+								for(var i=0;i<datas.length;i++){//遍历数组，将id用","相隔
 								    if(i==datas.length-1){//如果是最后一条记录，则不添加","
 								    	ids += checkStatus.data[i].id;
 										names+=checkStatus.data[i].name;
@@ -129,28 +129,28 @@
 								    }
 								}
 								layer.confirm('确定要批量删除这些产品(' + names + ')吗？删除后所有数据都将无法恢复！', function(index) {
-									$.deleteRestful(WEBURL_API + "/backstage/product/" + ids, 
+									$.deleteRestful(WEBURL_API + "/backstage/product/" + ids,
 										function(msg) {
 											if(msg.code == 0) {
 												layer.msg("删除成功");
 												table.reload('productmanage_table');//重新刷新表格数据
-												 //location.reload(true);刷新整个页面											
+												 //location.reload(true);刷新整个页面
 											} else {
 												layer.msg(msg.msg);
 											}
 										}
 									)
 									layer.close(index);//关闭窗口
-								});								
+								});
 							}
 							break;
 						case 'updatePicUrls':
 							layer.msg("该功能未开放，敬请期待");
 							break;
-							
+
 					};
 				});
-				
+
 				//监听行工具事件
 				table.on('tool(products)', function(obj) {
 					var data = obj.data; //获取该行的记录
@@ -198,8 +198,8 @@
 			           }
 				    }
 				})
-				
-				
+
+
 				 // 执行搜索，表格重载
     			$('#search_button').on('click', function() {
 	    			// 搜索条件
@@ -218,16 +218,16 @@
 	    					,'orderNum': orderNum
 	    					,'onSale': onSale
 	    					,'orderType': orderType
-	    				}	    				
+	    				}
     				});
-    			});	
-    			
-    				
+    			});
+
+
     		});	//layui.use结尾
-    		
-    	
-    			
-    		
+
+
+
+
 
 		</script>
 	</head>
@@ -238,7 +238,7 @@
 				<label class="layui-form-label">产品名称</label>
 				<div class="layui-inline">
 					<input type="text" name="name" autocomplete="off" placeholder="请输入要查询的产品名称" class="layui-input">
-				</div>	
+				</div>
 			</div>
 			<div class="layui-inline" style="margin-top:5px;">
 				<label class="layui-form-label">产品类别</label>
@@ -247,7 +247,7 @@
 						<option value="">请选择</option>
 					</select>
 				</div>
-			</div>	
+			</div>
 			<div class="layui-inline" style="margin-top:5px;">
 				<label class="layui-form-label">优先级</label>
 				<div class="layui-input-inline">
@@ -255,7 +255,7 @@
 							<option value="">请选择</option>
 						</select>
 				</div>
-			</div>	
+			</div>
 			<div class="layui-inline" style="margin-top:5px;">
 				<label class="layui-form-label">是否上架</label>
 				<div class="layui-input-inline">
@@ -265,7 +265,7 @@
 							<option value="false">未上架</option>
 						</select>
 				</div>
-			</div>				
+			</div>
 			<div class="layui-inline" style="margin-top:5px;">
 				<label class="layui-form-label">排序规则</label>
 				<div class="layui-input-inline">
@@ -273,40 +273,40 @@
 							<option value="">请选择</option>
 						</select>
 				</div>
-			</div>	
+			</div>
 			<button class="layui-btn" data-type="reload" id="search_button" type="button">搜索</button>
 		</form>
 		<table class="layui-hide" id="products" lay-filter="products"></table>
-		
-		
+
+
 		<script>
 			layui.use(['layedit','form'], function() { //表单插件初始化
 				var form = layui.form;//只有执行了这一步，部分表单元素才会自动修饰成功
-				
+
 				//读取当前记录
 				$.getJSON(//先读取产品栏目列表初始化下拉框，作为第一读取顺序
-					WEBURL_API + "backstage/producttype",
+					WEBURL_API + "backstage/producttype/all",
 				    function(producttypesMsg){
 				    	if(producttypesMsg.code==code_success){
 					    	$.each(producttypesMsg.data,function(index,item){//对于java的list集合转换为的json格式的遍历
 					        	//option  第一个参数是页面显示的值，第二个参数是传递到后台的值
-					        	$('select[name="productTypeId"]').append(new Option(item.name,item.id));//往下拉菜单里添加元素				        	
+					        	$('select[name="productTypeId"]').append(new Option(item.name,item.id));//往下拉菜单里添加元素
 					        })
 				    		form.render('select'); //刷新表单select选择框渲染
-				    		initOrderNumSelect();//调用优先级列表初始化				    		
+				    		initOrderNumSelect();//调用优先级列表初始化
 				    	}else{
 				    		layer.msg(producttypesMsg.msg);
 				    	}
 				    }
 				)
-				
+
 				//初始化优先级列表，这里定义为函数，是保证多个ajax的顺序，将其给第一个ajax调用
 				function initOrderNumSelect(){
 					//读取当前记录
 					$.getJSON(
 						WEBURL_API + "backstage/product/orderNumMap",//获取初始化表单信息
 					    function(msg){
-					    	if(msg.code==code_success){		
+					    	if(msg.code==code_success){
 					    		$.each(msg.data,function(key,value){
 					        		//option  第一个参数是页面显示的值，第二个参数是传递到后台的值
 					        		$('select[name="orderNum"]').append(new Option(value,key));//往下拉菜单里添加元素
@@ -315,18 +315,18 @@
 					    		initOrderTypeSelect()//初始化排序规则列表
 					    	}else{
 								layer.msg(msg.msg);
-							}				    	
+							}
 					    }
 					)
 				}
-				
+
 				//初始化排序规则列表，这里定义为函数，是保证多个ajax的顺序，将其给第一个ajax调用
 				function initOrderTypeSelect(){
 					//读取当前记录
 					$.getJSON(
 						WEBURL_API + "backstage/product/orderTypeMap",//获取初始化表单信息
 					    function(msg){
-					    	if(msg.code==code_success){		
+					    	if(msg.code==code_success){
 					    		$.each(msg.data,function(key,value){
 					        		//option  第一个参数是页面显示的值，第二个参数是传递到后台的值
 					        		$('select[name="orderType"]').append(new Option(value,key));//往下拉菜单里添加元素
@@ -334,11 +334,11 @@
 					    		form.render('select'); //刷新表单select选择框渲染
 					    	}else{
 								layer.msg(msg.msg);
-							}				    	
+							}
 					    }
 					)
 				}
-				
+
 			});	//layui.use结尾
 		</script>
 	</body>

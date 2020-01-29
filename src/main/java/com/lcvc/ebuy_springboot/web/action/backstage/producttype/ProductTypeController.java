@@ -4,6 +4,8 @@ package com.lcvc.ebuy_springboot.web.action.backstage.producttype;
 import com.lcvc.ebuy_springboot.model.ProductType;
 import com.lcvc.ebuy_springboot.model.base.Constant;
 import com.lcvc.ebuy_springboot.model.base.JsonCode;
+import com.lcvc.ebuy_springboot.model.base.PageObject;
+import com.lcvc.ebuy_springboot.model.query.ProductTypeQuery;
 import com.lcvc.ebuy_springboot.service.ProductTypeService;
 import com.lcvc.ebuy_springboot.util.file.MyFileOperator;
 import io.swagger.annotations.Api;
@@ -31,14 +33,30 @@ public class ProductTypeController {
     @Value("${myFile.uploadFolder}")
     private String uploadFolder;//上传路径
 
-    @ApiOperation(value = "读取产品栏目信息", notes = "读取产品栏目所有信息，不分页")
-    @GetMapping
-    public Map<String, Object>  toManageProductType(HttpServletRequest request){
+    @ApiOperation(value = "获取所有产品栏目信息", notes = "获取所有产品栏目信息")
+    @GetMapping(value = "/all")
+    public Map<String, Object> listProductType(HttpServletRequest request){
         Map<String, Object> map=new HashMap<String, Object>();
         String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+request.getContextPath()+"/";//获取项目根目录网址
         List<ProductType> list=productTypeService.getProductTypes(basePath);
-        map.put(Constant.JSON_TOTAL,list.size());
         map.put(Constant.JSON_DATA,list);
+        map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
+        return map;
+    }
+
+    @ApiOperation(value = "分页读取所有产品类别信息", notes = "如果page为空则默认是第一页;如果limit为空则采用服务器的默认数值")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "page", value = "当前页码", required = false, dataType = "int",example="1"),
+            @ApiImplicitParam(name = "limit", value = "每页最多展示的记录数", required = false, dataType = "int",example="1"),
+            @ApiImplicitParam(name = "customerQuery", value = "查询条件，以对象方式上传，如果为Null表示没有条件", required = false, dataType = "CustomerQuery")
+    })
+    @GetMapping
+    public Map<String, Object>  toManageProductType(Integer page, Integer limit, ProductTypeQuery productTypeQuery, HttpServletRequest request){
+        Map<String, Object> map=new HashMap<String, Object>();
+        String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+request.getContextPath()+"/";//获取项目根目录网址
+        PageObject pageObject=productTypeService.searchProductTypes(page,limit,productTypeQuery,basePath);
+        map.put(Constant.JSON_TOTAL,pageObject.getTotalRecords());
+        map.put(Constant.JSON_DATA,pageObject.getList());
         map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
         return map;
     }
@@ -72,15 +90,16 @@ public class ProductTypeController {
             @ApiImplicitParam(name = "file", value = "要上传的图片", paramType = "form", dataType="__file",required = true)
     })
     @PostMapping("/uploadPhoto/{id}")
-    public Map<String, Object> uploadPhoto(@PathVariable Integer id, MultipartFile file){
+    public Map<String, Object> uploadPhoto(@PathVariable Integer id, MultipartFile file,HttpServletRequest request){
         Map<String, Object> map=new HashMap<String, Object>();
         map.put(Constant.JSON_CODE, JsonCode.ERROR.getValue());//默认失败
         if(!file.isEmpty()){
-            ProductType productType=productTypeService.getProductType(id);//获取对象
+            String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+request.getContextPath()+"/";//获取项目根目录网址
+            ProductType productType=productTypeService.getProductType(id,basePath);//获取对象
             if(productType!=null){//如果该对象存在，则执行上传
                 //String basepath= ClassUtils.getDefaultClassLoader().getResource("").getPath();//获取项目的根目录，注意不能用JSP那套获取根目录，因为spring boot的tomcat为内置，每次都变
-                String basepath=uploadFolder;
-                String filePath=basepath+Constant.PRODUCTTYPE_PICTURE_UPLOAD_URL;//获取图片上传后保存的物理路径
+                String baseUploadFolderPath=uploadFolder;
+                String filePath=baseUploadFolderPath+Constant.PRODUCTTYPE_PICTURE_UPLOAD_URL;//获取图片上传后保存的物理路径
                 MyFileOperator.createDir(filePath);//创建存储目录
                 String fileName=file.getOriginalFilename();//获取文件名
                 String extensionName=MyFileOperator.getExtensionName(fileName);//获取文件扩展名
@@ -124,10 +143,11 @@ public class ProductTypeController {
     @ApiOperation(value = "读取指定产品栏目信息", notes = "根据id的值读取指定产品栏目信息")
     @ApiImplicitParam(name = "id", value = "要读取的账户id", paramType = "path",dataType="int", required = true,example="1")
     @GetMapping("/{id}")
-    public Map<String, Object>  getProductType(@PathVariable Integer id){
+    public Map<String, Object>  getProductType(@PathVariable Integer id,HttpServletRequest request){
+        String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+request.getContextPath()+"/";//获取项目根目录网址
         Map<String, Object> map=new HashMap<String, Object>();
         map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
-        map.put(Constant.JSON_DATA,productTypeService.getProductType(id));
+        map.put(Constant.JSON_DATA,productTypeService.getProductType(id,basePath));
         return map;
     }
 

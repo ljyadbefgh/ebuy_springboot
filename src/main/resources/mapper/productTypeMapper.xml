@@ -12,7 +12,7 @@
    <!-- useGeneratedKeys="true" 表示给主键设置自增长-->
     <!--keyProperty="id" 表示将自增长后的Id赋值给实体类中的id字段。-->
     <insert id="save" useGeneratedKeys="true" keyProperty="id">
-        insert into producttype(id,name,linkUrl,imageUrl,summary,intro,orderNum) values(null,#{name},#{linkUrl},#{imageUrl},#{summary},#{intro},#{orderNum})
+        insert into producttype(id,name,display,linkUrl,imageUrl,summary,intro,orderNum) values(null,#{name},#{display},#{linkUrl},#{imageUrl},#{summary},#{intro},#{orderNum})
     </insert>
 
     <update id="update" parameterType="ProductType">
@@ -20,6 +20,7 @@
         <!--set标签可以剔除末尾的,-->
         <set>
             <if test="name!=null and name.length()>0">name=#{name},</if>
+            <if test="display!=null">display=#{display},</if>
             <if test="linkUrl!=null">linkUrl=#{linkUrl},</if>
             <if test="imageUrl!=null">imageUrl=#{imageUrl},</if>
             <if test="orderNum!=null">orderNum=#{orderNum},</if>
@@ -47,6 +48,33 @@
 
     <select id="total" resultType="int">
        select count(1) from producttype
+    </select>
+
+    <select id="querySize" resultType="int">
+        select count(1) from producttype
+        <if test="objectQuery!=null">
+            <where>
+                <if test="objectQuery.name!=null and objectQuery.name.length()>0">
+                    <!-- bind，重新定义一个变量，可用于模糊查询等，并且可以直接覆盖原变量 -->
+                    <bind name="name" value="'%' + _parameter.objectQuery.name + '%'" />
+                    and name like #{name}
+                </if>
+            </where>
+        </if>
+    </select>
+
+    <select id="query" resultType="ProductType">
+        select * from producttype
+        <if test="objectQuery!=null">
+            <where>
+                <if test="objectQuery.name!=null and objectQuery.name.length()>0">
+                    <!-- bind，重新定义一个变量，可用于模糊查询等，并且可以直接覆盖原变量 -->
+                    <bind name="name" value="'%' + _parameter.objectQuery.name + '%'" />
+                    and name like #{name}
+                </if>
+            </where>
+        </if>
+        order by orderNum asc limit #{offset},#{length}
     </select>
 
     <!--专为配合其他表的级联，如产品表关联查询-->

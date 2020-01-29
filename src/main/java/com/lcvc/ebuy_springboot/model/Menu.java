@@ -19,9 +19,9 @@ public class Menu implements Serializable {
     private String url;//资源地址，服务器跳转地址的权限，目录形式，对应Controller地址
     //对应客户端vue的路由树形
     private String route;//表示路由的跳转地址（前端vue的跳转，通过点击该菜单跳转到的前端url），可以作为详细菜单的权限验证。当前未采用这个作为权限验证，因为如果采用则所有菜单动作都要添加进去，太麻烦，以后如果需要精确控制可以采用
-    private String path;//vue组件在前端项目的地址，详细地址
-    private Object component;//专门为vue等设计，表示组件的名称（对应vue路由的name）
-    private String iconCls;//图标-css样式名称,要和前端的对应，非图片上传。
+    private String path;//vue组件在前端项目的地址，详细地址。如：/views/adminmanage/AdminManage.vue
+    private Object component;//专门为vue等设计，表示组件的名称（对应vue路由的name）。如果是中文，也可以由本类的name树形决定，属于特定情况下的字段。
+    private String iconCls;//图标-css样式名称,要和前端的对应，非图片上传。如element的icon样式名：el-icon-platform-eleme
     private Boolean requireAuth;//要求登陆后才能访问，当前设计是给前端路由跳转时验证
     private Boolean enabled;//该菜单是否可用，也用于U服务端验证。如果是查看账户拥有的菜单时，当前设计是不会将不可用的菜单传递到前端。
     private Boolean display;//该菜单是否显示，提供给前端去进行处理。当前的element ui设计是如果菜单隐藏，则该菜单及其所有子菜单都不会在前台访问
