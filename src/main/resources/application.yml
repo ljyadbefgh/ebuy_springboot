@@ -4,7 +4,7 @@ server:
   servlet:
     #context-path: /ebuy_springboot  #在项目路径上加项目名，注意，spring boot2和spring boot1不同
     session:
-      timeout: 60m #设置过期时间为60分钟
+      timeout: 120m #设置过期时间为120分钟
 
 
 

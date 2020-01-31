@@ -6,6 +6,7 @@ import com.lcvc.ebuy_springboot.model.Product;
 import com.lcvc.ebuy_springboot.model.base.Constant;
 import com.lcvc.ebuy_springboot.model.base.JsonCode;
 import com.lcvc.ebuy_springboot.model.base.PageObject;
+import com.lcvc.ebuy_springboot.model.form.product.ProductTransferForm;
 import com.lcvc.ebuy_springboot.model.query.ProductQuery;
 import com.lcvc.ebuy_springboot.service.ProductService;
 import io.swagger.annotations.Api;
@@ -14,10 +15,11 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpSession;
+import javax.validation.constraints.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -62,9 +64,9 @@ public class ProductController {
 	@ApiOperation(value = "添加产品信息", notes = "id、createTime不传值，由服务端赋值")
 	@ApiImplicitParam(name = "product", value = "产品信息，id、createTime不传值，由服务端赋值", paramType = "body", dataType="Product",required = true)
 	@PostMapping
-	public Map<String, Object> addProduct(@RequestBody Product product,HttpSession session){
+	public Map<String, Object> addProduct(@RequestBody Product product,@AuthenticationPrincipal Admin admin){
 		Map<String, Object> map=new HashMap<String, Object>();
-		productService.addProduct(product,(Admin)session.getAttribute("admin"));
+		productService.addProduct(product,admin);
 		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
 		map.put(Constant.JSON_MESSAGE, "产品添加成功");
 		return map;
@@ -83,9 +85,9 @@ public class ProductController {
 	@ApiOperation(value = "编辑产品信息", notes = "id不能为空")
 	@ApiImplicitParam(name = "product", value = "id不能为空", paramType = "body", dataType="Product",required = true)
 	@PutMapping
-	public Map<String, Object> updateProduct(@RequestBody Product product,HttpSession session){
+	public Map<String, Object> updateProduct(@RequestBody Product product,@AuthenticationPrincipal Admin admin){
 		Map<String, Object> map=new HashMap<String, Object>();
-		productService.updateProduct(product,(Admin)session.getAttribute("admin"));
+		productService.updateProduct(product,admin);
 		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
 		map.put(Constant.JSON_MESSAGE, "产品信息修改成功");
 		return map;
@@ -101,6 +103,18 @@ public class ProductController {
 		productService.deleteProducts(ids);
 		return map;
 	}
+
+	@ApiOperation(value = "将产品批量转移到指定栏目下", notes = "将产品批量转移到指定栏目下")
+	@ApiImplicitParam(name = "productTransferForm", value = "封装的用于接收productIds[]和productTypeId的表单对象", paramType = "body", dataType="ProductTransferForm",required = true)
+	@PutMapping("/productType")
+	public Map<String, Object>  transferProductTypeBySelect(@RequestBody @NotNull ProductTransferForm productTransferForm){
+		Map<String, Object> map=new HashMap<String, Object>();
+		//批量转移栏目
+		productService.updateProductToTransferProductTypeBySelect(productTransferForm.getProductIds(),productTransferForm.getProductTypeId());
+		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
+		return map;
+	}
+
 
 	@ApiOperation(value = "产品优先级列表", notes = "产品优先级列表，用于选择框")
 	@GetMapping("/orderNumMap")
@@ -119,5 +133,8 @@ public class ProductController {
 		map.put(Constant.JSON_DATA, Constant.orderTypeMapOfProduct);
 		return map;
 	}
+
+
+
 
 }

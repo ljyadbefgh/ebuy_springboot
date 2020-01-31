@@ -62,4 +62,12 @@ public interface ProductService {
      * @param admin 执行的管理账户
      */
     void updateProduct(@Valid @NotNull Product product, Admin admin) throws MyWebException;
+
+
+    /**
+     * 将选中产品都转移到指定产品栏目下
+     * @param productIds 该参数为Product类的标识属性结合
+     * @param productTypeId 要转移到的栏目标识符
+     */
+    void updateProductToTransferProductTypeBySelect(@NotNull Integer[] productIds,Integer productTypeId);
 }

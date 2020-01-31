@@ -167,7 +167,17 @@
         <!--select * from product order by createTime desc limit 0,#{pageSize}-->
     <!--</select>-->
 
+    <!--==================================定制查询============================-->
 
+    <update id="updateProductToTransferProductTypeBySelect">
+        update product set productTypeId=#{productTypeId} where 1=0
+        <if test="productIds != null and productIds.length> 0">
+            OR id in
+            <foreach item="item" collection="productIds" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+    </update>
 
 
 

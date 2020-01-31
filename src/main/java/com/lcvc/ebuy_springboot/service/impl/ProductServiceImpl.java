@@ -1,8 +1,10 @@
 package com.lcvc.ebuy_springboot.service.impl;
 
 import com.lcvc.ebuy_springboot.dao.ProductDao;
+import com.lcvc.ebuy_springboot.dao.ProductTypeDao;
 import com.lcvc.ebuy_springboot.model.Admin;
 import com.lcvc.ebuy_springboot.model.Product;
+import com.lcvc.ebuy_springboot.model.ProductType;
 import com.lcvc.ebuy_springboot.model.base.PageObject;
 import com.lcvc.ebuy_springboot.model.exception.MyWebException;
 import com.lcvc.ebuy_springboot.model.query.ProductQuery;
@@ -17,7 +19,9 @@ import org.springframework.validation.annotation.Validated;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Transactional(propagation = Propagation.REQUIRED,isolation = Isolation.DEFAULT,timeout=36000,rollbackFor=Exception.class)
 @Service
@@ -26,6 +30,8 @@ public class ProductServiceImpl implements ProductService {
 
     @Resource
     private ProductDao productDao;
+    @Resource
+    private ProductTypeDao productTypeDao;
 
     @Override
     public PageObject searchProducts(Integer page, Integer limit, ProductQuery productQuery) {
@@ -103,5 +109,20 @@ public class ProductServiceImpl implements ProductService {
         product.setFinalEditor(admin);
         product.setUpdateTime(Calendar.getInstance().getTime());
         productDao.update(product);
+    }
+
+    @Override
+    public void updateProductToTransferProductTypeBySelect(Integer[] productIds, Integer productTypeId) {
+        Set<Integer> productIdSet=new HashSet<Integer>();
+        if(productTypeId==null){
+            throw new MyWebException("操作错误：请选择要转移的产品栏目");
+        }
+        ProductType productType=productTypeDao.get(productTypeId);
+        if(productType!=null){
+            //进行栏目转移
+            productDao.updateProductToTransferProductTypeBySelect(productIds,productTypeId);
+        }else{//如果栏目不存在
+            throw new MyWebException("操作错误：栏目（"+productType.getName()+"不存在");
+        }
     }
 }

@@ -78,6 +78,7 @@ public class AdminFilterInvocationSecurityMetadataSource implements FilterInvoca
         FilterInvocation filterInvocation = (FilterInvocation) object;
         //String requestUrl=filterInvocation.getRequestUrl();//获取前端访问的接口地址，例如：/api/backstage/adminmanage?page=1&limit=10&_=1571329473477
         String httpMethod =filterInvocation.getRequest().getMethod();//获取访问方法，例如：GET、POST、PUT、PATCH、DELETE
+        //System.out.println(filterInvocation.getRequest().getSession().getId());
         String servletPath=filterInvocation.getRequest().getServletPath();//获取控制器地址，例如：/api/backstage/adminmanage
         AntPathMatcher antPathMatcher=new AntPathMatcher();//创建ant风格的匹配器，准备用来对比访问的url是否符合权限路径
         List<Purview> purviews=purviewService.getAllEnabledPurviews();//所有在启用的权限列表

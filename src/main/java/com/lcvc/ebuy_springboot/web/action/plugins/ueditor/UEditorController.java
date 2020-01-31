@@ -105,7 +105,7 @@ public class UEditorController {
             //
             PrintWriter writer = response.getWriter();
             writer.write(exec);
-            System.out.println(exec);
+            //System.out.println(exec);
             writer.flush();
             writer.close();
         } catch (IOException e) {

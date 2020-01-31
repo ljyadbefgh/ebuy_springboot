@@ -52,18 +52,18 @@
 			</div>-->
 			<div class="layui-form-item">
 				<label class="layui-form-label" style="display: block;">*LOGO</label>
-				<div class="layui-input-inline" style="width:400px;">					
-					<input type="text" id="pirUrl" name="picUrl" lay-verify="required" readonly="readonly" class="layui-input"/>					
+				<div class="layui-input-inline" style="width:400px;">
+					<input type="text" id="pirUrl" name="picUrl" lay-verify="required" readonly="readonly" class="layui-input"/>
 				</div>
-				<div class="layui-input-inline">	
+				<div class="layui-input-inline">
 					<button id="uploadPicButton" class="layui-btn layui-btn-radius layui-btn-normal" type="button">上传图片</button>
 				</div>
-			</div>			
+			</div>
 			<div class="layui-form-item">
 				<label class="layui-form-label">*优先级</label>
 				<div class="layui-input-inline">
 					<select id="orderNum" name="orderNum">
-						
+
 					</select>
 				</div>
 			</div>
@@ -93,7 +93,7 @@
 			</div>
 			<div class="layui-form-item">
 				<label class="layui-form-label">*是否上架</label>
-				<div class="layui-input-inline">					
+				<div class="layui-input-inline">
 					<select id="onSale" name="onSale" lay-verify="required">
 						<option value="">请选择</option>
 						<option value="true">上架</option>
@@ -128,17 +128,19 @@
 		</form>
 
 		<script>
-			
-			
-			
-				
-				
+
+
+
+
+
 			layui.use(['layedit','form'], function() { //表单插件初始化
 				var form = layui.form;//只有执行了这一步，部分表单元素才会自动修饰成功
-				
+
 				//设置ueditor图片编辑器
-				var myEditorImage= new UE.ui.Editor();//新定义一个组件
-				myEditorImage.render('uploadPicButton');//绑定触发按钮
+				//var myEditorImage= new UE.ui.Editor();//新定义一个组件
+				//myEditorImage.render('uploadPicButton');//绑定触发按钮
+				//上面两行代码可以用下面的替代
+				var myEditorImage=UE.getEditor('uploadPicButton');
 				myEditorImage.ready(function(){
 					//myEditorImage.setDisabled();
 					myEditorImage.hide();//隐藏UE框体
@@ -152,14 +154,14 @@
 						}
 					});
 				});
-				
+
 				//当点击上传按钮时，打开图片组件
 				$("#uploadPicButton").click(function(){
 					d = myEditorImage.getDialog("insertimage");
 				    d.render();
 				    d.open();
 				});
-				
+
 				//读取当前记录
 				$.getJSON(//先读取产品栏目列表初始化下拉框，作为第一读取顺序
 					WEBURL_API + "backstage/producttype",
@@ -167,24 +169,24 @@
 				    	if(producttypesMsg.code==code_success){
 					    	$.each(producttypesMsg.data,function(index,item){//对于java的list集合转换为的json格式的遍历
 					        	//option  第一个参数是页面显示的值，第二个参数是传递到后台的值
-					        	$('#productTypeId').append(new Option(item.name,item.id));//往下拉菜单里添加元素				        	
+					        	$('#productTypeId').append(new Option(item.name,item.id));//往下拉菜单里添加元素
 					        })
 				    		form.render('select'); //刷新表单select选择框渲染
-				    		//form.render(); //更新全部表单内容		
-				    		initOrderNumSelect();//调用优先级列表初始化				    		
+				    		//form.render(); //更新全部表单内容
+				    		initOrderNumSelect();//调用优先级列表初始化
 				    	}else{
 				    		layer.msg(producttypesMsg.msg);
 				    	}
 				    }
 				)
-				
+
 				//初始化优先级列表，这里定义为函数，是保证多个ajax的顺序，将其给第一个ajax调用
 				function initOrderNumSelect(){
 					//读取当前记录
 					$.getJSON(
 						WEBURL_API + "backstage/product/orderNumMap",//获取初始化表单信息
 					    function(msg){
-					    	if(msg.code==code_success){		
+					    	if(msg.code==code_success){
 					    		$.each(msg.data,function(key,value){
 					        		//option  第一个参数是页面显示的值，第二个参数是传递到后台的值
 					        		$('#orderNum').append(new Option(value,key));//往下拉菜单里添加元素
@@ -193,13 +195,13 @@
 					    		initForm();//初始化表单信息
 					    	}else{
 								layer.msg(msg.msg);
-							}				    	
+							}
 					    }
 					)
 				}
-				
-				
-				
+
+
+
 				//初始化表单，这里定义为函数，是保证多个ajax的顺序，将其给第一个ajax调用
 				function initForm(){
 					var result=false;//该方法是否成功
@@ -218,16 +220,16 @@
 								});
 					    	}else{
 								layer.msg(msg.msg);
-							}				    	
+							}
 					    }
 					)
 					return result;
 				}
-				
-				    	
-				
-				
-			
+
+
+
+
+
 
 				//自定义表单验证规则
 				form.verify({
@@ -272,22 +274,22 @@
 				form.on('submit(addProduct)', function(data) {
 					var productType ={//创建所属产品类别对象
 				        id: $("#productTypeId").val()
-				   }; 
+				   };
 				    data.field.productType=productType;//将产品类别对象组装到表单中
-				    data.field.content=ueditor.getContent();//获得编辑器的富文本内容 
+				    data.field.content=ueditor.getContent();//获得编辑器的富文本内容
 				    if(data.field.description==''){//如果产品的描述内容为空
 				    	data.field.description=ueditor.getContentTxt();//将编辑器的纯文本内容赋给它
 				    }
 					$.postRestful(WEBURL_API+"backstage/product"
 						,JSON.stringify(data.field)
 						,function(msg){
-							if(msg.code==code_success){								
+							if(msg.code==code_success){
 								layer.msg("产品创建成功");
 								$('#myForm')[0].reset();
 								layui.form.render();//这个一定要加上去，不然的话，select/checkbox/radio不会重置的
 								$("#pirUrl").attr("value", "");//清空上传图片的文本框（很奇怪用$('#myForm')[0].reset()无法重置？）
 								ueditor.setContent("");//清空富文本内容
-								initForm();//重置表单的初始值		
+								initForm();//重置表单的初始值
 							}else{
 								layer.msg(msg.msg);
 							}
@@ -296,8 +298,8 @@
 					//layer.msg(JSON.stringify(data.field));
 					return false;//阻止表单跳转。如果需要表单跳转，去掉这段即可。
 				});
-				
-				
+
+
 			});
 		</script>
 	</body>
