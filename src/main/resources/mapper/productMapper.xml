@@ -159,15 +159,17 @@
         limit #{offset},#{length}
     </select>
 
-    <select id="getSimple" resultType="Product">
-        select * from product where id=#{id}
-    </select>
+
 
     <!--<select id="getNewTopProductList" resultType="Product">-->
         <!--select * from product order by createTime desc limit 0,#{pageSize}-->
     <!--</select>-->
 
     <!--==================================定制查询============================-->
+
+    <select id="getSimple" resultType="Product">
+        select * from product where id=#{id}
+    </select>
 
     <update id="updateProductToTransferProductTypeBySelect">
         update product set productTypeId=#{productTypeId} where 1=0

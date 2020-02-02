@@ -51,6 +51,9 @@ spring:
       maxFileSize: 100MB #单个上传文件的最大限制
       maxRequestSize: 100MB  #所有上传文件的最大限制
 #控制台打印sql语句
+logging:
+  level:
+    com.lcvc.ebuy_springboot.dao: DEBUG
 #logging:
 #  file: target/ebuy.log
 #  level:

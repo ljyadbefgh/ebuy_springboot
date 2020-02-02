@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 为这个mapper指定一个唯一的namespace，namespace的值习惯上设置成包名+sql映射文件名，这样就能够保证namespace的值是唯一的
+例如namespace="com.cn.mybatis.test1.dao.userMapper"就是com.cn.mybatis.test1.dao(包名)+userMapper(userMapper.xml文件去除后缀)
+ -->
+<mapper namespace="com.lcvc.ebuy_springboot.dao.ProductOrderDao">
+    <!--自定义返回的类型-->
+    <resultMap id="productOrder" type="ProductOrder">
+        <!--这里必须写，否则在执行<collection  property="orderDetails" ………………关联查询后，orderNo会被覆盖，原因不明，猜想是mybatis自己组装sql上出现命名冲突覆盖-->
+        <id column="orderNo" property="orderNo"/>
+        <association property="customer" javaType="Customer" column="customerId" select="com.lcvc.ebuy_springboot.dao.CustomerDao.get">
+        </association>
+        <!--这里查询子订单-->
+        <collection  property="productOrderDetails" ofType="ProductOrderDetail" javaType="java.util.ArrayList" column="orderNo" select="com.lcvc.ebuy_springboot.dao.ProductOrderDetailDao.getProductOrderDetailsByOrderNo"/>
+    </resultMap>
+
+    <select id="get" resultMap="productOrder">
+        select * from product_order where orderNo=#{id}
+    </select>
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="orderNo">
+        insert into product_order(orderNo,customerId,sendName,sendAddress,sendZip,sendTel,paymentStatus,paymentType,strikePrice,meno,createTime,dealTime,tag)
+        values(#{orderNo},#{customer.id},#{sendName},#{sendAddress},#{sendZip},#{sendTel},#{paymentStatus},#{paymentType},#{strikePrice},#{meno},now(),null,#{tag})
+    </insert>
+
+    <update id="update" parameterType="ProductOrder">
+        update product_order
+        <!-- 使用set标签可以将动态的配置SET 关键字，和剔除追加到条件末尾的任何不相关的逗号。 -->
+        <set>
+            <if test="sendName!=null and sendName.length()>0">sendName=#{sendName},</if>
+            <if test="sendAddress!=null and sendAddress.length()>0">sendAddress=#{sendAddress},</if>
+            <if test="sendZip!=null and sendZip.length()>0">sendZip=#{sendZip},</if>
+            <if test="sendTel!=null and sendTel.length()>0">sendTel=#{sendTel},</if>
+            <if test="strikePrice!=null">strikePrice=#{strikePrice},</if>
+            <if test="paymentStatus!=null">paymentStatus=#{paymentStatus},</if>
+            <if test="paymentType!=null">paymentType=#{paymentType},</if>
+            <if test="tag!=null">tag=#{tag},</if>
+            <if test="dealTime!=null">dealTime=#{dealTime},</if>
+            <if test="sendTime!=null">sendTime=#{sendTime},</if>
+            <if test="receiveTime!=null">receiveTime=#{receiveTime},</if>
+        </set>
+        where orderNo=#{orderNo}
+    </update>
+
+    <delete id="delete">
+        delete from product_order where orderNo=#{id}
+    </delete>
+
+
+    <select id="readAll" resultMap="productOrder">
+        select * from product_order order by createTime desc
+    </select>
+
+    <select id="total" resultType="int">
+        select count(1) from product_order
+    </select>
+
+    <!--统一查询的条件，方便用于分页等查询，这里提供给query和querySize调用-->
+    <sql id="queryWhere">
+        <if test="objectQuery!=null">
+            <where>
+                <if test="objectQuery.orderNo!=null and objectQuery.orderNo.length()>0">
+                    and orderNo=#{objectQuery.orderNo}
+                </if>
+                <if test="objectQuery.paymentType!=null">
+                    and paymentType=#{objectQuery.paymentType}
+                </if>
+                <if test="objectQuery.paymentStatus!=null">
+                    and paymentStatus=#{objectQuery.paymentStatus}
+                </if>
+                <if test="objectQuery.tag!=null">
+                    and tag=#{objectQuery.tag}
+                </if>
+                <if test="objectQuery.sendName!=null and objectQuery.sendName.length()>0">
+                    and sendName=#{objectQuery.sendName}
+                </if>
+                <if test="objectQuery.sendTel!=null and objectQuery.sendTel.length()>0">
+                    and sendTel=#{objectQuery.sendTel}
+                </if>
+            </where>
+        </if>
+    </sql>
+
+    <select id="querySize" resultType="int">
+        select count(1) from product_order
+        <include refid="queryWhere"></include>
+    </select>
+
+    <select id="query" resultMap="productOrder">
+        select * from product_order
+        <include refid="queryWhere"></include>
+        order by createTime desc limit #{offset},#{length}
+    </select>
+
+
+
+    <!--<select id="getNewTopProductList" resultType="Product">-->
+        <!--select * from product order by createTime desc limit 0,#{pageSize}-->
+    <!--</select>-->
+
+    <!--==================================定制查询============================-->
+    <select id="getSimple" resultType="ProductOrder">
+        select * from product_order where orderNo=#{orderNo}
+    </select>
+
+
+
+
+</mapper>

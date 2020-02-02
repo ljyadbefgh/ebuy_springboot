@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 为这个mapper指定一个唯一的namespace，namespace的值习惯上设置成包名+sql映射文件名，这样就能够保证namespace的值是唯一的
+例如namespace="com.cn.mybatis.test1.dao.userMapper"就是com.cn.mybatis.test1.dao(包名)+userMapper(userMapper.xml文件去除后缀)
+ -->
+<mapper namespace="com.lcvc.ebuy_springboot.dao.ProductOrderDetailDao">
+
+    <!--自定义返回的类型-->
+    <resultMap id="productOrderDetail" type="ProductOrderDetail">
+        <association property="product" javaType="Product" column="productId" select="com.lcvc.ebuy_springboot.dao.ProductDao.getSimple">
+        </association>
+        <association property="productOrder" javaType="ProductOrder" column="orderNo" select="com.lcvc.ebuy_springboot.dao.ProductOrderDao.getSimple">
+        </association>
+    </resultMap>
+
+    <select id="get" resultMap="productOrderDetail">
+        select * from product_order_detail where id=#{id}
+    </select>
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="id">
+        insert into product_order_detail(id,orderNo,productId,price,originalPrice,productNumber)
+        values(null,#{orderNo},#{product.id},#{price},#{originalPrice},#{productNumber})
+    </insert>
+
+    <update id="update" parameterType="ProductOrderDetail">
+        update product_order_detail
+        <!-- 使用set标签可以将动态的配置SET 关键字，和剔除追加到条件末尾的任何不相关的逗号。 -->
+        <set>
+            <if test="price!=null">price=#{price},</if>
+            <if test="productNumber!=null">productNumber=#{productNumber},</if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <delete id="delete">
+        delete from product_order_detail where id=#{id}
+    </delete>
+
+
+
+    <!--<select id="getNewTopProductList" resultType="Product">-->
+        <!--select * from product order by createTime desc limit 0,#{pageSize}-->
+    <!--</select>-->
+
+    <!--==================================定制查询============================-->
+
+    <select id="getProductOrderDetailsByOrderNo" resultMap="productOrderDetail" parameterType="String">
+        select * from product_order_detail where orderNo=#{orderNo} order by id asc
+    </select>
+
+
+
+</mapper>
