@@ -49,6 +49,8 @@ public class AdminManageController {
 	private AdminMenuService adminMenuService;
 
 
+
+
 	@ApiOperation(value = "分页读取管理账户信息", notes = "如果page为空则默认是第一页;如果limit为空则采用服务器的默认数值")
 	@ApiImplicitParams({
 			@ApiImplicitParam(name = "page", value = "当前页码", required = false, dataType = "int",example="1"),
@@ -117,6 +119,15 @@ public class AdminManageController {
 		adminService.updateAdmin(admin,user);
 		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
 		map.put(Constant.JSON_MESSAGE, "账户信息修改成功");
+		return map;
+	}
+
+	@ApiOperation(value = "获取管理账户的总记录数", notes = "获取管理账户的总记录数")
+	@GetMapping("/total")
+	public Map<String, Object> total(){
+		Map<String, Object> map=new HashMap<String, Object>();
+		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
+		map.put(Constant.JSON_DATA,adminService.total());
 		return map;
 	}
 

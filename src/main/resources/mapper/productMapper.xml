@@ -61,99 +61,79 @@
         select count(id) from product
     </select>
 
-    <select id="querySize" resultType="int">
-        select count(1) from product
+    <!--统一查询的条件，方便用于分页等查询，这里提供给query和querySize调用-->
+    <sql id="queryWhere">
         <if test="objectQuery!=null">
             <where>
                 <if test="objectQuery.name!=null and objectQuery.name.length()>0">
                     <!-- bind，重新定义一个变量，可用于模糊查询等，并且可以直接覆盖原变量 -->
                     <bind name="name" value="'%' + _parameter.objectQuery.name + '%'" />
-                    and name like #{name}
+                    and product.name like #{name}
                 </if>
                 <if test="objectQuery.productType!=null">
-                  <if test="objectQuery.productType.id!=null">
-                      and productTypeId=#{objectQuery.productType.id}
-                  </if>
+                    <if test="objectQuery.productType.id!=null">
+                        and product.productTypeId=#{objectQuery.productType.id}
+                    </if>
                 </if>
                 <if test="objectQuery.onSale!=null">
-                    and onSale=#{objectQuery.onSale}
+                    and product.onSale=#{objectQuery.onSale}
                 </if>
                 <if test="objectQuery.orderNum!=null">
-                    and orderNum=#{objectQuery.orderNum}
+                    and product.orderNum=#{objectQuery.orderNum}
                 </if>
                 <if test="objectQuery.creator!=null and objectQuery.creator.id!=null">
-                    and creatorId=#{objectQuery.creator.id}
+                    and product.creatorId=#{objectQuery.creator.id}
                 </if>
                 <if test="objectQuery.finalEditor!=null and objectQuery.finalEditor.id!=null">
-                    and finalEditorId=#{objectQuery.finalEditor.id}
+                    and product.finalEditorId=#{objectQuery.finalEditor.id}
                 </if>
             </where>
         </if>
+    </sql>
+
+    <select id="querySize" resultType="int">
+        select count(1) from product
+        <include refid="queryWhere"></include>
     </select>
 
     <select id="query" resultMap="product">
        /* select * from product*/
-        select id,productTypeId,name,orderNum,price,originalPrice,picUrl,repository,click,onSale,createTime,creatorId,finalEditorId,updateTime from product
-        <if test="objectQuery!=null">
-            <where>
-                <if test="objectQuery.name!=null and objectQuery.name.length()>0">
-                    <!-- bind，重新定义一个变量，可用于模糊查询等，并且可以直接覆盖原变量 -->
-                    <bind name="name" value="'%' + _parameter.objectQuery.name + '%'" />
-                    and name like #{name}
-                </if>
-                <if test="objectQuery.productType!=null">
-                    <if test="objectQuery.productType.id!=null">
-                        and productTypeId=#{objectQuery.productType.id}
-                    </if>
-                </if>
-                <if test="objectQuery.onSale!=null">
-                    and onSale=#{objectQuery.onSale}
-                </if>
-                <if test="objectQuery.orderNum!=null">
-                    and orderNum=#{objectQuery.orderNum}
-                </if>
-                <if test="objectQuery.creator!=null and objectQuery.creator.id!=null">
-                    and creatorId=#{objectQuery.creator.id}
-                </if>
-                <if test="objectQuery.finalEditor!=null and objectQuery.finalEditor.id!=null">
-                    and finalEditorId=#{objectQuery.finalEditor.id}
-                </if>
-            </where>
-        </if>
+        select product.id,product.productTypeId,product.name,product.orderNum,product.price,product.originalPrice,product.picUrl,product.repository,product.click,product.onSale,product.createTime,product.creatorId,product.finalEditorId,product.updateTime from product
+        <include refid="queryWhere"></include>
         <choose>
             <when test="objectQuery.orderType!=null">
                 <choose>
                     <when test="objectQuery.orderType==1">
-                        order by orderNum asc,createTime desc
+                        order by product.orderNum asc,createTime desc
                     </when>
                     <when test="objectQuery.orderType==2">
-                        order by orderNum desc,createTime desc
+                        order by product.orderNum desc,createTime desc
                     </when>
                     <when test="objectQuery.orderType==3">
-                        order by click desc
+                        order by product.click desc
                     </when>
                     <when test="objectQuery.orderType==4">
-                        order by click asc
+                        order by product.click asc
                     </when>
                     <when test="objectQuery.orderType==5">
-                        order by createTime desc
+                        order by product.createTime desc
                     </when>
                     <when test="objectQuery.orderType==6">
-                        order by createTime asc
+                        order by product.createTime asc
                     </when>
                     <when test="objectQuery.orderType==7">
-                        order by price asc
+                        order by product.price asc
                     </when>
                     <when test="objectQuery.orderType==8">
-                        order by price desc
+                        order by product.price desc
                     </when>
                     <otherwise>
-                        order by orderNum asc,createTime desc
+                        order by product.orderNum asc,createTime desc
                     </otherwise>
                 </choose>
             </when>
             <otherwise>
-                order by orderNum asc,createTime desc
+                order by product.orderNum asc,createTime desc
             </otherwise>
         </choose>
         limit #{offset},#{length}
@@ -179,6 +159,10 @@
                 #{item}
             </foreach>
         </if>
+    </update>
+
+    <update id="updateProductRepositoryByIncreasement">
+         update product set repository=repository+ROUND(RAND()*(#{max}-#{min}) + #{min})
     </update>
 
 

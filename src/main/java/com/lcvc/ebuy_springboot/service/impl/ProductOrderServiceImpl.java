@@ -1,10 +1,8 @@
 package com.lcvc.ebuy_springboot.service.impl;
 
 import com.lcvc.ebuy_springboot.dao.ProductOrderDao;
-import com.lcvc.ebuy_springboot.model.Admin;
-import com.lcvc.ebuy_springboot.model.Customer;
-import com.lcvc.ebuy_springboot.model.ProductOrder;
-import com.lcvc.ebuy_springboot.model.ProductOrderDetail;
+import com.lcvc.ebuy_springboot.dao.ProductOrderDetailDao;
+import com.lcvc.ebuy_springboot.model.*;
 import com.lcvc.ebuy_springboot.model.base.PageObject;
 import com.lcvc.ebuy_springboot.model.exception.MyServiceException;
 import com.lcvc.ebuy_springboot.model.exception.MyWebException;
@@ -33,6 +31,8 @@ public class ProductOrderServiceImpl implements ProductOrderService {
 
     @Autowired
     private ProductOrderDao productOrderDao;
+    @Autowired
+    private ProductOrderDetailDao productOrderDetailDao;
 
     /*
      * 生成订单编号（唯一），按规则生成
@@ -58,6 +58,30 @@ public class ProductOrderServiceImpl implements ProductOrderService {
         return orderNo;
     }
 
+    /**
+     * 将购物车中的信息保存到数据库中，然后清空购物车
+     * @param shoppingCart
+     * @param productOrder 订单
+     */
+    private void saveShoppingCart(ShoppingCart shoppingCart,ProductOrder productOrder){
+        List<ShoppingCartItem> list=shoppingCart.getList();
+        ProductOrderDetail productOrderDetail=null;//子订单
+        for(ShoppingCartItem item:list){
+            productOrderDetail=new ProductOrderDetail();
+            productOrderDetail.setProductOrder(productOrder);//设置订单编号
+            productOrderDetail.setProduct(item.getProduct());//获取产品信息
+            productOrderDetail.setOriginalPrice(item.getProduct().getOriginalPrice());//获取产品原价
+            productOrderDetail.setPrice(item.getProduct().getPrice());//获取产品现价
+            productOrderDetail.setProductNumber(item.getNumber());//获取购买数量
+            productOrderDetailDao.save(productOrderDetail);//保存子订单
+        }
+    }
+
+    @Override
+    public Integer total() {
+        return productOrderDao.total();
+    }
+
     @Override
     public PageObject search(Integer page, Integer limit, ProductOrderQuery productOrderQuery) {
         PageObject pageObject = new PageObject(limit,page,productOrderDao.querySize(productOrderQuery));
@@ -77,7 +101,22 @@ public class ProductOrderServiceImpl implements ProductOrderService {
     }
 
     @Override
-    public void save(@Valid @NotNull ProductOrder productOrder,@NotNull Customer customer) {
+    public ProductOrder get(@NotNull String orderNo) {
+        ProductOrder productOrder=productOrderDao.get(orderNo);
+        BigDecimal totalPrice=new BigDecimal("0.00");//默认总价
+        //处理订单信息
+        for(ProductOrderDetail productOrderDetail:productOrder.getProductOrderDetails()){//遍历子订单
+            //计算子订单的价格
+            BigDecimal priceTotal=productOrderDetail.getPrice().multiply(BigDecimal.valueOf(productOrderDetail.getProductNumber()));
+            productOrderDetail.setPriceTotal(priceTotal);
+            totalPrice=totalPrice.add(priceTotal);
+        }
+        productOrder.setTotalPrice(totalPrice);
+        return productOrder;
+    }
+
+    @Override
+    public void save(ShoppingCart shoppingCart,ProductOrder productOrder,Customer customer) {
         if(productOrder.getSendName()==null){
             throw new MyWebException("保存失败:请输入收货人名字");
         }
@@ -101,7 +140,7 @@ public class ProductOrderServiceImpl implements ProductOrderService {
         productOrder.setCreateTime(new Date());//设置交易时间
         productOrderDao.save(productOrder);//保存订单
         //保存子订单，将购物车的数据拿出来
-
+        this.saveShoppingCart(shoppingCart,productOrder);
     }
 
     @Override
@@ -116,10 +155,10 @@ public class ProductOrderServiceImpl implements ProductOrderService {
         if(!productOrderOriginal.allowUpdate()){//已付款的订单不可以修改
             throw new MyServiceException("修改失败：不符合修改条件");
         }
+        //productOrder.setStrikePrice(null);//不允许修改成交价。这里允许修改成交价，如果是0则将成交价设置为NULL，如果是大于0则设置为相关价格，如果是NULL则不作修改
         productOrder.setTag(null);//不允许修改订单状态，设置为NULL
         productOrder.setPaymentStatus(null);//不允许修改付款状态
         productOrder.setPaymentType(null);//不允许修改付款方式
-        //productOrder.setStrikePrice(null);//不允许修改成交价
         productOrder.setDealTime(null);//不允许修改交易时间
         productOrder.setSendTime(null);//不允许修改发货时间
         productOrder.setReceiveTime(null);//不允许修改收货时间

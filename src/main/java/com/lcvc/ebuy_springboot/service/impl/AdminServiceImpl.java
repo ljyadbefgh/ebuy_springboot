@@ -70,6 +70,11 @@ public class AdminServiceImpl implements  AdminService,UserDetailsService{
         return judge;
     }
 
+    @Override
+    public Integer total() {
+        return adminDao.total();
+    }
+
 
     @Override
     public List<Admin> getAdmins() {

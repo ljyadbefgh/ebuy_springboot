@@ -21,6 +21,12 @@ public interface ProductService {
      */
     PageObject searchProducts(Integer page, Integer limit, ProductQuery productQuery);
 
+    /**
+     * 获取产品的总记录数
+     * @return
+     */
+    Integer total();
+
 
     /**
      * 获取产品的初始值-用于创建时表单初始化
@@ -70,4 +76,14 @@ public interface ProductService {
      * @param productTypeId 要转移到的栏目标识符
      */
     void updateProductToTransferProductTypeBySelect(@NotNull Integer[] productIds,Integer productTypeId);
+
+    /**
+     * 为每个商品随机增加商品库存——用于测试订餐系统用
+     * 说明：
+     * 1.是增加（在原来的基础上增加），不是改变。
+     * 2.每个商品增加的随机数不同
+     * @param minNumber 最小数值
+     * @param maxNumber 最大数值
+     */
+    void updateProductRepositoryByIncreasement(Integer minNumber,Integer maxNumber);
 }

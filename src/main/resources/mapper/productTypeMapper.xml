@@ -83,6 +83,21 @@
         order by orderNum asc limit #{offset},#{length}
     </select>
 
+
+
+    <select id="readAllIds" resultType="int">
+        select id from producttype
+    </select>
+
+    <select id="getIdsByIds" resultType="int">
+        <if test="productIds != null and productIds.length> 0">
+            select id from producttype where  id in
+            <foreach item="id" collection="ids" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        </if>
+    </select>
+
     <!--专为配合其他表的级联，如产品表关联查询-->
     <select id="getForCascade" resultType="ProductType">
         select id,name,orderNum from producttype where id=#{id}

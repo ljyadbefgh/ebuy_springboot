@@ -15,4 +15,13 @@ public interface ProductDao extends IBaseDao<Product>{
     void updateProductToTransferProductTypeBySelect(@Param(value = "productIds")Integer[] productIds, @Param(value = "productTypeId")Integer productTypeId);
 
 
+    /**
+     * 为每个商品随机增加商品库存——用于测试订餐系统用
+     * 说明：
+     * 1.是增加（在原来的基础上增加），不是改变。
+     * 2.每个商品增加的随机数不同
+     * @param min 最小数量
+     * @param max 最大数量
+     */
+    void updateProductRepositoryByIncreasement(@Param(value = "min")Integer min,@Param(value = "max")Integer max);
 }

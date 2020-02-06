@@ -37,6 +37,7 @@ public class Customer implements java.io.Serializable {
 
 	//非数据库字段
 	private Boolean initialPasswordStatus;//是否为初始密码，true表示是初始密码。一般默认123456为初始密码，具体由业务层根据加密规则判断
+	private Integer productOrderNumber;//该客户的订单数量
 
 
 //private List<LiangDianOrder> listOfLiangDianOrder = new ArrayList<LiangDianOrder>(0);//客户的订单集合
@@ -150,6 +151,14 @@ public class Customer implements java.io.Serializable {
 
 	public Boolean getInitialPasswordStatus() {
 		return initialPasswordStatus;
+	}
+
+	public Integer getProductOrderNumber() {
+		return productOrderNumber;
+	}
+
+	public void setProductOrderNumber(Integer productOrderNumber) {
+		this.productOrderNumber = productOrderNumber;
 	}
 
 	public void setInitialPasswordStatus(Boolean initialPasswordStatus) {

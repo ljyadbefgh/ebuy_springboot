@@ -3,6 +3,7 @@ package com.lcvc.ebuy_springboot.service;
 import com.lcvc.ebuy_springboot.model.Admin;
 import com.lcvc.ebuy_springboot.model.Customer;
 import com.lcvc.ebuy_springboot.model.ProductOrder;
+import com.lcvc.ebuy_springboot.model.ShoppingCart;
 import com.lcvc.ebuy_springboot.model.base.PageObject;
 import com.lcvc.ebuy_springboot.model.query.ProductOrderQuery;
 
@@ -10,6 +11,12 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 public interface ProductOrderService {
+
+    /**
+     * 获取订单的总记录数
+     * @return
+     */
+    Integer total();
     /**
      * 分页查询产品订单
      * @param page 当前页面
@@ -19,15 +26,25 @@ public interface ProductOrderService {
      */
     PageObject search(Integer page, Integer limit, ProductOrderQuery productOrderQuery);
 
+
+
+    /**
+     * 根据OrderNo读取对象
+     * @param orderNo
+     * @return
+     */
+    ProductOrder get(@NotNull String orderNo);
+
     /**
      * 保存订单
      * 说明：
      * 1.如果是网上支付，订单状态为待支付
      * 2.如果是货到付款，订单状态为待发货
+     * @param shoppingCart 购物车类
      * @param productOrder
      * @param customer 操作的客户
      */
-    void save(@Valid @NotNull ProductOrder productOrder,@NotNull Customer customer);
+    void save(@NotNull ShoppingCart shoppingCart,@Valid @NotNull ProductOrder productOrder, @NotNull Customer customer);
 
     /**
      * 编辑订单，用于管理员操作.
@@ -68,6 +85,7 @@ public interface ProductOrderService {
      * 1.订单只有处于待付款状态才能更改为付款状态，由商家操作
      * 2.必须是货到付款的订单才允许修改
      * 3.付款后：付款状态变为已付款。
+     * 4.如果成交款设置为0，则在数据库将成交款设置为NULL
      * @param OrderNo 订单编号，不能为空
      * @param admin 操作的管理员
      */

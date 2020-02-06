@@ -1,6 +1,7 @@
 package com.lcvc.ebuy_springboot.service.impl;
 
 import com.lcvc.ebuy_springboot.dao.CustomerDao;
+import com.lcvc.ebuy_springboot.dao.ProductOrderDao;
 import com.lcvc.ebuy_springboot.model.Customer;
 import com.lcvc.ebuy_springboot.model.base.Constant;
 import com.lcvc.ebuy_springboot.model.base.PageObject;
@@ -8,10 +9,12 @@ import com.lcvc.ebuy_springboot.model.exception.MyDataException;
 import com.lcvc.ebuy_springboot.model.exception.MyServiceException;
 import com.lcvc.ebuy_springboot.model.exception.MyWebException;
 import com.lcvc.ebuy_springboot.model.query.CustomerQuery;
+import com.lcvc.ebuy_springboot.model.query.ProductOrderQuery;
 import com.lcvc.ebuy_springboot.service.CustomerService;
 import com.lcvc.ebuy_springboot.util.SHA;
 import com.lcvc.ebuy_springboot.util.file.MyFileOperator;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -28,6 +31,8 @@ import java.util.List;
 public class CustomerServiceImpl implements CustomerService {
     @Resource
     private CustomerDao customerDao;
+    @Autowired
+    private ProductOrderDao productOrderDao;
 
     @Override
     public boolean login(String username, String password) {
@@ -42,6 +47,11 @@ public class CustomerServiceImpl implements CustomerService {
             }
         }
         return judge;
+    }
+
+    @Override
+    public Integer total() {
+        return customerDao.total();
     }
 
     @Override
@@ -68,6 +78,10 @@ public class CustomerServiceImpl implements CustomerService {
             }else{
                 customer.setInitialPasswordStatus(false);
             }
+            //获取客户拥有的订单数量
+            ProductOrderQuery productOrderQuery=new ProductOrderQuery();
+            productOrderQuery.setCustomer(customer);
+            customer.setProductOrderNumber(productOrderDao.querySize(productOrderQuery));
         }
         return pageObject;
     }
@@ -80,6 +94,12 @@ public class CustomerServiceImpl implements CustomerService {
             String picUrl=customer.getPicUrl();//获取头像地址
             if(!StringUtils.isEmpty(picUrl)){//如果头像存在
               throw new MyServiceException("账户删除失败：请先删除头像，再执行账户删除");
+            }
+            //获取客户拥有的订单数量
+            ProductOrderQuery productOrderQuery=new ProductOrderQuery();
+            productOrderQuery.setCustomer(customer);
+            if(productOrderDao.querySize(productOrderQuery)>0){
+                throw new MyServiceException("账户删除失败：该客户已经下了订单，不能删除");
             }
         }
         customerDao.deletes(ids);

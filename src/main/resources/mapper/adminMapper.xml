@@ -47,6 +47,9 @@
         </foreach>
     </delete>
 
+    <select id="total"  resultType="Integer">
+        select count(1) from admin
+    </select>
 
     <select id="readAll" resultType="Admin">
         select * from admin order by id asc

@@ -15,7 +15,7 @@ public interface ShoppingCartService {
 	 * @param numberOfSale 要购买的产品数量，不能为Null
 	 * @return 购物车类。特别说明：如果shoppingCart不为Null，则不需要获取返回值来保存购物车类
 	 */
-	ShoppingCart addShoppingCart(ShoppingCart shoppingCart,Integer productId,Integer numberOfSale);
+	ShoppingCart addShoppingCart(ShoppingCart shoppingCart,Integer productId, Integer numberOfSale);
 	
 	/**
 	 * 修改购物车,根据传入的产品和数量信息，将购物车的指定产品改为相关数量

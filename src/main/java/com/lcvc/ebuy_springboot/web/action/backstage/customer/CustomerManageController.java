@@ -91,6 +91,15 @@ public class CustomerManageController {
 		return map;
 	}
 
+	@ApiOperation(value = "获取客户的总记录数")
+	@GetMapping("/total")
+	public Map<String, Object> total(){
+		Map<String, Object> map=new HashMap<String, Object>();
+		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
+		map.put(Constant.JSON_DATA,customerService.total());
+		return map;
+	}
+
 	@ApiOperation(value = "批量移除客户头像", notes = "根据id的值删除客户头像")
 	@ApiImplicitParam(name = "ids", value = "要移除头像的客户id集合", required = true,paramType = "path",example ="15,25,74" )
 	@DeleteMapping("/customersProfilePicture/{ids}")

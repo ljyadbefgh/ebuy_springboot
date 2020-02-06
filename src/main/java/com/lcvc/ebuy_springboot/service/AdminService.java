@@ -19,6 +19,13 @@ public interface AdminService {
      */
     boolean login(String username, String password);
 
+
+    /**
+     * 获取管理账户的总记录数
+     * @return
+     */
+    Integer total();
+
     /**
      * 获取所有账户集合
      */

@@ -20,6 +20,12 @@ public interface CustomerService {
     boolean login(String username, String password);
 
     /**
+     * 获取客户的总记录数
+     * @return
+     */
+    Integer total();
+
+    /**
      * 根据账户名读取指定标识符
      * @param username
      * @return

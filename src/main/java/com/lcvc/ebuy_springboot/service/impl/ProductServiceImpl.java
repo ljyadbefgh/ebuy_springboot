@@ -1,15 +1,20 @@
 package com.lcvc.ebuy_springboot.service.impl;
 
 import com.lcvc.ebuy_springboot.dao.ProductDao;
+import com.lcvc.ebuy_springboot.dao.ProductOrderDetailDao;
 import com.lcvc.ebuy_springboot.dao.ProductTypeDao;
 import com.lcvc.ebuy_springboot.model.Admin;
 import com.lcvc.ebuy_springboot.model.Product;
+import com.lcvc.ebuy_springboot.model.ProductOrderDetail;
 import com.lcvc.ebuy_springboot.model.ProductType;
 import com.lcvc.ebuy_springboot.model.base.PageObject;
+import com.lcvc.ebuy_springboot.model.exception.MyServiceException;
 import com.lcvc.ebuy_springboot.model.exception.MyWebException;
+import com.lcvc.ebuy_springboot.model.query.ProductOrderDetailQuery;
 import com.lcvc.ebuy_springboot.model.query.ProductQuery;
 import com.lcvc.ebuy_springboot.service.ProductService;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -18,10 +23,7 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.Calendar;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Transactional(propagation = Propagation.REQUIRED,isolation = Isolation.DEFAULT,timeout=36000,rollbackFor=Exception.class)
 @Service
@@ -32,15 +34,33 @@ public class ProductServiceImpl implements ProductService {
     private ProductDao productDao;
     @Resource
     private ProductTypeDao productTypeDao;
+    @Autowired
+    private ProductOrderDetailDao productOrderDetailDao;
 
     @Override
     public PageObject searchProducts(Integer page, Integer limit, ProductQuery productQuery) {
         PageObject pageObject = new PageObject(limit,page,productDao.querySize(productQuery));
         pageObject.setList(productDao.query(pageObject.getOffset(),pageObject.getLimit(),productQuery));
+        BigDecimal totalPrice=new BigDecimal("0.00");//默认总价
         for(Product product:(List<Product>)pageObject.getList()){
             //处理订单信息
+            ProductOrderDetailQuery productOrderDetailQuery=new ProductOrderDetailQuery();
+            productOrderDetailQuery.setProduct(product);
+            List<ProductOrderDetail> productOrderDetails=productOrderDetailDao.readAll(productOrderDetailQuery);//获取该产品对应的子订单集合
+            product.setProductOrderDetailNumber(productOrderDetails.size());//获取商品的订单数量
+            product.setSalesVolume(0);//设置初始销售量0
+            product.setSale(new BigDecimal("0.00"));//设置初始销售额
+            for(ProductOrderDetail productOrderDetail:productOrderDetails){//遍历子订单进行价格计算
+                product.setSalesVolume(product.getSalesVolume()+productOrderDetail.getProductNumber());//计算总销量
+                product.setSale(product.getSale().add(productOrderDetail.getPrice()));//计算总销售额
+            }
         }
         return pageObject;
+    }
+
+    @Override
+    public Integer total() {
+        return productDao.total();
     }
 
     @Override
@@ -86,6 +106,14 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void deleteProducts(Integer[] ids){
+        for(Integer id:ids){
+            //判断是否有订单
+            ProductOrderDetailQuery productOrderDetailQuery=new ProductOrderDetailQuery();
+            productOrderDetailQuery.setProduct(new Product(id));
+            if(productOrderDetailDao.querySize(productOrderDetailQuery)>0){
+                throw new MyServiceException("删除失败：产品"+productDao.get(id).getName()+"已经有订单，无法删除");
+            }
+        }
         //如果商品有订单不允许删除
         productDao.deletes(ids);
     }
@@ -124,5 +152,10 @@ public class ProductServiceImpl implements ProductService {
         }else{//如果栏目不存在
             throw new MyWebException("操作错误：栏目（"+productType.getName()+"不存在");
         }
+    }
+
+    @Override
+    public void updateProductRepositoryByIncreasement(Integer minNumber, Integer maxNumber) {
+        productDao.updateProductRepositoryByIncreasement(minNumber,maxNumber);//为所有产品随机增加相应的数量
     }
 }

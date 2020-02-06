@@ -45,7 +45,9 @@ public class Product implements java.io.Serializable {
 	//非数据库字段
 	//private List<ProductOrder> productOrders = new ArrayList<ProductOrder>();//该产品对应的订单
 	//private Float totalPriceOfTrade;//该产品的总交易额
-	private Integer totalNumberOfOrder;//该产品的订单数
+	private Integer salesVolume;//销售量
+	private BigDecimal sale;//销售额
+	private Integer productOrderDetailNumber;//该产品的订单数，主要指子订单
 	private String nameOfProductType;//产品分类名称
 	
 	//private Integer numberOfCart;//获取购物车的数量，用于在下订单时候显示
@@ -165,13 +167,13 @@ public class Product implements java.io.Serializable {
 	public void setCreateTime(java.util.Date createTime) {
 		this.createTime = createTime;
 	}
-	
-	public Integer getTotalNumberOfOrder() {
-		return totalNumberOfOrder;
+
+	public Integer getProductOrderDetailNumber() {
+		return productOrderDetailNumber;
 	}
 
-	public void setTotalNumberOfOrder(Integer totalNumberOfOrder) {
-		this.totalNumberOfOrder = totalNumberOfOrder;
+	public void setProductOrderDetailNumber(Integer productOrderDetailNumber) {
+		this.productOrderDetailNumber = productOrderDetailNumber;
 	}
 
 	public Admin getCreator() {
@@ -206,6 +208,21 @@ public class Product implements java.io.Serializable {
 		this.nameOfProductType = nameOfProductType;
 	}
 
+	public Integer getSalesVolume() {
+		return salesVolume;
+	}
+
+	public void setSalesVolume(Integer salesVolume) {
+		this.salesVolume = salesVolume;
+	}
+
+	public BigDecimal getSale() {
+		return sale;
+	}
+
+	public void setSale(BigDecimal sale) {
+		this.sale = sale;
+	}
 
 	@Override
 	public boolean equals(Object o) {

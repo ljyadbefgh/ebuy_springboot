@@ -104,6 +104,15 @@ public class ProductController {
 		return map;
 	}
 
+	@ApiOperation(value = "获取产品的总记录数")
+	@GetMapping("/total")
+	public Map<String, Object> total(){
+		Map<String, Object> map=new HashMap<String, Object>();
+		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
+		map.put(Constant.JSON_DATA,productService.total());
+		return map;
+	}
+
 	@ApiOperation(value = "将产品批量转移到指定栏目下", notes = "将产品批量转移到指定栏目下")
 	@ApiImplicitParam(name = "productTransferForm", value = "封装的用于接收productIds[]和productTypeId的表单对象", paramType = "body", dataType="ProductTransferForm",required = true)
 	@PutMapping("/productType")

@@ -35,12 +35,21 @@ public class ProductOrderController {
 	@Autowired
 	private ProductOrderDetailService productOrderDetailService;
 
+	@ApiOperation(value = "获取产品订单的总记录数")
+	@GetMapping("/total")
+	public Map<String, Object> total(){
+		Map<String, Object> map=new HashMap<String, Object>();
+		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
+		map.put(Constant.JSON_DATA,productOrderService.total());
+		return map;
+	}
 
-	@ApiOperation(value = "分页读取所有产品信息", notes = "如果page为空则默认是第一页;如果limit为空则采用服务器的默认数值")
+
+	@ApiOperation(value = "分页读取订单信息", notes = "如果page为空则默认是第一页;如果limit为空则采用服务器的默认数值")
 	@ApiImplicitParams({
 			@ApiImplicitParam(name = "page", value = "当前页码", required = false, dataType = "int",example="1"),
 			@ApiImplicitParam(name = "limit", value = "每页最多展示的记录数", required = false, dataType = "int",example="1"),
-			@ApiImplicitParam(name = "customerQuery", value = "查询条件，以对象方式上传，如果为Null表示没有条件", required = false, dataType = "CustomerQuery")
+			@ApiImplicitParam(name = "productOrderQuery", value = "查询条件，以对象方式上传，如果为Null表示没有条件", required = false, dataType = "ProductOrderQuery")
 	})
 	@GetMapping
 	public Map<String, Object> toManageProductOrder(Integer page, Integer limit,  ProductOrderQuery productOrderQuery){
@@ -59,6 +68,7 @@ public class ProductOrderController {
 		Map<String, Object> map=new HashMap<String, Object>();
 		productOrderService.update(productOrder,admin);
 		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
+		map.put(Constant.JSON_DATA,productOrderService.get(productOrder.getOrderNo()));//读取最新的表单信息传递回去
 		return map;
 	}
 

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 为这个mapper指定一个唯一的namespace，namespace的值习惯上设置成包名+sql映射文件名，这样就能够保证namespace的值是唯一的
+例如namespace="com.cn.mybatis.test1.dao.userMapper"就是com.cn.mybatis.test1.dao(包名)+userMapper(userMapper.xml文件去除后缀)
+ -->
+<mapper namespace="com.lcvc.ebuy_springboot.dao.CountDao">
+   <!--<resultMap id="productNameAndSalesVolume" type="java.util.Map">
+        <result column="productId" property="productId" jdbcType="INTEGER" />
+        <result column="salesVolume" property="salesVolume" jdbcType="INTEGER" />
+    </resultMap>-->
+
+    <select id="getMaxSalesVolumeOfProduct" resultType="map">
+      /*
+      //这个是获取id的
+       select productId,sum(productNumber) as salesVolume
+       from product_order_detail
+       GROUP BY productId
+       ORDER BY salesVolume desc
+       limit 0,10*/
+
+
+        select product.name as productName,sum(product_order_detail.productNumber) as productSalesVolume
+        from product_order_detail,product
+        where product.id=product_order_detail.productId
+        GROUP BY product_order_detail.productId
+        ORDER BY productSalesVolume desc limit 0,#{limit}
+    </select>
+
+    <select id="getMaxSaleOfProductType" resultType="map">
+       select producttype.name as productTypeName,IFNULL(sum(product_order_detail.price*product_order_detail.productNumber),0) as productTypeSale
+        from product
+        left JOIN  product_order_detail on product.id=product_order_detail.productId
+        right join producttype  on product.productTypeId=producttype.id
+        GROUP BY producttype.id
+        ORDER BY productTypeSale DESC
+        limit 0,#{limit}
+    </select>
+
+ <select id="getMaxSalesVolumeOfProductTypeInSomeDay" resultType="map">
+     select id as productTypeId,name as productTypeName,IFNULL(productTypeSalesVolume,0) as productTypeSalesVolume from producttype
+     LEFT JOIN
+         ( select product.productTypeId as productTypeId,sum(product_order_detail.productNumber) as productTypeSalesVolume
+         from product
+         LEFT JOIN  product_order_detail on product.id=product_order_detail.productId
+         LEFT JOIN product_order on product_order.orderNo=product_order_detail.orderNo
+         <![CDATA[
+                   where to_days(#{currentDay})-to_days(product_order.createTime)>=0 and to_days(#{currentDay})-to_days(product_order.createTime)<#{dayNumber}
+          ]]>
+         GROUP BY product.productTypeId
+         ) as orderCount
+     on producttype.id=orderCount.productTypeId
+     ORDER BY productTypeSalesVolume desc
+     limit 0,#{limit}
+    </select>
+
+    <select id="getMaxSalesVolumeOfProductTypeByProductIdInSomeDay" resultType="map">
+     select id as productTypeId,name as productTypeName,IFNULL(productTypeSalesVolume,0) as productTypeSalesVolume from producttype
+     LEFT JOIN
+         ( select product.productTypeId as productTypeId,sum(product_order_detail.productNumber) as productTypeSalesVolume
+         from product
+         LEFT JOIN  product_order_detail on product.id=product_order_detail.productId
+         LEFT JOIN product_order on product_order.orderNo=product_order_detail.orderNo
+         <![CDATA[
+                   where to_days(#{currentDay})-to_days(product_order.createTime)>=0 and to_days(#{currentDay})-to_days(product_order.createTime)<#{dayNumber}
+          ]]>
+         GROUP BY product.productTypeId
+         ) as orderCount
+     on producttype.id=orderCount.productTypeId
+    <if test="productTypeIds != null and productTypeIds.length> 0">
+        where  productType.id in
+        <foreach item="productTypeId" collection="productTypeIds" open="(" separator="," close=")">
+            #{productTypeId}
+        </foreach>
+    </if>
+
+    </select>
+
+
+
+
+
+</mapper>

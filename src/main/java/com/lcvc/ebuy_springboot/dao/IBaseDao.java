@@ -84,6 +84,6 @@ public interface IBaseDao<T>{
 	 * @return
 	 */
 	List<T> query(@Param(value = "offset") final int offset, @Param(value = "length") final int length,@Param(value = "objectQuery")Object objectQuery);
-	
+
 	
 }

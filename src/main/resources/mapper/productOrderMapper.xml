@@ -31,7 +31,15 @@
             <if test="sendAddress!=null and sendAddress.length()>0">sendAddress=#{sendAddress},</if>
             <if test="sendZip!=null and sendZip.length()>0">sendZip=#{sendZip},</if>
             <if test="sendTel!=null and sendTel.length()>0">sendTel=#{sendTel},</if>
-            <if test="strikePrice!=null">strikePrice=#{strikePrice},</if>
+            <choose>
+                <when test="strikePrice!= null and strikePrice>0">
+                    strikePrice=#{strikePrice},
+                </when>
+                <when test="strikePrice!= null and strikePrice==0">
+                    strikePrice=null,
+                </when>
+            </choose>
+          <!--  <if test="strikePrice!=null">strikePrice=#{strikePrice},</if>-->
             <if test="paymentStatus!=null">paymentStatus=#{paymentStatus},</if>
             <if test="paymentType!=null">paymentType=#{paymentType},</if>
             <if test="tag!=null">tag=#{tag},</if>
@@ -71,12 +79,83 @@
                 <if test="objectQuery.tag!=null">
                     and tag=#{objectQuery.tag}
                 </if>
+                <if test="objectQuery.customer!=null and objectQuery.customer.id!=null">
+                    and customerId=#{objectQuery.customer.id}
+                </if>
                 <if test="objectQuery.sendName!=null and objectQuery.sendName.length()>0">
                     and sendName=#{objectQuery.sendName}
                 </if>
                 <if test="objectQuery.sendTel!=null and objectQuery.sendTel.length()>0">
                     and sendTel=#{objectQuery.sendTel}
                 </if>
+                <bind name="createTimeQueryOfBegin" value="objectQuery.createTimeQueryOfBegin" />
+                <bind name="createTimeQueryOfEnd" value="objectQuery.createTimeQueryOfEnd" />
+                <choose>
+                    <when test="createTimeQueryOfBegin!= null and createTimeQueryOfEnd != null">
+                        AND createTime BETWEEN #{createTimeQueryOfBegin} AND #{createTimeQueryOfEnd}
+                    </when>
+                    <when test="createTimeQueryOfBegin!=null">
+                        <![CDATA[
+                              AND createTime>= #{createTimeQueryOfBegin}
+                        ]]>
+                    </when>
+                    <when test="createTimeQueryOfEnd!=null">
+                        <![CDATA[
+                             AND createTime<= #{createTimeQueryOfEnd}
+                        ]]>
+                    </when>
+                </choose>
+                <bind name="dealTimeQueryOfBegin" value="objectQuery.dealTimeQueryOfBegin" />
+                <bind name="dealTimeQueryOfEnd" value="objectQuery.dealTimeQueryOfEnd" />
+                <choose>
+                    <when test="dealTimeQueryOfBegin!= null and dealTimeQueryOfBegin != null">
+                        AND dealTime BETWEEN #{dealTimeQueryOfBegin} AND #{dealTimeQueryOfEnd}
+                    </when>
+                    <when test="createTimeQueryOfBegin!=null">
+                        <![CDATA[
+                              AND dealTime>= #{dealTimeQueryOfBegin}
+                        ]]>
+                    </when>
+                    <when test="createTimeQueryOfEnd!=null">
+                        <![CDATA[
+                             AND dealTime<= #{dealTimeQueryOfEnd}
+                        ]]>
+                    </when>
+                </choose>
+                <bind name="sendTimeQueryOfBegin" value="objectQuery.sendTimeQueryOfBegin" />
+                <bind name="sendTimeQueryOfEnd" value="objectQuery.sendTimeQueryOfEnd" />
+                <choose>
+                    <when test="sendTimeQueryOfBegin!= null and sendTimeQueryOfEnd != null">
+                        AND sendTime BETWEEN #{sendTimeQueryOfBegin} AND #{sendTimeQueryOfEnd}
+                    </when>
+                    <when test="sendTimeQueryOfBegin!=null">
+                        <![CDATA[
+                              AND sendTime>= #{sendTimeQueryOfBegin}
+                        ]]>
+                    </when>
+                    <when test="sendTimeQueryOfEnd!=null">
+                        <![CDATA[
+                             AND sendTime<= #{sendTimeQueryOfEnd}
+                        ]]>
+                    </when>
+                </choose>
+                <bind name="receiveTimeQueryOfBegin" value="objectQuery.receiveTimeQueryOfBegin" />
+                <bind name="receiveTimeQueryOfEnd" value="objectQuery.receiveTimeQueryOfEnd" />
+                <choose>
+                    <when test="receiveTimeQueryOfBegin!= null and receiveTimeQueryOfEnd != null">
+                        AND receiveTime BETWEEN #{receiveTimeQueryOfBegin} AND #{receiveTimeQueryOfEnd}
+                    </when>
+                    <when test="receiveTimeQueryOfBegin!=null">
+                        <![CDATA[
+                              AND receiveTime>= #{receiveTimeQueryOfBegin}
+                        ]]>
+                    </when>
+                    <when test="receiveTimeQueryOfEnd!=null">
+                        <![CDATA[
+                             AND receiveTime<= #{receiveTimeQueryOfEnd}
+                        ]]>
+                    </when>
+                </choose>
             </where>
         </if>
     </sql>

@@ -40,6 +40,12 @@ update product set picUrl=REPLACE(picUrl,'http://120.76.118.101:8080/ebuy_spring
 说明：将picUrl字段满足http://120.76.118.101:8080/ebuy_springboot条件的，将http://120.76.118.101:8080/ebuy_springboot全部替换为http://120.76.118.101:8081
 b.直接改content中的图片路径
 update product set content=REPLACE(content,'http://120.76.118.101:8080/ebuy_springboot','http://120.76.118.101:8081') where content REGEXP 'http://120.76.118.101:8080/ebuy_springboot';
+(3)批量修改订单的日期，这里是-7天
+UPDATE product_order set createTime=date_sub(createTime, interval 7 day)
+WHERE to_days(createTime)=to_days(now())
+
+
+
 
 5.spring sccurity
 （1）搭建比较好的文章：

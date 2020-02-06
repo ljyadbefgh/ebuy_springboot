@@ -19,7 +19,16 @@
 
     <insert id="save" useGeneratedKeys="true" keyProperty="id">
         insert into product_order_detail(id,orderNo,productId,price,originalPrice,productNumber)
-        values(null,#{orderNo},#{product.id},#{price},#{originalPrice},#{productNumber})
+        values(null,#{productOrder.orderNo},#{product.id},#{price},#{originalPrice},#{productNumber})
+    </insert>
+
+    <insert id="saves"  useGeneratedKeys="true" keyProperty="id">
+        <if test="list.size()>0">
+            insert into product_order_detail(id,orderNo,productId,price,originalPrice,productNumber) values
+            <foreach collection="list" item="item" index="index" separator=",">
+                values(null,#{productOrder.orderNo},#{product.id},#{price},#{originalPrice},#{productNumber})
+            </foreach>
+        </if>
     </insert>
 
     <update id="update" parameterType="ProductOrderDetail">
@@ -35,6 +44,66 @@
     <delete id="delete">
         delete from product_order_detail where id=#{id}
     </delete>
+
+    <!--统一查询的条件，方便用于分页等查询，这里提供给query和querySize调用-->
+    <sql id="queryWhere">
+        <if test="objectQuery!=null">
+            <bind name="productOrderQuery" value="objectQuery.productOrderQuery" />
+            <if test="productOrderQuery!=null">
+                left join product_order on product_order.orderNo =product_order_detail.orderNo
+            </if>
+            <where>
+                <if test="productOrderQuery!=null">
+                    <if test="productOrderQuery.orderNo!=null and productOrderQuery.orderNo.length()>0">
+                        and product_order_detail.orderNo=#{productOrderQuery.orderNo}
+                    </if>
+                    <if test="productOrderQuery.paymentStatus!=null">
+                        and product_order.paymentStatus=#{productOrderQuery.paymentStatus}
+                    </if>
+                    <if test="productOrderQuery.tag!=null">
+                        and product_order.tag=#{productOrderQuery.tag}
+                    </if>
+                    <bind name="createTimeQueryOfBegin" value="productOrderQuery.createTimeQueryOfBegin" />
+                    <bind name="createTimeQueryOfEnd" value="productOrderQuery.createTimeQueryOfEnd" />
+                    <choose>
+                        <when test="createTimeQueryOfBegin!= null and createTimeQueryOfEnd != null">
+                            AND product_order.createTime BETWEEN #{createTimeQueryOfBegin} AND #{createTimeQueryOfEnd}
+                        </when>
+                        <when test="createTimeQueryOfBegin!=null">
+                            <![CDATA[
+                              AND product_order.createTime>= #{createTimeQueryOfBegin}
+                        ]]>
+                        </when>
+                        <when test="createTimeQueryOfEnd!=null">
+                            <![CDATA[
+                             AND product_order.createTime<= #{createTimeQueryOfEnd}
+                        ]]>
+                        </when>
+                    </choose>
+                </if>
+                <if test="objectQuery.product!=null and objectQuery.product.id!=null">
+                    and product_order_detail.productId=#{objectQuery.product.id}
+                </if>
+            </where>
+        </if>
+    </sql>
+
+    <select id="readAll" resultType="ProductOrderDetail">
+        select * from product_order_detail
+        <include refid="queryWhere"></include>
+    </select>
+
+
+    <select id="querySize" resultType="int">
+        select count(1) from product_order_detail
+        <include refid="queryWhere"></include>
+    </select>
+
+    <select id="query" resultMap="productOrderDetail">
+        select * from product_order_detail
+        <include refid="queryWhere"></include>
+        order by id desc limit #{offset},#{length}
+    </select>
 
 
 

@@ -31,6 +31,7 @@ public class ProductOrder implements java.io.Serializable {
 	private Integer paymentType;//付款方式（1、网上支付；2、货到付款）
 	@Digits(integer=11, fraction=2,message = "订单金额的小数位数不能超过{fraction}位")
 	@Range(min=0,message="订单金额不能为负数")
+	//strikePrice：如果是0则将成交价设置为NULL，如果是大于0则设置为相关价格，如果是NULL则不作修改
 	private BigDecimal strikePrice;//成交价，应付款，实际要付款的金额。该字段的设定是两个考虑：一是记录付款金额，二是到商家直接在后台通过修改未付款订单的价格，也就是优惠后的价格。
 	private String meno;//订单备注
 	private java.util.Date createTime;//订单创建时间
@@ -45,6 +46,10 @@ public class ProductOrder implements java.io.Serializable {
 	//private Integer totalNumberOfOrder;//该订单的订单数量
 
 	public ProductOrder() {
+	}
+
+	public ProductOrder(String orderNo) {
+		this.orderNo = orderNo;
 	}
 
 	public Customer getCustomer() {
