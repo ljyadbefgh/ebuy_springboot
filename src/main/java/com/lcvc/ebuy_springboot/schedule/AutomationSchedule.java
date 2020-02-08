@@ -31,15 +31,6 @@ public class AutomationSchedule {
     private ProductOrderDao productOrderDao;
 
     /**
-     * 执行自动购买订单的任务,设计为每天上午5点30分执行自动购买
-     */
-    @Scheduled(cron = "0 30 05 ? * *")
-    public void buyTask(){
-        int buyNumber=new Random().nextInt(6)+6;//随机购买次数为6-11
-        automationService.autoBuy(buyNumber,5000l);//每5秒购买一次
-    }
-
-    /**
      * 为每个商品随机增加商品库存——对应随机下单使用
      * 设计为每天上午5点10分执行自动购买
      */
@@ -48,9 +39,21 @@ public class AutomationSchedule {
         productDao.updateProductRepositoryByIncreasement(20,30);
     }
 
+
+
+    /**
+     * 执行自动购买订单的任务,设计为每天上午5点30分执行自动购买
+     */
+    @Scheduled(cron = "0 30 05 ? * *")
+    public void buyTask(){
+        int buyNumber=new Random().nextInt(6)+6;//随机购买次数为6-11
+        automationService.autoBuy(buyNumber,60000l);//每60秒购买一次
+    }
+
+
     /**
      * 模拟客户本人操作，将当前的所有订单都修改为支付状态
-     * 设计为每天晚上11点30分执行自动购买
+     * 设计为每天晚上11点30分执行自动更改
      * 说明：
      * 1.只有网上支付的才能付款
      */
