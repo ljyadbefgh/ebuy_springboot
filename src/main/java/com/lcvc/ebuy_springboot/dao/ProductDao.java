@@ -20,6 +20,7 @@ public interface ProductDao extends IBaseDao<Product>{
      * 说明：
      * 1.是增加（在原来的基础上增加），不是改变。
      * 2.每个商品增加的随机数不同
+     * 3.如果库存超过10000就不再增加
      * @param min 最小数量
      * @param max 最大数量
      */

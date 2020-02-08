@@ -1,7 +1,5 @@
 package com.lcvc.ebuy_springboot;
 
-import com.lcvc.ebuy_springboot.model.Admin;
-import com.lcvc.ebuy_springboot.model.Customer;
 import com.lcvc.ebuy_springboot.model.Product;
 import com.lcvc.ebuy_springboot.model.ProductType;
 import com.lcvc.ebuy_springboot.util.MyBeanUtils;
@@ -18,12 +16,7 @@ public class TestMain {
 
     @Test
     public void test2(){
-        Admin admin=new Admin(1);
-        admin.setName("张三");
-        Customer customer=new Customer();
-        MyBeanUtils.copyProperties(admin,customer);
-        System.out.println(customer.getId());
-        System.out.println(customer.getName());
+       System.out.println(3-(-2));
     }
 
     @Test

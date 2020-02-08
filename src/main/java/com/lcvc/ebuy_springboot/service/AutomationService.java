@@ -3,7 +3,7 @@ package com.lcvc.ebuy_springboot.service;
 import javax.validation.constraints.NotNull;
 
 /**
- * 用于自动化调度任务
+ * 专门用于自动化调度任务
  * 该任务建立在所有业务层之上
  * 说明：该业务类可以调用其他其业务类的方法，但是不能让其他业务类调用本类的方法
  *

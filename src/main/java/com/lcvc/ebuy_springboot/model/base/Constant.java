@@ -65,4 +65,6 @@ public class Constant {
             put(8,"按当前价格降序排序");
         }
     };
+
+    public final static int maxProductNumberByBuy=20;//表示每次下单时商品的最大购买数量(包含)
 }

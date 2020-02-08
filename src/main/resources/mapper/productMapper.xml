@@ -163,6 +163,10 @@
 
     <update id="updateProductRepositoryByIncreasement">
          update product set repository=repository+ROUND(RAND()*(#{max}-#{min}) + #{min})
+          <![CDATA[
+                 where repository<=10000
+          ]]>
+
     </update>
 
 

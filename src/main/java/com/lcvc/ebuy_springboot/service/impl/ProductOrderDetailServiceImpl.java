@@ -1,8 +1,11 @@
 package com.lcvc.ebuy_springboot.service.impl;
 
+import com.lcvc.ebuy_springboot.dao.ProductDao;
 import com.lcvc.ebuy_springboot.dao.ProductOrderDao;
 import com.lcvc.ebuy_springboot.dao.ProductOrderDetailDao;
+import com.lcvc.ebuy_springboot.model.Product;
 import com.lcvc.ebuy_springboot.model.ProductOrderDetail;
+import com.lcvc.ebuy_springboot.model.base.Constant;
 import com.lcvc.ebuy_springboot.model.base.PageObject;
 import com.lcvc.ebuy_springboot.model.exception.MyServiceException;
 import com.lcvc.ebuy_springboot.model.exception.MyWebException;
@@ -27,6 +30,8 @@ public class ProductOrderDetailServiceImpl implements ProductOrderDetailService 
     private ProductOrderDao productOrderDao;
     @Autowired
     private ProductOrderDetailDao productOrderDetailDao;
+    @Autowired
+    private ProductDao productDao;
 
     @Override
     public PageObject search(Integer page, Integer limit, ProductOrderDetailQuery productOrderDetailQuery) {
@@ -52,6 +57,24 @@ public class ProductOrderDetailServiceImpl implements ProductOrderDetailService 
         if(productOrderDetailOriginal.getProductOrder().getStrikePrice()!=null){//如果已经设定了成交价，即管理员给了优惠
             throw new MyServiceException("修改失败：该订单已经有成交价，请取消后再修改");
         }
+        if(productOrderDetail.getProductNumber()> Constant.maxProductNumberByBuy){
+            throw new MyServiceException("操作错误：同一件商品一次不能购买超过"+Constant.maxProductNumberByBuy+"件");
+        }
+        Product product=productDao.getSimple(productOrderDetailOriginal.getProduct().getId());//从数据库获取最新的产品信息
+        if(product!=null){//如果商品存在
+            if(!product.getOnSale()){
+                throw new MyServiceException("操作错误：商品"+product.getName()+"已经下架，无法再修改数量");
+            }
+            //检查库存是否足够
+            Integer repository=product.getRepository()+productOrderDetailOriginal.getProductNumber();//先获取原来的库存总量
+            if(productOrderDetail.getProductNumber()>repository){
+                throw new MyServiceException("操作错误：商品"+product.getName()+"库存不足");
+            }
+        }else{
+            throw new MyWebException("操作错误：商品不存在");
+        }
+        product.setRepository(product.getRepository()-(productOrderDetail.getProductNumber()-productOrderDetailOriginal.getProductNumber()));//将商品库存减少
+        productDao.update(product);//保存更改后的产品库存
         productOrderDetailDao.update(productOrderDetail);
     }
 }

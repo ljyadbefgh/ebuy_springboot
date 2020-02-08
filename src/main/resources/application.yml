@@ -55,10 +55,10 @@ logging:
   level:
     com.lcvc.ebuy_springboot.dao: DEBUG
 #logging:
-#  file: target/ebuy.log
+#  file: target/log/ebuy.log
 #  level:
-#    com.lcvc.ebuy_springboot: debug
-    #org.springframework: DEBUG
+#    com.lcvc.ebuy_springboot: error
+#    org.springframework: error
 myFile: #自定义变量
   #文件上传目录（注意Linux和Windows上的目录结构不同）
   uploadFolder: c:/ebuy_springboot/upload/

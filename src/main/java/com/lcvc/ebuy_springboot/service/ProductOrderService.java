@@ -63,6 +63,7 @@ public interface ProductOrderService {
      * 1.如果是网上支付状态，则必须是未付款状态才可以修改
      * 2.如果是货到付款，必须是发货以前才能修改
      * 3.只能收获信息等,不能修改成交价，也不能修改其他信息
+     *  4.必须购买者本人才能修改
      * @param productOrder
      */
     void update(@Valid @NotNull ProductOrder productOrder,@NotNull Customer customer);
@@ -74,6 +75,7 @@ public interface ProductOrderService {
      * 1.订单只有处于待付款状态才能更改为付款状态，由客户操作
      * 2.必须是网上支付的订单才允许修改
      * 3.付款后：付款状态变为已付款；订单状态变为待发货
+     * 4.必须购买者本人才能修改
      * @param OrderNo 订单编号，不能为空
      * @param customer 操作的客户
      */
@@ -105,6 +107,7 @@ public interface ProductOrderService {
      * 将订单状态修改为已收货
      * 说明：
      * 1.订单只有处于已发货状态才能更改为已收货，由客户操作
+     * 2.必须购买者本人才能修改
      * @param OrderNo 订单编号，不能为空
      * @param customer 操作的客户
      */

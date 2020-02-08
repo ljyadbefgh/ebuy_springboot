@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
-import javax.annotation.Resource;
 import java.util.List;
 import java.util.Random;
 
@@ -25,9 +24,9 @@ import java.util.Random;
 @Validated//表示开启sprint的校检框架，会自动扫描方法里的@Valid（@Valid注解一般写在接口即可）
 @Service
 public class AutomationServiceImpl implements AutomationService {
-    @Resource
+    @Autowired
     private CustomerDao customerDao;
-    @Resource
+    @Autowired
     private ProductDao productDao;
     @Autowired
     private ProductOrderDao productOrderDao;
@@ -50,11 +49,17 @@ public class AutomationServiceImpl implements AutomationService {
      */
     private void save(Customer customer,List<Product> products){
         ShoppingCart shoppingCart=new ShoppingCart();
-        int buyNumber=new Random().nextInt(4)+1;//随机购买次数为1-4
+        int buyNumber=Math.round(new Random().nextInt(3))+1;//随机购买次数为1-4
         while(buyNumber-->0){
             Product product=this.getProductByRandom(products);//获取随机产品数
-            int productNumber=new Random().nextInt(10)+1;//随机购买数量为1-10
-            shoppingCartService.addShoppingCart(shoppingCart,product.getId(),productNumber);
+            int productNumber=Math.round(new Random().nextInt(2))+1;//随机购买数量为1-3
+            try {
+                shoppingCartService.addShoppingCart(shoppingCart,product.getId(),productNumber);//将商品添加到购物车
+            } catch (Exception e) {//如果出现异常，一般是商品超出库存或是超过购买数量。此时移除，重新购买
+                shoppingCartService.removeShoppingCart(shoppingCart,product.getId());//移除该商品
+                buyNumber++;//重新让次数增加，达到重新购买的目的。但要防止库存都超出出现死循环
+                continue;//终止本次循环
+            }
         }
         ProductOrder productOrder=new ProductOrder();//创建订单对象
         productOrder.setSendName(customer.getName());//收货人

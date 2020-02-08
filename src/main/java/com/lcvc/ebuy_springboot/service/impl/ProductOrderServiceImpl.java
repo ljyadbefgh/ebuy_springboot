@@ -1,5 +1,6 @@
 package com.lcvc.ebuy_springboot.service.impl;
 
+import com.lcvc.ebuy_springboot.dao.ProductDao;
 import com.lcvc.ebuy_springboot.dao.ProductOrderDao;
 import com.lcvc.ebuy_springboot.dao.ProductOrderDetailDao;
 import com.lcvc.ebuy_springboot.model.*;
@@ -33,6 +34,8 @@ public class ProductOrderServiceImpl implements ProductOrderService {
     private ProductOrderDao productOrderDao;
     @Autowired
     private ProductOrderDetailDao productOrderDetailDao;
+    @Autowired
+    private ProductDao productDao;
 
     /*
      * 生成订单编号（唯一），按规则生成
@@ -65,15 +68,34 @@ public class ProductOrderServiceImpl implements ProductOrderService {
      */
     private void saveShoppingCart(ShoppingCart shoppingCart,ProductOrder productOrder){
         List<ShoppingCartItem> list=shoppingCart.getList();
-        ProductOrderDetail productOrderDetail=null;//子订单
-        for(ShoppingCartItem item:list){
-            productOrderDetail=new ProductOrderDetail();
-            productOrderDetail.setProductOrder(productOrder);//设置订单编号
-            productOrderDetail.setProduct(item.getProduct());//获取产品信息
-            productOrderDetail.setOriginalPrice(item.getProduct().getOriginalPrice());//获取产品原价
-            productOrderDetail.setPrice(item.getProduct().getPrice());//获取产品现价
-            productOrderDetail.setProductNumber(item.getNumber());//获取购买数量
-            productOrderDetailDao.save(productOrderDetail);//保存子订单
+        if(list.size()>0){//如果购物车有商品
+            ProductOrderDetail productOrderDetail=null;//子订单
+            for(ShoppingCartItem item:list){
+                Product product=productDao.getSimple(item.getProduct().getId());//从数据库获取最新的产品信息
+                if(product!=null){//如果商品存在
+                    if(!product.getOnSale()){
+                        throw new MyServiceException("操作错误：商品"+product.getName()+"已经下架，请移除该商品");
+                    }
+                    //检查库存是否足够
+                    if(item.getNumber()>product.getRepository()){
+                        throw new MyServiceException("操作错误：商品"+product.getName()+"库存不足");
+                    }
+                }else{
+                    throw new MyWebException("操作错误：商品不存在");
+                }
+                //如果商品验证通过
+                productOrderDetail=new ProductOrderDetail();
+                productOrderDetail.setProductOrder(productOrder);//设置订单编号
+                productOrderDetail.setProduct(item.getProduct());//获取产品信息
+                productOrderDetail.setOriginalPrice(item.getProduct().getOriginalPrice());//获取产品原价
+                productOrderDetail.setPrice(item.getProduct().getPrice());//获取产品现价
+                productOrderDetail.setProductNumber(item.getNumber());//获取购买数量
+                productOrderDetailDao.save(productOrderDetail);//保存子订单
+                product.setRepository(product.getRepository()-item.getNumber());//将产品库存-本次购买数量
+                productDao.update(product);
+            }
+        }else{//如果没有商品
+            throw new MyWebException("保存失败:请先购买商品再下单");
         }
     }
 
@@ -175,6 +197,9 @@ public class ProductOrderServiceImpl implements ProductOrderService {
         if(productOrderOriginal==null){
             throw new MyWebException("修改失败:找不到订单");
         }
+        if(productOrderOriginal.getCustomer().getId()!=customer.getId().intValue()){//如果不是客户本人修改的
+            throw new MyWebException("修改失败:该订单必须购买者本人才能修改");
+        }
         if(!productOrderOriginal.allowUpdate()){//已付款的订单不可以修改
             throw new MyServiceException("修改失败：不符合修改条件");
         }
@@ -203,6 +228,20 @@ public class ProductOrderServiceImpl implements ProductOrderService {
             if(tagOriginal!=0){
                 throw new MyServiceException("修改失败:订单只有处于待付款状态才能付款");
             }
+            if(productOrderOriginal.getCustomer().getId()!=customer.getId().intValue()){//如果不是客户本人修改的
+                throw new MyWebException("修改失败:该订单必须购买者本人才能修改");
+            }
+            if(productOrderOriginal.getStrikePrice()==null){//如果没有成交价，则让成交价=总价
+                BigDecimal totalPrice=new BigDecimal("0.00");//默认总价
+                //处理订单信息
+                for(ProductOrderDetail productOrderDetail:productOrderOriginal.getProductOrderDetails()){//遍历子订单
+                    //计算子订单的价格
+                    BigDecimal priceTotal=productOrderDetail.getPrice().multiply(BigDecimal.valueOf(productOrderDetail.getProductNumber()));
+                    productOrderDetail.setPriceTotal(priceTotal);
+                    totalPrice=totalPrice.add(priceTotal);
+                }
+                productOrderOriginal.setStrikePrice(totalPrice);//成交价=总价
+            }
             productOrderOriginal.setPaymentStatus(1);//修改订单状态为已付款
             productOrderOriginal.setDealTime(Calendar.getInstance().getTime());//付款时间
             productOrderOriginal.setTag(1);//修改订单状态为待发货
@@ -225,6 +264,17 @@ public class ProductOrderServiceImpl implements ProductOrderService {
             Integer tagOriginal=productOrderOriginal.getTag();//获取原订单状态
             if(tagOriginal!=3){
                 throw new MyServiceException("修改失败:订单只有处于已收货状态才能付款");
+            }
+            if(productOrderOriginal.getStrikePrice()==null){//如果没有成交价，则让成交价=总价
+                BigDecimal totalPrice=new BigDecimal("0.00");//默认总价
+                //处理订单信息
+                for(ProductOrderDetail productOrderDetail:productOrderOriginal.getProductOrderDetails()){//遍历子订单
+                    //计算子订单的价格
+                    BigDecimal priceTotal=productOrderDetail.getPrice().multiply(BigDecimal.valueOf(productOrderDetail.getProductNumber()));
+                    productOrderDetail.setPriceTotal(priceTotal);
+                    totalPrice=totalPrice.add(priceTotal);
+                }
+                productOrderOriginal.setStrikePrice(totalPrice);//成交价=总价
             }
             productOrderOriginal.setPaymentStatus(1);//修改订单状态为已付款
             productOrderOriginal.setDealTime(Calendar.getInstance().getTime());//付款时间
@@ -254,12 +304,15 @@ public class ProductOrderServiceImpl implements ProductOrderService {
     public void updateTagForReception(@Valid @NotNull String OrderNo, @NotNull Customer customer) {
         ProductOrder productOrderOriginal =productOrderDao.get(OrderNo);//获取原订单信息
         if(productOrderOriginal!=null){
+            if(productOrderOriginal.getCustomer().getId()!=customer.getId().intValue()){//如果不是客户本人修改的
+                throw new MyWebException("修改失败:该订单必须购买者本人才能修改");
+            }
             Integer tagOriginal=productOrderOriginal.getTag();//获取原订单状态
             if(tagOriginal!=2){//只有是待发货状态才能发送
                 throw new MyServiceException("修改失败:订单必须先处于待收货状态才能确认收货");
             }
-            productOrderOriginal.setTag(3);//修改订单状态为已发货
-            productOrderOriginal.setReceiveTime(Calendar.getInstance().getTime());//发货时间
+            productOrderOriginal.setTag(3);//修改订单状态为已收货
+            productOrderOriginal.setReceiveTime(Calendar.getInstance().getTime());//收货时间
             productOrderDao.update(productOrderOriginal);//保存到数据库
         }else{
             throw new MyWebException("修改失败:找不到订单");
@@ -274,10 +327,10 @@ public class ProductOrderServiceImpl implements ProductOrderService {
                 throw new MyServiceException("修改失败:该订单还未完成");
             }
             Integer tagOriginal=productOrderOriginal.getTag();//获取原订单状态
-            if(tagOriginal!=3){//只有是待发货状态才能发送
+            if(tagOriginal!=3){//只有是已发货状态才能发送
                 throw new MyServiceException("修改失败:订单必须确认收获了才能完成");
             }
-            productOrderOriginal.setTag(4);//修改订单状态为已发货
+            productOrderOriginal.setTag(4);//修改订单状态为已完成
             productOrderDao.update(productOrderOriginal);//保存到数据库
         }else{
             throw new MyWebException("修改失败:找不到订单");

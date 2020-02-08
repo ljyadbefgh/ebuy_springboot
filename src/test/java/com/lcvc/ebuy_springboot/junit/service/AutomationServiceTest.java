@@ -11,7 +11,7 @@ public class AutomationServiceTest extends EbuySpringbootApplicationTests {
 
     @Test
     public void testAutoBuy(){
-        automationService.autoBuy(16,12000l);
+        automationService.autoBuy(9,50000l);
     }
 
 }

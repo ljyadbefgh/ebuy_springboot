@@ -4,6 +4,7 @@ import com.lcvc.ebuy_springboot.dao.ProductDao;
 import com.lcvc.ebuy_springboot.model.Product;
 import com.lcvc.ebuy_springboot.model.ShoppingCart;
 import com.lcvc.ebuy_springboot.model.ShoppingCartItem;
+import com.lcvc.ebuy_springboot.model.base.Constant;
 import com.lcvc.ebuy_springboot.model.exception.MyServiceException;
 import com.lcvc.ebuy_springboot.model.exception.MyWebException;
 import com.lcvc.ebuy_springboot.service.ShoppingCartService;
@@ -73,6 +74,8 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 		}else{
 			if(numberOfSale<=0){
 				throw new MyWebException("操作错误：产品数量必须为大于0的整数");
+			}else if(numberOfSale> Constant.maxProductNumberByBuy){
+				throw new MyServiceException("操作错误：同一件商品一次不能购买超过"+Constant.maxProductNumberByBuy+"件");
 			}
 		}
 		if(productId==null){
@@ -107,6 +110,8 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 			//检查库存是否足够
 			if(number<=product.getRepository().intValue()){
 				shoppingCartItemOfOriginal.setNumber(number);
+			}else if(number> Constant.maxProductNumberByBuy){
+				throw new MyServiceException("操作错误：同一件商品一次不能购买超过"+Constant.maxProductNumberByBuy+"件");
 			}else{
 				throw new MyWebException("操作错误：商品"+product.getName()+"库存不足");
 			}
@@ -129,6 +134,8 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 		}else{
 			if(numberOfSale<=0){
 				throw new MyWebException("操作错误：产品数量必须为大于0的整数");
+			}else if(numberOfSale> Constant.maxProductNumberByBuy){
+				throw new MyServiceException("操作错误：同一件商品一次不能购买超过"+Constant.maxProductNumberByBuy+"件");
 			}
 		}
 		if(productId==null){

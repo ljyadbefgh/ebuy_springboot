@@ -55,9 +55,6 @@
     </delete>
 
 
-    <select id="readAll" resultMap="productOrder">
-        select * from product_order order by createTime desc
-    </select>
 
     <select id="total" resultType="int">
         select count(1) from product_order
@@ -111,12 +108,12 @@
                     <when test="dealTimeQueryOfBegin!= null and dealTimeQueryOfBegin != null">
                         AND dealTime BETWEEN #{dealTimeQueryOfBegin} AND #{dealTimeQueryOfEnd}
                     </when>
-                    <when test="createTimeQueryOfBegin!=null">
+                    <when test="dealTimeQueryOfBegin!=null">
                         <![CDATA[
                               AND dealTime>= #{dealTimeQueryOfBegin}
                         ]]>
                     </when>
-                    <when test="createTimeQueryOfEnd!=null">
+                    <when test="dealTimeQueryOfBegin!=null">
                         <![CDATA[
                              AND dealTime<= #{dealTimeQueryOfEnd}
                         ]]>
@@ -159,6 +156,13 @@
             </where>
         </if>
     </sql>
+
+    <select id="readAll" resultMap="productOrder">
+        select * from product_order
+        <include refid="queryWhere"></include>
+        order by createTime desc
+    </select>
+
 
     <select id="querySize" resultType="int">
         select count(1) from product_order
