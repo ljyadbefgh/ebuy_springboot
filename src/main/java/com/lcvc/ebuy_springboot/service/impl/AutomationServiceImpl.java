@@ -99,7 +99,14 @@ public class AutomationServiceImpl implements AutomationService {
         List<Customer> customers=customerDao.readAll(null);//获取所有客户信息
         List<Product> products=productDao.readAll(null);//获取所有产品信息
         while(number-->0){
-            this.save(this.getCustomerByRandom(customers),products);
+            if(number==1){//保证有一次是指定的客户购买，用于测试
+                Customer customer=customerDao.get(1);
+                if(customer!=null){
+                    this.save(customer,products);
+                }
+            }else{
+                this.save(this.getCustomerByRandom(customers),products);
+            }
             try {
                 Thread.sleep(millisecond);   // 休眠-毫秒
             } catch (InterruptedException e) {

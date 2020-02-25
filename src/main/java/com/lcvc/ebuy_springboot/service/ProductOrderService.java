@@ -9,6 +9,7 @@ import com.lcvc.ebuy_springboot.model.query.ProductOrderQuery;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 public interface ProductOrderService {
 
@@ -26,6 +27,13 @@ public interface ProductOrderService {
      */
     PageObject search(Integer page, Integer limit, ProductOrderQuery productOrderQuery);
 
+    /**
+     * 查询产品订单
+     * @param productOrderQuery 查询条件类
+     * @return
+     */
+    List<ProductOrder> search(ProductOrderQuery productOrderQuery);
+
 
 
     /**
@@ -40,11 +48,13 @@ public interface ProductOrderService {
      * 说明：
      * 1.如果是网上支付，订单状态为待支付
      * 2.如果是货到付款，订单状态为待发货
+     * 3.成功保存订单后，将清空购物车信息
      * @param shoppingCart 购物车类
      * @param productOrder
      * @param customer 操作的客户
+     * @return 返回订单号。如果是null则表示保存失败
      */
-    void save(@NotNull ShoppingCart shoppingCart,@Valid @NotNull ProductOrder productOrder, @NotNull Customer customer);
+    String save(@NotNull ShoppingCart shoppingCart,@Valid @NotNull ProductOrder productOrder, @NotNull Customer customer);
 
     /**
      * 编辑订单，用于管理员操作.
@@ -82,6 +92,7 @@ public interface ProductOrderService {
     void updatePaymentStatusForPay(@Valid @NotNull String OrderNo,@NotNull Customer customer);
 
     /**
+     * 20200225废弃该方法，因为货到付款的必须要交钱后才能从快递员处收货，故废弃。
      * 将订单付款方式修改为已付款。适用于货到付款。本方法模拟商家收到钱后进行操作
      * 说明：
      * 1.订单只有处于待付款状态才能更改为付款状态，由商家操作
@@ -91,7 +102,7 @@ public interface ProductOrderService {
      * @param OrderNo 订单编号，不能为空
      * @param admin 操作的管理员
      */
-    void updatePaymentStatusForPay(@Valid @NotNull String OrderNo,@NotNull Admin admin);
+    //void updatePaymentStatusForPay(@Valid @NotNull String OrderNo,@NotNull Admin admin);
 
 
     /**
@@ -108,6 +119,7 @@ public interface ProductOrderService {
      * 说明：
      * 1.订单只有处于已发货状态才能更改为已收货，由客户操作
      * 2.必须购买者本人才能修改
+     * 3.当收货后，货到付款的支付方式也变为已支付
      * @param OrderNo 订单编号，不能为空
      * @param customer 操作的客户
      */

@@ -82,7 +82,7 @@ public class ProductOrderController {
 		return map;
 	}
 
-	@ApiOperation(value = "将订单支付状态变更为已付款", notes = "将订单支付状态变更为已付款，适用于货到付款。模拟商家收到钱后进行操作")
+	/*@ApiOperation(value = "将订单支付状态变更为已付款", notes = "将订单支付状态变更为已付款，适用于货到付款。模拟商家收到钱后进行操作")
 	@ApiImplicitParam(name = "orderNo", value = "订单编号", paramType = "path", dataType="String",required = true,example="112314123")
 	@PatchMapping("/{orderNo}/payment")
 	public Map<String, Object> updatePaymentStatusForPay(@PathVariable("orderNo")String orderNo, @AuthenticationPrincipal Admin admin){
@@ -90,7 +90,7 @@ public class ProductOrderController {
 		productOrderService.updatePaymentStatusForPay(orderNo,admin);//将订单付款方式修改为已付款。适用于货到付款。本方法模拟商家收到钱后进行操作
 		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
 		return map;
-	}
+	}*/
 
 	@ApiOperation(value = "将订单状态修改为已发货", notes = "将订单状态修改为已发货")
 	@ApiImplicitParam(name = "orderNo", value = "订单编号", paramType = "path", dataType="String",required = true,example="112314123")

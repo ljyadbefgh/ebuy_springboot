@@ -32,12 +32,18 @@ public class Customer implements java.io.Serializable {
 	private String zip;//客户邮编
 	//@Email(message ="电子邮箱格式错误")
 	private String email;//客户电子邮箱
+	@Length(max = 255, message = "个人简介不能超过{max}个字符")
 	private String intro;//客户简介，备注等
 	private java.util.Date createTime;//创建时间、注册时间
 
 	//非数据库字段
 	private Boolean initialPasswordStatus;//是否为初始密码，true表示是初始密码。一般默认123456为初始密码，具体由业务层根据加密规则判断
 	private Integer productOrderNumber;//该客户的订单数量
+	private Integer payTagOrderNumber;//待付款的订单数
+	private Integer sendTagOrderNumber;//待发款的订单数
+	private Integer receiveTagOrderNumber;//待收货的订单数
+
+
 
 
 //private List<LiangDianOrder> listOfLiangDianOrder = new ArrayList<LiangDianOrder>(0);//客户的订单集合
@@ -163,5 +169,29 @@ public class Customer implements java.io.Serializable {
 
 	public void setInitialPasswordStatus(Boolean initialPasswordStatus) {
 		this.initialPasswordStatus = initialPasswordStatus;
+	}
+
+	public Integer getPayTagOrderNumber() {
+		return payTagOrderNumber;
+	}
+
+	public void setPayTagOrderNumber(Integer payTagOrderNumber) {
+		this.payTagOrderNumber = payTagOrderNumber;
+	}
+
+	public Integer getSendTagOrderNumber() {
+		return sendTagOrderNumber;
+	}
+
+	public void setSendTagOrderNumber(Integer sendTagOrderNumber) {
+		this.sendTagOrderNumber = sendTagOrderNumber;
+	}
+
+	public Integer getReceiveTagOrderNumber() {
+		return receiveTagOrderNumber;
+	}
+
+	public void setReceiveTagOrderNumber(Integer receiveTagOrderNumber) {
+		this.receiveTagOrderNumber = receiveTagOrderNumber;
 	}
 }

@@ -2,6 +2,7 @@ package com.lcvc.ebuy_springboot.service;
 
 
 import com.lcvc.ebuy_springboot.model.Customer;
+import com.lcvc.ebuy_springboot.model.WebConfig;
 import com.lcvc.ebuy_springboot.model.base.PageObject;
 import com.lcvc.ebuy_springboot.model.exception.MyWebException;
 import com.lcvc.ebuy_springboot.model.query.CustomerQuery;
@@ -12,12 +13,13 @@ import javax.validation.constraints.NotNull;
 public interface CustomerService {
     /**
      * 登录方法
-     *
+     * 说明：如果系统当前禁止登陆，则无法登陆
      * @param username 账户名
      * @param password 密码
+     * @param webConfig 网站配置对象，必须有数据库所有值
      * @return null表示登录失败
      */
-    boolean login(String username, String password);
+    boolean login(String username, String password, @NotNull WebConfig webConfig);
 
     /**
      * 获取客户的总记录数
@@ -62,12 +64,25 @@ public interface CustomerService {
     void removeCustomersProfilePicture(Integer[] ids,String basePath);
 
     /**
-     * 添加管理员
-     * 说明：账户名和密码不能为空
+     * 添加客户，主要用于管理员后台手动添加
+     * 说明：核心参数不能为空
      * @param customer
      * @throws MyWebException
      */
     void addCustomer(@Valid @NotNull Customer customer);
+
+    /**
+     * 客户注册，用于前端注册功能
+     * 说明：
+     * 1.账户名和密码不能为空
+     * 2.如果网站配置要求了邀请码，则必须使用邀请码
+     * 3.如果当前禁止注册，则无法注册
+     * @param customer
+     * @param inviteCode 邀请码
+     * @param webConfig 网站配置对象，必须有数据库所有值
+     * @throws MyWebException
+     */
+    void regCustomer(@Valid @NotNull Customer customer, String inviteCode,  @NotNull WebConfig webConfig);
 
 
     /**
@@ -94,4 +109,15 @@ public interface CustomerService {
      * @return
      */
     void resetPassword(Integer id);
+
+    /**
+     * 修改密码
+     * 说明：
+     * 1.本方法不对原密码、新密码和确认密码的规则进行验证，请在web层验证后再传入
+     * @param username 必填
+     * @param password 必填
+     * @param newPass 必填
+     * @param rePass 必填
+     */
+    void updatePassword(String username,String password,String newPass,String rePass);
 }

@@ -5,7 +5,7 @@ import com.lcvc.ebuy_springboot.model.Admin;
 import com.lcvc.ebuy_springboot.model.Menu;
 import com.lcvc.ebuy_springboot.model.base.Constant;
 import com.lcvc.ebuy_springboot.model.base.JsonCode;
-import com.lcvc.ebuy_springboot.model.form.admin.AdminPasswordEditForm;
+import com.lcvc.ebuy_springboot.model.form.PasswordEditForm;
 import com.lcvc.ebuy_springboot.service.AdminMenuService;
 import com.lcvc.ebuy_springboot.service.AdminService;
 import io.swagger.annotations.Api;
@@ -66,12 +66,12 @@ public class AdminController {
 
 	@ApiOperation(value = "修改密码", notes = "修改密码")
 	@PatchMapping("/password")
-	public Map<String, Object> updatePassword(@RequestBody @Validated AdminPasswordEditForm adminPasswordEditForm, HttpSession session) {
+	public Map<String, Object> updatePassword(@RequestBody @Validated PasswordEditForm passwordEditForm, HttpSession session) {
 		//String username = ((Admin) session.getAttribute("admin")).getUsername();
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		Admin admin=(Admin)authentication.getPrincipal();
 		Map<String, Object> map = new HashMap<String, Object>();
-		adminService.updatePassword(admin.getUsername(),adminPasswordEditForm.getPassword(),adminPasswordEditForm.getNewPass(),adminPasswordEditForm.getRePass());
+		adminService.updatePassword(admin.getUsername(), passwordEditForm.getPassword(), passwordEditForm.getNewPass(), passwordEditForm.getRePass());
 		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
 		map.put(Constant.JSON_MESSAGE, "密码修改成功");
 		return map;

@@ -3,6 +3,7 @@ package com.lcvc.ebuy_springboot.service.impl;
 import com.lcvc.ebuy_springboot.dao.CustomerDao;
 import com.lcvc.ebuy_springboot.dao.ProductOrderDao;
 import com.lcvc.ebuy_springboot.model.Customer;
+import com.lcvc.ebuy_springboot.model.WebConfig;
 import com.lcvc.ebuy_springboot.model.base.Constant;
 import com.lcvc.ebuy_springboot.model.base.PageObject;
 import com.lcvc.ebuy_springboot.model.exception.MyDataException;
@@ -34,8 +35,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Autowired
     private ProductOrderDao productOrderDao;
 
-    @Override
-    public boolean login(String username, String password) {
+    private boolean login(String username, String password) {
         boolean judge=false;
         if(StringUtils.isEmpty(username)){
             throw new MyWebException("登陆失败：账户名不能为空");
@@ -47,6 +47,38 @@ public class CustomerServiceImpl implements CustomerService {
             }
         }
         return judge;
+    }
+
+
+    /**
+     * 专门用于完善客户订单模块的数据
+     * @param customer 必须包含数据库的基本字段
+     */
+    private void getCustomerOrderParam(Customer customer){
+        //获取客户拥有的订单数量
+        ProductOrderQuery productOrderQuery=new ProductOrderQuery();
+        productOrderQuery.setCustomer(customer);
+        customer.setProductOrderNumber(productOrderDao.querySize(productOrderQuery));
+        //获取该客户拥有的待付款订单数
+        productOrderQuery=new ProductOrderQuery();
+        productOrderQuery.setCustomer(customer);
+        productOrderQuery.setTag(0);
+        customer.setPayTagOrderNumber(productOrderDao.querySize(productOrderQuery));
+        //获取该客户拥有的待发货订单数
+        productOrderQuery.setTag(1);
+        customer.setSendTagOrderNumber(productOrderDao.querySize(productOrderQuery));
+        //获取该客户拥有的待收货订单数
+        productOrderQuery.setTag(2);
+        customer.setReceiveTagOrderNumber(productOrderDao.querySize(productOrderQuery));
+    }
+
+    @Override
+    public boolean login(String username, String password,WebConfig webConfig) {
+        //前面已经经过spring验证框架的验证
+        if(webConfig.getCloseLoginOfCustomer()){
+            throw new MyServiceException("登陆失败：系统当前禁止客户登陆");
+        }
+        return this.login(username,password);
     }
 
     @Override
@@ -78,10 +110,8 @@ public class CustomerServiceImpl implements CustomerService {
             }else{
                 customer.setInitialPasswordStatus(false);
             }
-            //获取客户拥有的订单数量
-            ProductOrderQuery productOrderQuery=new ProductOrderQuery();
-            productOrderQuery.setCustomer(customer);
-            customer.setProductOrderNumber(productOrderDao.querySize(productOrderQuery));
+            //获取客户购买的订单数据
+            this.getCustomerOrderParam(customer);
         }
         return pageObject;
     }
@@ -140,6 +170,38 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    public void regCustomer(Customer customer, String inviteCode, WebConfig webConfig) {
+        //前面已经经过spring验证框架的验证
+        if(webConfig.getCloseRegOfCustomer()){
+            throw new MyServiceException("注册失败：系统当前禁止注册客户");
+        }
+        if(!StringUtils.isEmpty(webConfig.getInviteCodeOfCustomer())){//如果邀请码不为空
+            if(!inviteCode.equals(webConfig.getInviteCodeOfCustomer())){
+                throw new MyWebException("注册失败：邀请码不正确，请咨询管理员要正确的邀请码");
+            }
+        }
+        if(customer!=null){
+            if(customer.getUsername()==null){
+                throw new MyWebException("注册失败：账户名不能为空");
+            }else if(customer.getPassword()==null){//如果有重名的
+                throw new MyServiceException("注册失败：密码不能为空");
+            }else if(customer.getName()==null){
+                throw new MyWebException("注册失败：姓名不能为空");
+            }else if(customer.getSex()==null){
+                throw new MyWebException("注册失败：性别不能为空");
+            }else if(customerDao.countUsername(customer.getUsername())>0){//如果有重名的
+                throw new MyServiceException("注册失败：账户名重名");
+            }else{
+                customer.setPassword(SHA.getResult(customer.getPassword()));//加密密码
+                customer.setCreateTime(Calendar.getInstance().getTime());//获取当前时间为创建时间
+                customerDao.save(customer);
+            }
+        }else{
+            throw new MyWebException("客户信息创建失败：表单数据不能为空");
+        }
+    }
+
+    @Override
     public Customer getCustomer(Integer id,String basePath) {
         Customer customer=null;
         if(id!=null){
@@ -149,6 +211,8 @@ public class CustomerServiceImpl implements CustomerService {
                 if(!StringUtils.isEmpty(customer.getPicUrl())){//只要有图片则加上绝对地址
                     customer.setPicUrl(basePath+ Constant.CUSTOMER_PROFILE_PICTURE_URL+customer.getPicUrl());
                 }
+                //获取客户购买的订单数据
+                this.getCustomerOrderParam(customer);
             }else{
                 throw new MyDataException("客户信息读取失败：找不到指定的客户信息");
             }
@@ -179,5 +243,20 @@ public class CustomerServiceImpl implements CustomerService {
         Customer customer=new Customer(id);
         customer.setPassword(SHA.getResult("123456"));
         customerDao.update(customer);
+    }
+
+    @Override
+    public void updatePassword(String username, String password, String newPass, String rePass) {
+        //在web层已对密码字段进行验证
+        if(!newPass.equals(rePass)){
+            throw new MyWebException("密码修改失败：确认密码与新密码必须相同");
+        }
+        if(this.login(username, password)){//说明原密码正确
+            Customer customer=customerDao.getCustomerByUsername(username);
+            customer.setPassword(SHA.getResult(newPass));//设置新密码
+            customerDao.update(customer);
+        }else{
+            throw new MyServiceException("密码修改失败：原密码错误");
+        }
     }
 }

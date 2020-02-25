@@ -21,7 +21,7 @@ public class ProductOrder implements java.io.Serializable {
 	private Customer customer;//客户类
 	@Length(min = 1, max = 10, message = "姓名长度必须在 {min} - {max} 之间")
 	private String sendName;//收货人姓名
-	@Length(min = 1, max = 100, message = "地址长度必须在 {min} - {max} 之间")
+	@Length(min = 2, max = 100, message = "地址长度必须在 {min} - {max} 之间")
 	private String sendAddress;//收货人地址
 	@Pattern(regexp = "\\d{6}",message = "客户邮编格式错误")//限制必须符合指定的正则表达式，注意是0也可以
 	private String sendZip;//收货人邮编
@@ -43,6 +43,7 @@ public class ProductOrder implements java.io.Serializable {
 	//非数据库字段
 	private List<ProductOrderDetail> productOrderDetails = new ArrayList<ProductOrderDetail>();
 	private BigDecimal totalPrice=new BigDecimal("0.00");//该订单的总交易额，作为原价总和。从扩展性说，总价可以放入数据库，本项目暂时不放
+
 	//private Integer totalNumberOfOrder;//该订单的订单数量
 
 	public ProductOrder() {
@@ -188,6 +189,7 @@ public class ProductOrder implements java.io.Serializable {
 	public void setReceiveTime(Date receiveTime) {
 		this.receiveTime = receiveTime;
 	}
+
 
 	/**
 	 * 判断该订单是否允许更改

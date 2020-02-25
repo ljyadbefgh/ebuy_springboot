@@ -66,5 +66,5 @@ public class Constant {
         }
     };
 
-    public final static int maxProductNumberByBuy=20;//表示每次下单时商品的最大购买数量(包含)
+    public final static int maxProductNumberByBuy=10;//表示每次下单时商品的最大购买数量(包含)
 }

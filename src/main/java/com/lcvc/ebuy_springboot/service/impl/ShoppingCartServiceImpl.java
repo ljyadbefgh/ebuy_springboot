@@ -42,29 +42,44 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 			//获取购物车里的商品集合
 			List<ShoppingCartItem> list=shoppingCart.getList();
 			for(ShoppingCartItem item:list){
-				Product product=item.getProduct();
-				productNumber+=item.getNumber();
-				//计算该商品项的原价总和
-				BigDecimal originalPrice=product.getOriginalPrice().multiply(BigDecimal.valueOf(item.getNumber())).setScale(2,BigDecimal.ROUND_HALF_UP);
-				//计算该商品项的当前价格总和
-				BigDecimal price=product.getPrice().multiply(BigDecimal.valueOf(item.getNumber())).setScale(2,BigDecimal.ROUND_HALF_UP);
-				//计算该商品项共优惠了多少金额
-				BigDecimal reducePrice=originalPrice.subtract(price);
-				item.setOriginalPriceTotal(originalPrice);
-				item.setPriceTotal(price);
-				item.setPriceTotalRuduce(reducePrice);
-				//计算购物车所有商品的原价总和
-				originalPriceTotal=originalPriceTotal.add(originalPrice);
-				//计算购物车所有商品的当前价格总和
-				priceTotal=priceTotal.add(price);
-				//计算购物车所有商品共优惠了多少金额
-				priceTotalRuduce=priceTotalRuduce.add(reducePrice);
+				Product product=productDao.getSimple(item.getProduct().getId());//从数据库获取最新的产品信息
+				if(product!=null) {//如果商品存在
+					item.setProduct(product);//将商品信息更新
+					productNumber+=item.getNumber();
+					//计算该商品项的原价总和
+					BigDecimal originalPrice=product.getOriginalPrice().multiply(BigDecimal.valueOf(item.getNumber())).setScale(2,BigDecimal.ROUND_HALF_UP);
+					//计算该商品项的当前价格总和
+					BigDecimal price=product.getPrice().multiply(BigDecimal.valueOf(item.getNumber())).setScale(2,BigDecimal.ROUND_HALF_UP);
+					//计算该商品项共优惠了多少金额
+					BigDecimal reducePrice=originalPrice.subtract(price);
+					item.setOriginalPriceTotal(originalPrice);
+					item.setPriceTotal(price);
+					item.setPriceTotalRuduce(reducePrice);
+					//计算购物车所有商品的原价总和
+					originalPriceTotal=originalPriceTotal.add(originalPrice);
+					//计算购物车所有商品的当前价格总和
+					priceTotal=priceTotal.add(price);
+					//计算购物车所有商品共优惠了多少金额
+					priceTotalRuduce=priceTotalRuduce.add(reducePrice);
+				}else{//如果商品已经不存在
+					throw new MyWebException("操作错误：商品("+item.getProduct().getName()+")不存在,请从购物车移除");
+				}
+
 			}
 			shoppingCart.setProductNumber(productNumber);
 			shoppingCart.setOriginalPriceTotal(originalPriceTotal);
 			shoppingCart.setPriceTotal(priceTotal);
 			shoppingCart.setPriceTotalRuduce(priceTotalRuduce);
 		}
+	}
+
+	@Override
+	public ShoppingCart getShoppingCart(ShoppingCart shoppingCart) {
+		if(shoppingCart!=null){
+			//最后对购物车中数据进行计算
+			countShoppingCart(shoppingCart);
+		}
+		return shoppingCart;
 	}
 
 	@Override
@@ -108,10 +123,10 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 			//将购物车原有商品数量和新购买的商品数量相加
 			int number=numberOfSale+numberOfCart;
 			//检查库存是否足够
-			if(number<=product.getRepository().intValue()){
-				shoppingCartItemOfOriginal.setNumber(number);
-			}else if(number> Constant.maxProductNumberByBuy){
+			if(number> Constant.maxProductNumberByBuy){
 				throw new MyServiceException("操作错误：同一件商品一次不能购买超过"+Constant.maxProductNumberByBuy+"件");
+			}else if(number<=product.getRepository().intValue()){
+				shoppingCartItemOfOriginal.setNumber(number);
 			}else{
 				throw new MyWebException("操作错误：商品"+product.getName()+"库存不足");
 			}

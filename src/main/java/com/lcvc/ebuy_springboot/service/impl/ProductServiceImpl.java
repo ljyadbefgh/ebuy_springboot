@@ -37,23 +37,31 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private ProductOrderDetailDao productOrderDetailDao;
 
+    /**
+     * 专门用于完善产品要统计的销售类数据
+     * @param product 必须包含数据库的基本字段
+     */
+    private void getProductSaleParam(Product product){
+        //处理订单信息
+        ProductOrderDetailQuery productOrderDetailQuery=new ProductOrderDetailQuery();
+        productOrderDetailQuery.setProduct(product);
+        List<ProductOrderDetail> productOrderDetails=productOrderDetailDao.readAll(productOrderDetailQuery);//获取该产品对应的子订单集合
+        product.setProductOrderDetailNumber(productOrderDetails.size());//获取商品的订单数量
+        product.setSalesVolume(0);//设置初始销售量0
+        product.setSale(new BigDecimal("0.00"));//设置初始销售额
+        for(ProductOrderDetail productOrderDetail:productOrderDetails){//遍历子订单进行价格计算
+            product.setSalesVolume(product.getSalesVolume()+productOrderDetail.getProductNumber());//计算总销量
+            product.setSale(product.getSale().add(productOrderDetail.getPrice()));//计算总销售额
+        }
+    }
+
     @Override
     public PageObject searchProducts(Integer page, Integer limit, ProductQuery productQuery) {
         PageObject pageObject = new PageObject(limit,page,productDao.querySize(productQuery));
         pageObject.setList(productDao.query(pageObject.getOffset(),pageObject.getLimit(),productQuery));
         BigDecimal totalPrice=new BigDecimal("0.00");//默认总价
         for(Product product:(List<Product>)pageObject.getList()){
-            //处理订单信息
-            ProductOrderDetailQuery productOrderDetailQuery=new ProductOrderDetailQuery();
-            productOrderDetailQuery.setProduct(product);
-            List<ProductOrderDetail> productOrderDetails=productOrderDetailDao.readAll(productOrderDetailQuery);//获取该产品对应的子订单集合
-            product.setProductOrderDetailNumber(productOrderDetails.size());//获取商品的订单数量
-            product.setSalesVolume(0);//设置初始销售量0
-            product.setSale(new BigDecimal("0.00"));//设置初始销售额
-            for(ProductOrderDetail productOrderDetail:productOrderDetails){//遍历子订单进行价格计算
-                product.setSalesVolume(product.getSalesVolume()+productOrderDetail.getProductNumber());//计算总销量
-                product.setSale(product.getSale().add(productOrderDetail.getPrice()));//计算总销售额
-            }
+           this.getProductSaleParam(product);//获取销售方面的统计数据
         }
         return pageObject;
     }
@@ -122,7 +130,12 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product getProduct(Integer id) {
-        return productDao.get(id);
+        Product product=productDao.get(id);
+        if(product!=null){
+            this.getProductSaleParam(product);//获取销售方面的统计数据
+        }
+        return product;
+
     }
 
     @Override

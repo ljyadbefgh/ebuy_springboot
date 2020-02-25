@@ -94,6 +94,9 @@ public class ProductOrderServiceImpl implements ProductOrderService {
                 product.setRepository(product.getRepository()-item.getNumber());//将产品库存-本次购买数量
                 productDao.update(product);
             }
+            //清空购物车
+            list.clear();
+            shoppingCart=null;
         }else{//如果没有商品
             throw new MyWebException("保存失败:请先购买商品再下单");
         }
@@ -123,6 +126,23 @@ public class ProductOrderServiceImpl implements ProductOrderService {
     }
 
     @Override
+    public List<ProductOrder> search(ProductOrderQuery productOrderQuery) {
+        List<ProductOrder> list=productOrderDao.readAll(productOrderQuery);
+        for(ProductOrder productOrder:list){
+            BigDecimal totalPrice=new BigDecimal("0.00");//默认总价
+            //处理订单信息
+            for(ProductOrderDetail productOrderDetail:productOrder.getProductOrderDetails()){//遍历子订单
+                //计算子订单的价格
+                BigDecimal priceTotal=productOrderDetail.getPrice().multiply(BigDecimal.valueOf(productOrderDetail.getProductNumber()));
+                productOrderDetail.setPriceTotal(priceTotal);
+                totalPrice=totalPrice.add(priceTotal);
+            }
+            productOrder.setTotalPrice(totalPrice);
+        }
+        return list;
+    }
+
+    @Override
     public ProductOrder get(@NotNull String orderNo) {
         ProductOrder productOrder=productOrderDao.get(orderNo);
         BigDecimal totalPrice=new BigDecimal("0.00");//默认总价
@@ -138,7 +158,13 @@ public class ProductOrderServiceImpl implements ProductOrderService {
     }
 
     @Override
-    public void save(ShoppingCart shoppingCart,ProductOrder productOrder,Customer customer) {
+    public String save(ShoppingCart shoppingCart,ProductOrder productOrder,Customer customer) {
+        if(shoppingCart.getList().size()==0){
+            throw new MyWebException("保存失败:购物车中的没有商品，请选购商品后再下单");
+        }
+        if(productOrder.getPaymentType()==null){
+            throw new MyWebException("保存失败:请选择支付方式");
+        }
         if(productOrder.getSendName()==null){
             throw new MyWebException("保存失败:请输入收货人名字");
         }
@@ -163,6 +189,7 @@ public class ProductOrderServiceImpl implements ProductOrderService {
         productOrderDao.save(productOrder);//保存订单
         //保存子订单，将购物车的数据拿出来
         this.saveShoppingCart(shoppingCart,productOrder);
+        return productOrder.getOrderNo();//返回订单号
     }
 
     @Override
@@ -251,7 +278,7 @@ public class ProductOrderServiceImpl implements ProductOrderService {
         }
     }
 
-    @Override
+   /* @Override
     public void updatePaymentStatusForPay(@Valid @NotNull String OrderNo, @NotNull Admin admin) {
         ProductOrder productOrderOriginal =productOrderDao.get(OrderNo);//获取原订单信息
         if(productOrderOriginal!=null){
@@ -282,7 +309,7 @@ public class ProductOrderServiceImpl implements ProductOrderService {
         }else{
             throw new MyWebException("修改失败:找不到订单");
         }
-    }
+    }*/
 
     @Override
     public void updateTagForMerchantShipped(@Valid @NotNull String OrderNo, @NotNull Admin admin) {
@@ -312,6 +339,9 @@ public class ProductOrderServiceImpl implements ProductOrderService {
                 throw new MyServiceException("修改失败:订单必须先处于待收货状态才能确认收货");
             }
             productOrderOriginal.setTag(3);//修改订单状态为已收货
+            if(productOrderOriginal.getPaymentType()==2){//如果是货到付款方式
+                productOrderOriginal.setPaymentStatus(1);//付款状态变为已付款
+            }
             productOrderOriginal.setReceiveTime(Calendar.getInstance().getTime());//收货时间
             productOrderDao.update(productOrderOriginal);//保存到数据库
         }else{

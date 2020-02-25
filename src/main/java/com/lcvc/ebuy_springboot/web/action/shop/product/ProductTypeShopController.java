@@ -34,7 +34,8 @@ public class ProductTypeShopController {
 
 
 	@ApiOperation(value = "获取所有产品栏目信息", notes = "获取所有产品栏目信息")
-	@GetMapping(value = "/listProductType")
+	//@GetMapping(value = "/listProductType")
+	@GetMapping
 	public Map<String, Object> listProductType(HttpServletRequest request){
         Map<String, Object> map=new HashMap<String, Object>();
 		String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+request.getContextPath()+"/";//获取项目根目录网址

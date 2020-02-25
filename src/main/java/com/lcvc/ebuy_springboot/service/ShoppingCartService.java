@@ -7,6 +7,16 @@ import com.lcvc.ebuy_springboot.model.ShoppingCart;
  */
 public interface ShoppingCartService {
 
+	/**
+	 * 获取购物车信息
+	 * 说明：
+	 * 1.将对购物车的商品信息进行更新
+	 * 2.对购物车中的商品总价进行重新计算
+	 * @param shoppingCart 购物车类
+	 * @return 购物车类。特别说明：如果shoppingCart不为Null，则不需要获取返回值来保存购物车类
+	 */
+	ShoppingCart getShoppingCart(ShoppingCart shoppingCart);
+
 
 	/**
 	 * 将商品放入购物车内

@@ -1,10 +1,14 @@
 package com.lcvc.ebuy_springboot.config;
 
 import com.lcvc.ebuy_springboot.web.interceptor.LoginForAdminInterceptor;
+import com.lcvc.ebuy_springboot.web.interceptor.LoginForCustomerInterceptor;
+import com.lcvc.ebuy_springboot.web.interceptor.WebConfigInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.util.LinkedList;
 
 /**
  * 拦截器配置
@@ -19,6 +23,18 @@ public class WebConfigurer implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
+        //网站配置信息的拦截器
+        registry.addInterceptor(webConfigInterceptor())
+                .addPathPatterns("/api/**");//要拦截的路径
+        //管理客户登陆的拦截器
+       registry.addInterceptor(loginForCustomerInterceptor())
+            .addPathPatterns("/api/shop/customer/**")//要拦截的路径
+               .addPathPatterns("/api/shop/order/**")//要拦截的路径
+            .excludePathPatterns(new LinkedList<String>(){{//不拦截的路径（一般指addPathPatterns中包含，但是不进行拦截的特例）
+                add("/api/shop/customer/login");
+                add("/api/shop/customer/logout");
+                add("/api/shop/customer/reg");
+            }});
         //管理账户登陆的拦截器
      /*  registry.addInterceptor(lginForAdminInterceptor())
                 .addPathPatterns("/api/backstage/**")//要拦截的路径
@@ -33,5 +49,17 @@ public class WebConfigurer implements WebMvcConfigurer {
     @Bean
     public LoginForAdminInterceptor lginForAdminInterceptor() {
         return new LoginForAdminInterceptor();
+    }
+
+    //客户信息的拦截器
+    @Bean
+    public LoginForCustomerInterceptor loginForCustomerInterceptor() {
+        return new LoginForCustomerInterceptor();
+    }
+
+    //网站配置的拦截器
+    @Bean
+    public WebConfigInterceptor webConfigInterceptor() {
+        return new WebConfigInterceptor();
     }
 }

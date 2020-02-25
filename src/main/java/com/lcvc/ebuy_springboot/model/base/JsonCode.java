@@ -5,8 +5,8 @@ package com.lcvc.ebuy_springboot.model.base;
  */
 public enum JsonCode {
     SUCCESS(0),
-    ERROR(-1);
-    //LOGIN(-2);
+    ERROR(-1),
+    LOGIN(-9);
 
     private Integer value;
 

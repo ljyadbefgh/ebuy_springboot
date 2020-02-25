@@ -28,6 +28,7 @@ public class ShoppingCartController {
         Map<String, Object> map=new HashMap<String, Object>();
         map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
         ShoppingCart cart=(ShoppingCart)session.getAttribute("shoppingCart");
+        cart=shoppingCartService.getShoppingCart(cart);
         map.put(Constant.JSON_DATA,cart);
         return map;
     }
@@ -38,7 +39,7 @@ public class ShoppingCartController {
             @ApiImplicitParam(name = "number", value = "数量", required = true, dataType = "int",example="1")
     })
     @PostMapping
-    public Map<String, Object> putProductToCart(@RequestParam Integer productId,@RequestParam Integer number, HttpSession session){
+    public Map<String, Object> putProductToCart(Integer productId,Integer number, HttpSession session){
         Map<String, Object> map=new HashMap<String, Object>();
         ShoppingCart cart=(ShoppingCart)session.getAttribute("shoppingCart");
         cart=shoppingCartService.addShoppingCart(cart,productId,number);
@@ -57,10 +58,18 @@ public class ShoppingCartController {
     public Map<String, Object> modifyCart(Integer productId,Integer number, HttpSession session){
         Map<String, Object> map=new HashMap<String, Object>();
         ShoppingCart cart=(ShoppingCart)session.getAttribute("shoppingCart");
-        shoppingCartService.updateShoppingCart(cart,productId,number);
-        session.setAttribute("shoppingCart", cart);
-        map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
-        map.put(Constant.JSON_DATA,cart);
+        try {
+            shoppingCartService.updateShoppingCart(cart,productId,number);
+            map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
+            map.put(Constant.JSON_DATA,cart);
+        } catch (Exception e) {//这里手动处理异常，保证错误的时候也能返回原来的值
+            map.put(Constant.JSON_CODE, JsonCode.ERROR.getValue());
+            map.put(Constant.JSON_MESSAGE, e.getMessage());
+        } finally {
+            session.setAttribute("shoppingCart", cart);//错误的话也将原来的购物车的值重新存入session，主要起刷新的作用
+            map.put(Constant.JSON_DATA,cart);//如果错误，则返回原来的购物车值
+        }
+
         return map;
     }
 

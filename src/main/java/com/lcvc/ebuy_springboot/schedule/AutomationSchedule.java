@@ -36,7 +36,7 @@ public class AutomationSchedule {
      */
     @Scheduled(cron = "0 10 05 ? * *")
     public void updateProductRepositoryByIncreasementTask(){
-        productDao.updateProductRepositoryByIncreasement(20,30);
+        productDao.updateProductRepositoryByIncreasement(40,50);
     }
 
 
@@ -82,12 +82,13 @@ public class AutomationSchedule {
     }
 
     /**
+     * 废弃方法，管理员不再负责处理支付问题
      * 模拟管理员操作，将当前的所有订单都修改为支付状态
      * 设计为每天晚上11点35分执行自动购买
      * 说明：
      * 1.只有已经收货的才能付款
      */
-    @Scheduled(cron = "0 35 23 ? * *")
+    /*@Scheduled(cron = "0 35 23 ? * *")
     public void updatePaymentStatusForPayByAdminTask(){
         //模拟管理员操作。必须是已收货状态才能更改
         ProductOrderQuery productOrderQuery=new ProductOrderQuery();
@@ -98,7 +99,7 @@ public class AutomationSchedule {
         for(ProductOrder productOrder:list){//这里如果数量多可能崩掉，未来再增加批量保存
             productOrderService.updatePaymentStatusForPay(productOrder.getOrderNo(),new Admin(-99));//修改订单状态为已购买状态
         }
-    }
+    }*/
 
     /**
      * 将订单变为已发货状态
@@ -119,13 +120,13 @@ public class AutomationSchedule {
     /**
      * 将订单变为已收货状态
      * 设计为每天晚上11点45分执行自动购买
-     * 1.必须是已经发货后满2天
+     * 1.必须是已经发货后满3天
      */
     @Scheduled(cron = "0 45 23 ? * *")
     public void updateTagForReceptionTask(){
         ProductOrderQuery productOrderQuery=new ProductOrderQuery();
         productOrderQuery.setTag(2);//处于已发货状态
-        productOrderQuery.setSendTimeQueryOfEnd(MyDateUtil.getDateBefore(new Date(),2));//发货时间在2天以前
+        productOrderQuery.setSendTimeQueryOfEnd(MyDateUtil.getDateBefore(new Date(),3));//发货时间在2天以前
         List<ProductOrder> list=productOrderDao.readAll(productOrderQuery);//查出所有满足条件的订单
         for(ProductOrder productOrder:list){//这里如果数量多可能崩掉，未来再增加批量保存
             productOrderService.updateTagForReception(productOrder.getOrderNo(),productOrder.getCustomer());//修改订单状态为已收货状态
