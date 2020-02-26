@@ -3,9 +3,10 @@ package com.lcvc.ebuy_springboot.service.impl;
 import com.lcvc.ebuy_springboot.dao.ProductDao;
 import com.lcvc.ebuy_springboot.dao.ProductOrderDao;
 import com.lcvc.ebuy_springboot.dao.ProductOrderDetailDao;
+import com.lcvc.ebuy_springboot.dao.WebConfigDao;
 import com.lcvc.ebuy_springboot.model.Product;
 import com.lcvc.ebuy_springboot.model.ProductOrderDetail;
-import com.lcvc.ebuy_springboot.model.base.Constant;
+import com.lcvc.ebuy_springboot.model.WebConfig;
 import com.lcvc.ebuy_springboot.model.base.PageObject;
 import com.lcvc.ebuy_springboot.model.exception.MyServiceException;
 import com.lcvc.ebuy_springboot.model.exception.MyWebException;
@@ -32,6 +33,8 @@ public class ProductOrderDetailServiceImpl implements ProductOrderDetailService 
     private ProductOrderDetailDao productOrderDetailDao;
     @Autowired
     private ProductDao productDao;
+    @Autowired
+    private WebConfigDao webConfigDao;
 
     @Override
     public PageObject search(Integer page, Integer limit, ProductOrderDetailQuery productOrderDetailQuery) {
@@ -47,6 +50,8 @@ public class ProductOrderDetailServiceImpl implements ProductOrderDetailService 
 
     @Override
     public void updateProductOrderDetail(ProductOrderDetail productOrderDetail) {
+        WebConfig webConfig=webConfigDao.get();//读取网站配置信息
+        Integer maxSingleProductNumberByBuy=webConfig.getMaxSingleProductNumberByBuy();
         if(productOrderDetail.getId()==null){
             throw new MyWebException("编辑失败：缺少主键");
         }
@@ -57,8 +62,8 @@ public class ProductOrderDetailServiceImpl implements ProductOrderDetailService 
         if(productOrderDetailOriginal.getProductOrder().getStrikePrice()!=null){//如果已经设定了成交价，即管理员给了优惠
             throw new MyServiceException("修改失败：该订单已经有成交价，请取消后再修改");
         }
-        if(productOrderDetail.getProductNumber()> Constant.maxProductNumberByBuy){
-            throw new MyServiceException("操作错误：同一件商品一次不能购买超过"+Constant.maxProductNumberByBuy+"件");
+        if(maxSingleProductNumberByBuy>0 && productOrderDetail.getProductNumber()> maxSingleProductNumberByBuy){
+            throw new MyServiceException("操作错误：同一件商品一次不能购买超过"+maxSingleProductNumberByBuy+"件");
         }
         Product product=productDao.getSimple(productOrderDetailOriginal.getProduct().getId());//从数据库获取最新的产品信息
         if(product!=null){//如果商品存在

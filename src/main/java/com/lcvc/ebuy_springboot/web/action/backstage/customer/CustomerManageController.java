@@ -85,6 +85,7 @@ public class CustomerManageController {
 	public Map<String, Object> updateCustomer(@RequestBody Customer customer){
 		Map<String, Object> map=new HashMap<String, Object>();
 		customer.setPassword(null);//将密码字段去除，不修改密码，也不加入验证
+		customer.setPicUrl(null);//更新不能更改上传图片，只能用上传图片方式更改
 		customerService.updateCustomer(customer);
 		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
 		map.put(Constant.JSON_MESSAGE, "账户信息修改成功");

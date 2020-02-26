@@ -2,7 +2,6 @@ package com.lcvc.ebuy_springboot.service;
 
 
 import com.lcvc.ebuy_springboot.model.Customer;
-import com.lcvc.ebuy_springboot.model.WebConfig;
 import com.lcvc.ebuy_springboot.model.base.PageObject;
 import com.lcvc.ebuy_springboot.model.exception.MyWebException;
 import com.lcvc.ebuy_springboot.model.query.CustomerQuery;
@@ -16,10 +15,9 @@ public interface CustomerService {
      * 说明：如果系统当前禁止登陆，则无法登陆
      * @param username 账户名
      * @param password 密码
-     * @param webConfig 网站配置对象，必须有数据库所有值
      * @return null表示登录失败
      */
-    boolean login(String username, String password, @NotNull WebConfig webConfig);
+    boolean login(String username, String password);
 
     /**
      * 获取客户的总记录数
@@ -79,10 +77,9 @@ public interface CustomerService {
      * 3.如果当前禁止注册，则无法注册
      * @param customer
      * @param inviteCode 邀请码
-     * @param webConfig 网站配置对象，必须有数据库所有值
      * @throws MyWebException
      */
-    void regCustomer(@Valid @NotNull Customer customer, String inviteCode,  @NotNull WebConfig webConfig);
+    void regCustomer(@Valid @NotNull Customer customer, String inviteCode);
 
 
     /**

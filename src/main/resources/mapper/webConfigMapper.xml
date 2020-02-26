@@ -17,6 +17,9 @@
             <if test="inviteCodeOfCustomer!=null">inviteCodeOfCustomer=#{inviteCodeOfCustomer},</if>
             <if test="closeRegOfCustomer!=null">closeRegOfCustomer=#{closeRegOfCustomer},</if>
             <if test="closeLoginOfCustomer!=null">closeLoginOfCustomer=#{closeLoginOfCustomer},</if>
+            <if test="maxSingleProductNumberByBuy!=null">maxSingleProductNumberByBuy=#{maxSingleProductNumberByBuy},</if>
+            <if test="maxProductNumberInCart!=null">maxProductNumberInCart=#{maxProductNumberInCart},</if>
+            <if test="maxProductOrderNumberInToday!=null">maxProductOrderNumberInToday=#{maxProductOrderNumberInToday},</if>
         </set>
         where id=#{id}
     </update>

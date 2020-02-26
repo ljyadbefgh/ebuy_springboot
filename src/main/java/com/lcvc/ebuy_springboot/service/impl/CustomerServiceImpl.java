@@ -2,6 +2,7 @@ package com.lcvc.ebuy_springboot.service.impl;
 
 import com.lcvc.ebuy_springboot.dao.CustomerDao;
 import com.lcvc.ebuy_springboot.dao.ProductOrderDao;
+import com.lcvc.ebuy_springboot.dao.WebConfigDao;
 import com.lcvc.ebuy_springboot.model.Customer;
 import com.lcvc.ebuy_springboot.model.WebConfig;
 import com.lcvc.ebuy_springboot.model.base.Constant;
@@ -34,8 +35,16 @@ public class CustomerServiceImpl implements CustomerService {
     private CustomerDao customerDao;
     @Autowired
     private ProductOrderDao productOrderDao;
+    @Autowired
+    private WebConfigDao webConfigDao;
 
-    private boolean login(String username, String password) {
+    /**
+     * 单纯进行登陆验证，不考虑其他验证
+     * @param username
+     * @param password
+     * @return
+     */
+    private boolean loginOfSimple(String username, String password) {
         boolean judge=false;
         if(StringUtils.isEmpty(username)){
             throw new MyWebException("登陆失败：账户名不能为空");
@@ -73,12 +82,9 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public boolean login(String username, String password,WebConfig webConfig) {
+    public boolean login(String username, String password) {
         //前面已经经过spring验证框架的验证
-        if(webConfig.getCloseLoginOfCustomer()){
-            throw new MyServiceException("登陆失败：系统当前禁止客户登陆");
-        }
-        return this.login(username,password);
+        return this.loginOfSimple(username,password);
     }
 
     @Override
@@ -170,8 +176,9 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public void regCustomer(Customer customer, String inviteCode, WebConfig webConfig) {
+    public void regCustomer(Customer customer, String inviteCode) {
         //前面已经经过spring验证框架的验证
+        WebConfig webConfig=webConfigDao.get();//读取网站配置信息
         if(webConfig.getCloseRegOfCustomer()){
             throw new MyServiceException("注册失败：系统当前禁止注册客户");
         }
@@ -234,6 +241,11 @@ public class CustomerServiceImpl implements CustomerService {
         }else if(customer.getName()!=null&&customer.getName().equals("")){//姓名验证
             throw new MyWebException("客户信息编辑失败：姓名不能为空");
         }
+        if(!StringUtils.isEmpty(customer.getPicUrl())){//如果图片地址不为空
+            if(customer.getPicUrl().contains("http")){ // 因为图片地址是加工后（加绝对地址）传过去的，所以要注意前端未处理传回来
+               customer.setPicUrl(null);//清空该地址，表示不更新
+            }
+        }
         customer.setPassword(null);//不修改密码字段
         customerDao.update(customer);
     }
@@ -251,7 +263,7 @@ public class CustomerServiceImpl implements CustomerService {
         if(!newPass.equals(rePass)){
             throw new MyWebException("密码修改失败：确认密码与新密码必须相同");
         }
-        if(this.login(username, password)){//说明原密码正确
+        if(this.loginOfSimple(username, password)){//说明原密码正确
             Customer customer=customerDao.getCustomerByUsername(username);
             customer.setPassword(SHA.getResult(newPass));//设置新密码
             customerDao.update(customer);

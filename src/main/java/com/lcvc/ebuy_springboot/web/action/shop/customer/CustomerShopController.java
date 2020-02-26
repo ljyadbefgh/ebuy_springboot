@@ -2,7 +2,6 @@ package com.lcvc.ebuy_springboot.web.action.shop.customer;
 
 
 import com.lcvc.ebuy_springboot.model.Customer;
-import com.lcvc.ebuy_springboot.model.WebConfig;
 import com.lcvc.ebuy_springboot.model.base.Constant;
 import com.lcvc.ebuy_springboot.model.base.JsonCode;
 import com.lcvc.ebuy_springboot.model.form.PasswordEditForm;
@@ -43,7 +42,7 @@ public class CustomerShopController {
 	@PostMapping("/reg")
 	public Map<String, Object> regCustomer(@RequestBody Customer customer,String inviteCode,HttpSession session){
 		Map<String, Object> map=new HashMap<String, Object>();
-		customerService.regCustomer(customer,inviteCode,(WebConfig)session.getAttribute("webConfig"));
+		customerService.regCustomer(customer,inviteCode);
 		customer=customerService.getCustomer(customer.getUsername());//获取注册的账户信息
 		session.setAttribute("customer",customer);
 		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
@@ -60,7 +59,7 @@ public class CustomerShopController {
 	public Map<String, Object> login(String username, String password, HttpSession session){
 		Map<String, Object> map=new HashMap<String, Object>();
 		map.put(Constant.JSON_CODE, JsonCode.ERROR.getValue());
-		if(customerService.login(username, password,(WebConfig)session.getAttribute("webConfig"))){//如果登录成功
+		if(customerService.login(username, password)){//如果登录成功
 			Customer customer=customerService.getCustomer(username);
 			session.setAttribute("customer",customer);
 			map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
@@ -112,6 +111,7 @@ public class CustomerShopController {
 		customer.setId(customerSession.getId());//获取当前登陆账户的id
 		customer.setUsername(null);//不修改账户名
 		customer.setPassword(null);//将密码字段去除，不修改密码，也不加入验证
+		customer.setPicUrl(null);//更新不能更改上传图片，只能用上传图片方式更改
 		customerService.updateCustomer(customer);
 		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
 		map.put(Constant.JSON_MESSAGE, "账户信息修改成功");

@@ -85,6 +85,9 @@
                 <if test="objectQuery.sendTel!=null and objectQuery.sendTel.length()>0">
                     and sendTel=#{objectQuery.sendTel}
                 </if>
+                <if test="objectQuery.createTimeQueryOfCurrentDay!=null">
+                    and to_days(createTime)=to_days(#{objectQuery.createTimeQueryOfCurrentDay})
+                </if>
                 <bind name="createTimeQueryOfBegin" value="objectQuery.createTimeQueryOfBegin" />
                 <bind name="createTimeQueryOfEnd" value="objectQuery.createTimeQueryOfEnd" />
                 <choose>

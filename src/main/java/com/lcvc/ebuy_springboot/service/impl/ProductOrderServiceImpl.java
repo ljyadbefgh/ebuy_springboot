@@ -3,6 +3,7 @@ package com.lcvc.ebuy_springboot.service.impl;
 import com.lcvc.ebuy_springboot.dao.ProductDao;
 import com.lcvc.ebuy_springboot.dao.ProductOrderDao;
 import com.lcvc.ebuy_springboot.dao.ProductOrderDetailDao;
+import com.lcvc.ebuy_springboot.dao.WebConfigDao;
 import com.lcvc.ebuy_springboot.model.*;
 import com.lcvc.ebuy_springboot.model.base.PageObject;
 import com.lcvc.ebuy_springboot.model.exception.MyServiceException;
@@ -36,6 +37,8 @@ public class ProductOrderServiceImpl implements ProductOrderService {
     private ProductOrderDetailDao productOrderDetailDao;
     @Autowired
     private ProductDao productDao;
+    @Autowired
+    private WebConfigDao webConfigDao;
 
     /*
      * 生成订单编号（唯一），按规则生成
@@ -67,6 +70,8 @@ public class ProductOrderServiceImpl implements ProductOrderService {
      * @param productOrder 订单
      */
     private void saveShoppingCart(ShoppingCart shoppingCart,ProductOrder productOrder){
+        WebConfig webConfig=webConfigDao.get();//读取网站配置信息
+        Integer maxSingleProductNumberByBuy=webConfig.getMaxSingleProductNumberByBuy();
         List<ShoppingCartItem> list=shoppingCart.getList();
         if(list.size()>0){//如果购物车有商品
             ProductOrderDetail productOrderDetail=null;//子订单
@@ -79,6 +84,9 @@ public class ProductOrderServiceImpl implements ProductOrderService {
                     //检查库存是否足够
                     if(item.getNumber()>product.getRepository()){
                         throw new MyServiceException("操作错误：商品"+product.getName()+"库存不足");
+                    }
+                    if(maxSingleProductNumberByBuy>0 && item.getNumber()> maxSingleProductNumberByBuy){
+                        throw new MyServiceException("操作错误：同一件商品一次不能购买超过"+maxSingleProductNumberByBuy+"件");
                     }
                 }else{
                     throw new MyWebException("操作错误：商品不存在");
@@ -176,6 +184,17 @@ public class ProductOrderServiceImpl implements ProductOrderService {
         }
         if(productOrder.getSendZip()==null){
             throw new MyWebException("保存失败:请输入收货人邮编");
+        }
+        WebConfig webConfig=webConfigDao.get();//读取网站配置信息
+        Integer maxProductOrderNumberInToday=webConfig.getMaxProductOrderNumberInToday();//获取当天可以购买的最大订单数
+        if(maxProductOrderNumberInToday>0){
+            ProductOrderQuery productOrderQuery=new ProductOrderQuery();
+            productOrderQuery.setCustomer(customer);
+            productOrderQuery.setCreateTimeQueryOfCurrentDay(new Date());//查询今天的订单
+            int orderNumber=productOrderDao.querySize(productOrderQuery);//获取当天改客户下单的次数
+            if(orderNumber>=maxProductOrderNumberInToday){
+                throw new MyServiceException("保存失败:每天可以最多只能下"+maxProductOrderNumberInToday+"单，当前已下了"+orderNumber+"单");
+            }
         }
         if(productOrder.getPaymentType()==1){//如果是网上支付
             productOrder.setTag(0);//设置为待付款

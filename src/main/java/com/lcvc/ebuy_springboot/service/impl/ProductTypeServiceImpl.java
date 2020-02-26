@@ -107,6 +107,11 @@ public class ProductTypeServiceImpl implements ProductTypeService {
 
     public void updateProductType(ProductType productType) throws MyWebException {
         if(productType!=null){
+            if(!StringUtils.isEmpty(productType.getImageUrl())){//如果图片地址不为空
+                if(productType.getImageUrl().contains("http")){ // 因为图片地址是加工后（加绝对地址）传过去的，所以要注意前端未处理传回来
+                    productType.setImageUrl(null);//清空该地址，表示不更新
+                }
+            }
             productTypeDao.update(productType);
         }else{
             throw new MyWebException("产品类别编辑失败:表单异常");

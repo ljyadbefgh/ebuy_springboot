@@ -1,20 +1,21 @@
 package com.lcvc.ebuy_springboot.service.impl;
 
 import com.lcvc.ebuy_springboot.dao.ProductDao;
+import com.lcvc.ebuy_springboot.dao.WebConfigDao;
 import com.lcvc.ebuy_springboot.model.Product;
 import com.lcvc.ebuy_springboot.model.ShoppingCart;
 import com.lcvc.ebuy_springboot.model.ShoppingCartItem;
-import com.lcvc.ebuy_springboot.model.base.Constant;
+import com.lcvc.ebuy_springboot.model.WebConfig;
 import com.lcvc.ebuy_springboot.model.exception.MyServiceException;
 import com.lcvc.ebuy_springboot.model.exception.MyWebException;
 import com.lcvc.ebuy_springboot.service.ShoppingCartService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
-import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -26,8 +27,10 @@ import java.util.List;
 @Validated//表示开启sprint的校检框架，会自动扫描方法里的@Valid（@Valid注解一般写在接口即可）
 public class ShoppingCartServiceImpl implements ShoppingCartService {
 
-	@Resource
+	@Autowired
 	private ProductDao productDao;
+	@Autowired
+	private WebConfigDao webConfigDao;
 
 	/**
 	 * 对购物车里的数据进行计算
@@ -84,13 +87,15 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 
 	@Override
 	public ShoppingCart addShoppingCart(ShoppingCart shoppingCart,Integer productId,Integer numberOfSale){
+		WebConfig webConfig=webConfigDao.get();//读取网站配置信息
+		Integer maxSingleProductNumberByBuy=webConfig.getMaxSingleProductNumberByBuy();
 		if(numberOfSale==null){
 			throw new MyWebException("操作错误：产品数量不能为空");
 		}else{
 			if(numberOfSale<=0){
 				throw new MyWebException("操作错误：产品数量必须为大于0的整数");
-			}else if(numberOfSale> Constant.maxProductNumberByBuy){
-				throw new MyServiceException("操作错误：同一件商品一次不能购买超过"+Constant.maxProductNumberByBuy+"件");
+			}else if(maxSingleProductNumberByBuy>0 && numberOfSale> maxSingleProductNumberByBuy){
+				throw new MyServiceException("操作错误：同一件商品一次不能购买超过"+maxSingleProductNumberByBuy+"件");
 			}
 		}
 		if(productId==null){
@@ -123,8 +128,8 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 			//将购物车原有商品数量和新购买的商品数量相加
 			int number=numberOfSale+numberOfCart;
 			//检查库存是否足够
-			if(number> Constant.maxProductNumberByBuy){
-				throw new MyServiceException("操作错误：同一件商品一次不能购买超过"+Constant.maxProductNumberByBuy+"件");
+			if(maxSingleProductNumberByBuy>0 && number> maxSingleProductNumberByBuy){
+				throw new MyServiceException("操作错误：同一件商品一次不能购买超过"+maxSingleProductNumberByBuy+"件");
 			}else if(number<=product.getRepository().intValue()){
 				shoppingCartItemOfOriginal.setNumber(number);
 			}else{
@@ -140,6 +145,8 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 
 	@Override
 	public void updateShoppingCart(ShoppingCart shoppingCart,Integer productId,Integer numberOfSale){
+		WebConfig webConfig=webConfigDao.get();//读取网站配置信息
+		Integer maxSingleProductNumberByBuy=webConfig.getMaxSingleProductNumberByBuy();
 		int number;//要购买的产品数量
 		if(shoppingCart==null){//如果购物车不存在
 			throw new MyWebException("非法操作：请先添加商品进购物车");
@@ -149,8 +156,8 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 		}else{
 			if(numberOfSale<=0){
 				throw new MyWebException("操作错误：产品数量必须为大于0的整数");
-			}else if(numberOfSale> Constant.maxProductNumberByBuy){
-				throw new MyServiceException("操作错误：同一件商品一次不能购买超过"+Constant.maxProductNumberByBuy+"件");
+			}else if(maxSingleProductNumberByBuy>0 && numberOfSale> maxSingleProductNumberByBuy){
+				throw new MyServiceException("操作错误：同一件商品一次不能购买超过"+maxSingleProductNumberByBuy+"件");
 			}
 		}
 		if(productId==null){

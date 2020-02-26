@@ -18,6 +18,16 @@ public class ProductOrderQuery extends ProductOrder implements java.io.Serializa
     private Date receiveTimeQueryOfBegin;//收货时间——开始日期
     private Date receiveTimeQueryOfEnd;//收货时间——结束日期
 
+    private Date createTimeQueryOfCurrentDay;//查询指定日期的订单
+
+    public Date getCreateTimeQueryOfCurrentDay() {
+        return createTimeQueryOfCurrentDay;
+    }
+
+    public void setCreateTimeQueryOfCurrentDay(Date createTimeQueryOfCurrentDay) {
+        this.createTimeQueryOfCurrentDay = createTimeQueryOfCurrentDay;
+    }
+
     public Date getCreateTimeQueryOfBegin() {
         return createTimeQueryOfBegin;
     }
