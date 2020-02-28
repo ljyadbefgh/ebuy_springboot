@@ -6,7 +6,9 @@ import com.lcvc.ebuy_springboot.model.base.Constant;
 import com.lcvc.ebuy_springboot.model.base.JsonCode;
 import com.lcvc.ebuy_springboot.service.AdminService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -75,5 +77,13 @@ public class AdminLoginLogoutController {
 		return map;
 	}
 
+	@ApiOperation(value = "读取后台sessionId，用于配合ueditor上传时无法跨域的问题")
+	@GetMapping("/sessionId")
+	public Map<String, Object> getSessionId(HttpSession session){
+		Map<String, Object> map=new HashMap<String, Object>();
+		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
+		map.put(Constant.JSON_DATA,session.getId());
+		return map;
+	}
 
 }

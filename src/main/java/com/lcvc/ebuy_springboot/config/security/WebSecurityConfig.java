@@ -92,6 +92,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 //.antMatchers(HttpMethod.POST, "/api/backstage/ueditor")//表示不拦截ueditor的图片上传请求，因为ueditor在测试中发现在上传的时候无法传递cookie
                 //.antMatchers(HttpMethod.POST, "/api/backstage/login")
                 .antMatchers("/upload/**")//不拦截上传文件展示的信息
+                .antMatchers("/api/backstage/sessionId")//不拦截上传文件展示的信息
                 .antMatchers( "/api/shop/**")//不拦截前端请求
                 .antMatchers("/v2/api-docs", "/configuration/ui", "/swagger-resources", "/configuration/security", "/swagger-ui.html", "/webjars/**","/swagger-resources/configuration/ui","/swagge‌​r-ui.html")//swagger文档不拦截
                 .antMatchers( "/oauth/**")

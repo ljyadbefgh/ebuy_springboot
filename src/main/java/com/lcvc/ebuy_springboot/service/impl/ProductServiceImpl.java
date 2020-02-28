@@ -42,6 +42,9 @@ public class ProductServiceImpl implements ProductService {
      * @param product 必须包含数据库的基本字段
      */
     private void getProductSaleParam(Product product){
+        //格式化小数数据，让前端显示。但是12.00，还是可能在前端被格式化为12，所以前端也要进行处理
+        product.setOriginalPrice(product.getOriginalPrice().setScale(2,BigDecimal.ROUND_DOWN));//直接去掉多余的位数
+        product.setPrice(product.getPrice().setScale(2,BigDecimal.ROUND_DOWN));//直接去掉多余的位数
         //处理订单信息
         ProductOrderDetailQuery productOrderDetailQuery=new ProductOrderDetailQuery();
         productOrderDetailQuery.setProduct(product);
@@ -92,10 +95,16 @@ public class ProductServiceImpl implements ProductService {
             throw new MyWebException("产品保存失败：表单必须有产品名字");
         }else if(StringUtils.isEmpty(product.getPicUrl())){
             throw new MyWebException("产品保存失败：必须上传图片");
-        }else if(product.getPrice()==null){
-            throw new MyWebException("产品保存失败：必须输入当前价格");
         }else if(product.getOriginalPrice()==null){
             throw new MyWebException("产品保存失败：必须输入原价");
+        }else if(product.getOriginalPrice().compareTo(BigDecimal.ZERO)==0){
+            throw new MyWebException("产品保存失败：原价不能为0");
+        }else if(product.getPrice()==null){
+            throw new MyWebException("产品保存失败：必须输入当前价格");
+        }else if(product.getPrice().compareTo(BigDecimal.ZERO)==0){
+            throw new MyWebException("产品保存失败：当前价格不能为0");
+        }else if(product.getPrice().compareTo(product.getOriginalPrice())>0){//如果现价比原价搞
+            throw new MyWebException("产品保存失败：现价不能高于原价");
         }else if(product.getRepository()==null){
             throw new MyWebException("产品保存失败：必须输入库存");
         }else if(product.getClick()==null){
@@ -145,6 +154,14 @@ public class ProductServiceImpl implements ProductService {
             if(product.getProductType().getId()==null){
                 throw new MyWebException("产品保存失败：必须选择产品所属栏目");
             }
+        }if(product.getOriginalPrice()!=null&&product.getOriginalPrice().compareTo(BigDecimal.ZERO)==0){
+            throw new MyWebException("产品保存失败：原价不能为0");
+        }
+        if(product.getPrice()!=null&&product.getPrice().compareTo(BigDecimal.ZERO)==0){
+            throw new MyWebException("产品保存失败：当前价格不能为0");
+        }
+        if(product.getOriginalPrice()!=null&&product.getPrice()!=null&&product.getPrice().compareTo(product.getOriginalPrice())>0){//如果现价比原价搞
+            throw new MyWebException("产品保存失败：现价不能高于原价");
         }
         //如果都验证通过
         product.setFinalEditor(admin);

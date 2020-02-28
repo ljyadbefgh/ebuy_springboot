@@ -98,7 +98,7 @@
 
     <select id="query" resultMap="product">
        /* select * from product*/
-        select product.id,product.productTypeId,product.name,product.orderNum,product.price,product.originalPrice,product.picUrl,product.repository,product.click,product.onSale,product.createTime,product.creatorId,product.finalEditorId,product.updateTime from product
+        select product.id,product.productTypeId,product.name,product.orderNum,product.price,product.originalPrice,product.picUrl,product.repository,product.click,product.onSale,product.description,product.createTime,product.creatorId,product.finalEditorId,product.updateTime from product
         <include refid="queryWhere"></include>
         <choose>
             <when test="objectQuery.orderType!=null">

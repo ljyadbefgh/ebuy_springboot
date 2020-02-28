@@ -1,14 +1,15 @@
 package com.lcvc.ebuy_springboot.schedule;
 
+import com.lcvc.ebuy_springboot.dao.CustomerDao;
 import com.lcvc.ebuy_springboot.dao.ProductDao;
 import com.lcvc.ebuy_springboot.dao.ProductOrderDao;
-import com.lcvc.ebuy_springboot.model.Admin;
-import com.lcvc.ebuy_springboot.model.ProductOrder;
-import com.lcvc.ebuy_springboot.model.ProductOrderDetail;
+import com.lcvc.ebuy_springboot.model.*;
 import com.lcvc.ebuy_springboot.model.query.ProductOrderQuery;
 import com.lcvc.ebuy_springboot.service.AutomationService;
 import com.lcvc.ebuy_springboot.service.ProductOrderService;
 import com.lcvc.ebuy_springboot.util.date.MyDateUtil;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -20,11 +21,13 @@ import java.util.Random;
 
 @Service
 public class AutomationSchedule {
-
+    public static final Log log= LogFactory.getLog(AutomationSchedule.class);
     @Autowired
-    private AutomationService automationService;
+    private CustomerDao customerDao;
     @Autowired
     private ProductDao productDao;
+    @Autowired
+    private AutomationService automationService;
     @Autowired
     private ProductOrderService productOrderService;
     @Autowired
@@ -46,8 +49,49 @@ public class AutomationSchedule {
      */
     @Scheduled(cron = "0 30 05 ? * *")
     public void buyTask(){
-        int buyNumber=new Random().nextInt(6)+6;//随机购买次数为6-11
-        automationService.autoBuy(buyNumber,60000l);//每60秒购买一次
+        int buyNumber=Math.round(new Random().nextInt(5))+8;//随机购买次数为8-13
+        try {
+            this.autoBuy(buyNumber,60000l);//每60秒购买一次
+        } catch (Exception e) {
+            //让程序能顺利执行，直接捕获
+        }
+    }
+
+    /**
+     * 每隔一段时间，自动执行购买一次
+     * 说明：如果某次购买出错，则撤销该次购买；其他未错误的保留
+     * 1.随机客户
+     * 2.随机购买次数（买几次商品）
+     * 3.随机产品
+     * 4.随机购买产品数量
+     * 5.随机支付方式
+     * @param number 下订单的次数
+     * @param millisecond 单位：毫秒。表示间隔多少毫秒下一次单
+     */
+    private void autoBuy(Integer number,Long millisecond) {
+        List<Customer> customers=customerDao.readAll(null);//获取所有客户信息
+        List<Product> products=productDao.readAll(null);//获取所有产品信息
+        Customer customer=null;
+        while(number-->0){
+            if(number==1){//保证有一次是指定的客户购买，用于测试
+                customer=customerDao.get(1);
+                if(customer==null){
+                    continue;//如果已经没有这个账户，则取消本次循环。这里是为了防止未来程序出错
+                }
+            }else{
+                customer=customer=customers.get(new Random().nextInt(customers.size()));//在客户里面随机选一个
+            }
+            try {
+                automationService.buy(customer,products);//执行购买程序
+            } catch (Exception e) {//如果出现异常
+                log.error("自动购买程序出错:"+e.getMessage());
+            }
+            try {
+                Thread.sleep(millisecond);   // 休眠-毫秒
+            } catch (InterruptedException e) {
+                break;
+            }
+        }
     }
 
 

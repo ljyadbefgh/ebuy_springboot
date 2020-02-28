@@ -37,10 +37,13 @@ public class WebConfigAspect {
      * 2.如果session没有（一般是在业务层测试中），则直接从数据库读取
      */
     private WebConfig getWebConfig(){
-        RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
-        HttpServletRequest request = (HttpServletRequest) requestAttributes.resolveReference(RequestAttributes.REFERENCE_REQUEST);
-        HttpSession session=request.getSession();
-        WebConfig webConfig=(WebConfig)session.getAttribute("webConfig");//更新客户的登陆信息
+        WebConfig webConfig=null;
+        if(RequestContextHolder.getRequestAttributes()!=null){//如果是不通过web调用本aop（例如定时程序或是业务层调用，不会获得web对象）
+            RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
+            HttpServletRequest request = (HttpServletRequest) requestAttributes.resolveReference(RequestAttributes.REFERENCE_REQUEST);
+            HttpSession session=request.getSession();
+            webConfig=(WebConfig)session.getAttribute("webConfig");//更新客户的登陆信息
+        }
         if(webConfig==null){
             webConfig=webConfigService.get();//从数据库读取
         }
