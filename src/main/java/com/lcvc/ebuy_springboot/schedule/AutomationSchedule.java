@@ -49,7 +49,7 @@ public class AutomationSchedule {
      */
     @Scheduled(cron = "0 30 05 ? * *")
     public void buyTask(){
-        int buyNumber=Math.round(new Random().nextInt(5))+8;//随机购买次数为8-13
+        int buyNumber=Math.round(new Random().nextInt(10))+5;//随机购买次数为5-15
         try {
             this.autoBuy(buyNumber,60000l);//每60秒购买一次
         } catch (Exception e) {
@@ -73,7 +73,7 @@ public class AutomationSchedule {
         List<Product> products=productDao.readAll(null);//获取所有产品信息
         Customer customer=null;
         while(number-->0){
-            if(number==1){//保证有一次是指定的客户购买，用于测试
+            if(number<=3){//保证有3次是指定的客户购买，用于测试
                 customer=customerDao.get(1);
                 if(customer==null){
                     continue;//如果已经没有这个账户，则取消本次循环。这里是为了防止未来程序出错
@@ -170,7 +170,7 @@ public class AutomationSchedule {
     public void updateTagForReceptionTask(){
         ProductOrderQuery productOrderQuery=new ProductOrderQuery();
         productOrderQuery.setTag(2);//处于已发货状态
-        productOrderQuery.setSendTimeQueryOfEnd(MyDateUtil.getDateBefore(new Date(),3));//发货时间在2天以前
+        productOrderQuery.setSendTimeQueryOfEnd(MyDateUtil.getDateBefore(new Date(),3));//发货时间在3天以前
         List<ProductOrder> list=productOrderDao.readAll(productOrderQuery);//查出所有满足条件的订单
         for(ProductOrder productOrder:list){//这里如果数量多可能崩掉，未来再增加批量保存
             productOrderService.updateTagForReception(productOrder.getOrderNo(),productOrder.getCustomer());//修改订单状态为已收货状态

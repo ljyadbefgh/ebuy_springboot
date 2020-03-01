@@ -1,7 +1,6 @@
 package com.lcvc.ebuy_springboot.aop.service;
 
 
-import com.lcvc.ebuy_springboot.model.ShoppingCart;
 import com.lcvc.ebuy_springboot.model.WebConfig;
 import com.lcvc.ebuy_springboot.model.exception.MyServiceException;
 import com.lcvc.ebuy_springboot.service.WebConfigService;
@@ -66,11 +65,12 @@ public class WebConfigAspect {
 
 
     /**
+     * 20200229撤销改方法：因为在这里判断和在购物车中添加商品判断时业务重合，不如在那里直接判断更合适
      * 对购物车进行拦截，不允许购物车中不同商品的数量超过指定数量
      * @param jp
      * @throws Exception
      */
-    @Before("execution(*  com.lcvc.ebuy_springboot.service.ShoppingCartService.addShoppingCart(..))")
+   /* @Before("execution(*  com.lcvc.ebuy_springboot.service.ShoppingCartService.addShoppingCart(..))")
     public void beforeAddShoppingCart(JoinPoint jp) throws Exception {
         Integer maxProductNumberInCart=this.getWebConfig().getMaxProductNumberInCart();//获取配置中的购物车最大商品数量
         if(maxProductNumberInCart>0){//只有当数量大于0时，才进行验证。0表示不限制
@@ -86,7 +86,7 @@ public class WebConfigAspect {
                 }
             }
         }
-    }
+    }*/
 
     /*@Around("execution(* com.lcvc.ebuy_springboot.service..*.*(..)) && args(..,result)")
     public Object doAround(ProceedingJoinPoint pjp, BindingResult result) {

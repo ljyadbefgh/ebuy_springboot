@@ -89,6 +89,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 	public ShoppingCart addShoppingCart(ShoppingCart shoppingCart,Integer productId,Integer numberOfSale){
 		WebConfig webConfig=webConfigDao.get();//读取网站配置信息
 		Integer maxSingleProductNumberByBuy=webConfig.getMaxSingleProductNumberByBuy();
+		Integer maxProductNumberInCart=webConfig.getMaxProductNumberInCart();//获取配置中的购物车最大商品数量
 		if(numberOfSale==null){
 			throw new MyWebException("操作错误：产品数量不能为空");
 		}else{
@@ -136,7 +137,11 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 				throw new MyWebException("操作错误：商品"+product.getName()+"库存不足");
 			}
 		}else{//如果不包含则该商品则直接添加
-			list.add(shoppingCartItem);
+			if(list!=null && list.size()>=maxProductNumberInCart){
+				throw new MyServiceException("操作失败：购物车中不同的商品最多只能有"+maxProductNumberInCart+"个");
+			}else{//如果没有超出则直接添加
+				list.add(shoppingCartItem);
+			}
 		}
 		//最后对购物车中数据进行计算
 		countShoppingCart(shoppingCart);

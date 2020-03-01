@@ -1,9 +1,11 @@
 package com.lcvc.ebuy_springboot.service.impl;
 
 import com.lcvc.ebuy_springboot.dao.CustomerDao;
+import com.lcvc.ebuy_springboot.dao.LogOfCustomerLoginDao;
 import com.lcvc.ebuy_springboot.dao.ProductOrderDao;
 import com.lcvc.ebuy_springboot.dao.WebConfigDao;
 import com.lcvc.ebuy_springboot.model.Customer;
+import com.lcvc.ebuy_springboot.model.LogOfCustomerLogin;
 import com.lcvc.ebuy_springboot.model.WebConfig;
 import com.lcvc.ebuy_springboot.model.base.Constant;
 import com.lcvc.ebuy_springboot.model.base.PageObject;
@@ -11,6 +13,7 @@ import com.lcvc.ebuy_springboot.model.exception.MyDataException;
 import com.lcvc.ebuy_springboot.model.exception.MyServiceException;
 import com.lcvc.ebuy_springboot.model.exception.MyWebException;
 import com.lcvc.ebuy_springboot.model.query.CustomerQuery;
+import com.lcvc.ebuy_springboot.model.query.LogOfCustomerLoginQuery;
 import com.lcvc.ebuy_springboot.model.query.ProductOrderQuery;
 import com.lcvc.ebuy_springboot.service.CustomerService;
 import com.lcvc.ebuy_springboot.util.SHA;
@@ -23,7 +26,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
-import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -31,12 +34,15 @@ import java.util.List;
 @Transactional(propagation = Propagation.REQUIRED,isolation = Isolation.DEFAULT,timeout=36000,rollbackFor=Exception.class)
 @Service
 public class CustomerServiceImpl implements CustomerService {
-    @Resource
+    @Autowired
     private CustomerDao customerDao;
     @Autowired
     private ProductOrderDao productOrderDao;
     @Autowired
     private WebConfigDao webConfigDao;
+    @Autowired
+    private LogOfCustomerLoginDao logOfCustomerLoginDao;
+
 
     /**
      * 单纯进行登陆验证，不考虑其他验证
@@ -124,6 +130,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public void deleteCustomers(Integer[] ids){
+        List<LogOfCustomerLogin> logOfCustomerLogins=new ArrayList<LogOfCustomerLogin>();//存储后面要删除的登陆入职
         for(Integer id:ids){
             //删除账户对应的图片
             Customer customer=customerDao.get(id);//读取相应的记录
@@ -137,7 +144,12 @@ public class CustomerServiceImpl implements CustomerService {
             if(productOrderDao.querySize(productOrderQuery)>0){
                 throw new MyServiceException("账户删除失败：该客户已经下了订单，不能删除");
             }
+            //获取客户的登陆日志
+            LogOfCustomerLoginQuery logOfCustomerLoginQuery=new LogOfCustomerLoginQuery();
+            logOfCustomerLoginQuery.setCustomer(customer);
+            logOfCustomerLogins.addAll(logOfCustomerLoginDao.readAll(logOfCustomerLoginQuery));
         }
+        logOfCustomerLoginDao.deleteObjects(logOfCustomerLogins);//删除客户的登陆日志
         customerDao.deletes(ids);
     }
 

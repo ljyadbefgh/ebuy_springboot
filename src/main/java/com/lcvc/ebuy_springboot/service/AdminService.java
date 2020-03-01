@@ -11,8 +11,8 @@ import java.util.List;
 
 public interface AdminService {
     /**
+     * 20200301说明：在使用spring security后，登陆处理已经不再这里完成，准备废弃
      * 登录方法
-     *
      * @param username 账户名，不能为空
      * @param password 密码，不能为空
      * @return null表示登录失败

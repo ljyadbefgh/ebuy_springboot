@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lcvc.ebuy_springboot.dao.LogOfCustomerLoginDao">
+	<!--自定义返回的类型-->
+	<resultMap id="logOfCustomerLogin" type="LogOfCustomerLogin">
+		<association property="customer" javaType="Customer" column="customerId" select="com.lcvc.ebuy_springboot.dao.CustomerDao.get">
+		</association>
+	</resultMap>
+
+	
+	<insert id="save"  useGeneratedKeys="true" keyProperty="id">
+	    insert into 
+	    log_customer_login(id,customerId,ip,loginResult,loginTime)
+	    values(null,#{customer.id},#{ip},#{loginResult},now())
+	</insert>
+
+	<delete id="deleteObjects" >
+		delete from log_customer_login where id in
+		<foreach item="item" collection="collection" open="(" separator="," close=")">
+			#{item.id}
+		</foreach>
+	</delete>
+
+
+
+	<select id="total" resultType="int">
+       select count(1) from log_customer_login
+    </select>
+
+	<!--统一查询的条件，方便用于分页等查询，这里提供给query和querySize调用-->
+	<sql id="queryWhere">
+		<if test="objectQuery!=null">
+			<if test="objectQuery.customer!=null and (objectQuery.customer.username!=null and objectQuery.customer.username.length()>0)">
+				left join customer on log_customer_login.customerId =customer.id
+			</if>
+			<where>
+				<if test="objectQuery.customer!=null">
+					<if test="objectQuery.customer.id!=null">
+						and log_customer_login.customerId=#{objectQuery.customer.id}
+					</if>
+					<if test="objectQuery.customer.username!=null and objectQuery.customer.username.length()>0">
+						<!-- bind，重新定义一个变量，可用于模糊查询等，并且可以直接覆盖原变量 -->
+						<bind name="username" value="'%' + _parameter.objectQuery.customer.username + '%'" />
+						and customer.username like #{username}
+					</if>
+				</if>
+			</where>
+		</if>
+	</sql>
+
+	<select id="querySize" resultType="int">
+		select count(1) from log_customer_login
+		<include refid="queryWhere"></include>
+    </select>
+
+	<select id="query" resultMap="logOfCustomerLogin">
+        select log_customer_login.* from log_customer_login
+		<include refid="queryWhere"></include>
+		order by log_customer_login.id desc limit #{offset},#{length}
+    </select>
+
+	<select id="readAll" resultType="LogOfCustomerLogin">
+		select log_customer_login.* from log_customer_login
+		<include refid="queryWhere"></include>
+	</select>
+
+	<select id="getContinuousLoginErrorNumber"  resultType="int">
+		select count(1) from log_customer_login
+		where customerId=#{customerId} and loginResult=false  and
+		loginTime>=IFNULL((
+		select loginTime from log_customer_login
+		where  customerId=#{customerId} and loginResult=true and to_days(now())=to_days(loginTime)
+		ORDER BY loginTime desc limit 0,1
+		),str_to_date(DATE_FORMAT(NOW(),'%Y-%m-%d'),'%Y-%m-%d %H:%i:%s'))
+	</select>
+</mapper>

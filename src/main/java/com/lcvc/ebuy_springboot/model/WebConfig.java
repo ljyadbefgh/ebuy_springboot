@@ -16,6 +16,10 @@ public class WebConfig implements java.io.Serializable{
     private Integer maxProductNumberInCart;//购物车中可以存放的最大商品（种类）数量（包含）。0表示不限制
     @Range(min=0,message="您当天的购买次数不能为负数")
     private Integer maxProductOrderNumberInToday;//当天一个客户可以下单的最大次数。0表示不限制
+    @Range(min=0,message="当天允许客户连续登陆错误的次数不能为负数")
+    private Integer maxLoginErrorNumberOfCustomer;//当天允许某客户连续登陆错误的次数
+    @Range(min=0,message="当天允许管理员连续登陆错误的次数的最大购买数量不能为负数")
+    private Integer maxLoginErrorNumberOfAdmin;//当天允许某管理账户连续登陆错误的次数
 
     public WebConfig() {
     }
@@ -78,5 +82,21 @@ public class WebConfig implements java.io.Serializable{
 
     public void setMaxProductOrderNumberInToday(Integer maxProductOrderNumberInToday) {
         this.maxProductOrderNumberInToday = maxProductOrderNumberInToday;
+    }
+
+    public Integer getMaxLoginErrorNumberOfCustomer() {
+        return maxLoginErrorNumberOfCustomer;
+    }
+
+    public void setMaxLoginErrorNumberOfCustomer(Integer maxLoginErrorNumberOfCustomer) {
+        this.maxLoginErrorNumberOfCustomer = maxLoginErrorNumberOfCustomer;
+    }
+
+    public Integer getMaxLoginErrorNumberOfAdmin() {
+        return maxLoginErrorNumberOfAdmin;
+    }
+
+    public void setMaxLoginErrorNumberOfAdmin(Integer maxLoginErrorNumberOfAdmin) {
+        this.maxLoginErrorNumberOfAdmin = maxLoginErrorNumberOfAdmin;
     }
 }

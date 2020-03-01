@@ -360,6 +360,7 @@ public class ProductOrderServiceImpl implements ProductOrderService {
             productOrderOriginal.setTag(3);//修改订单状态为已收货
             if(productOrderOriginal.getPaymentType()==2){//如果是货到付款方式
                 productOrderOriginal.setPaymentStatus(1);//付款状态变为已付款
+                productOrderOriginal.setDealTime(new Date());//设置交易时间
             }
             productOrderOriginal.setReceiveTime(Calendar.getInstance().getTime());//收货时间
             productOrderDao.update(productOrderOriginal);//保存到数据库

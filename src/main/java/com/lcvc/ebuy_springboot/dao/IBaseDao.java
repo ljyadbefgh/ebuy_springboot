@@ -55,7 +55,14 @@ public interface IBaseDao<T>{
 	 * @return  删除的记录数，>=1表示删除成功，0表示删除失败
 	 */
 	int deletes(java.io.Serializable[] ids);
-	
+
+	/**
+	 *批量删除集合对象，长度如果为0则不进行任何处理
+	 * @param collection
+	 * @return  删除的记录数，>=1表示删除成功，0表示删除失败
+	 */
+	int deleteObjects(@Param(value = "collection")Collection<T> collection);
+
 	/**
 	 * 获取表中符合条件的所有记录
 	 * 说明：如果查询条件为null，则表示查询所有记录

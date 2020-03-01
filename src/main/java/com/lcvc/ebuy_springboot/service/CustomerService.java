@@ -47,6 +47,8 @@ public interface CustomerService {
      * 批量删除指定账户
      * 说明：
      * 1.如果客户存在头像文件，则不允许删除
+     * 2.如果已经下了订单，则不允许删除
+     * 3.删除客户也将删除相关的日志
      * @param ids 多个账户的主键集合
      * @throws MyWebException
      */
