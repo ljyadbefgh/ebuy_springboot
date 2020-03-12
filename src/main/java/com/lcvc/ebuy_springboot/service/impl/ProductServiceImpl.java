@@ -11,6 +11,7 @@ import com.lcvc.ebuy_springboot.model.base.PageObject;
 import com.lcvc.ebuy_springboot.model.exception.MyServiceException;
 import com.lcvc.ebuy_springboot.model.exception.MyWebException;
 import com.lcvc.ebuy_springboot.model.query.ProductOrderDetailQuery;
+import com.lcvc.ebuy_springboot.model.query.ProductOrderQuery;
 import com.lcvc.ebuy_springboot.model.query.ProductQuery;
 import com.lcvc.ebuy_springboot.service.ProductService;
 import org.apache.commons.lang.StringUtils;
@@ -48,6 +49,9 @@ public class ProductServiceImpl implements ProductService {
         //处理订单信息
         ProductOrderDetailQuery productOrderDetailQuery=new ProductOrderDetailQuery();
         productOrderDetailQuery.setProduct(product);
+        ProductOrderQuery productOrderQuery=new ProductOrderQuery();
+        productOrderQuery.setTagQueryOfEnable(true);//只统计有效订单
+        productOrderDetailQuery.setProductOrderQuery(productOrderQuery);
         List<ProductOrderDetail> productOrderDetails=productOrderDetailDao.readAll(productOrderDetailQuery);//获取该产品对应的子订单集合
         product.setProductOrderDetailNumber(productOrderDetails.size());//获取商品的订单数量
         product.setSalesVolume(0);//设置初始销售量0
@@ -95,6 +99,10 @@ public class ProductServiceImpl implements ProductService {
             throw new MyWebException("产品保存失败：表单必须有产品名字");
         }else if(StringUtils.isEmpty(product.getPicUrl())){
             throw new MyWebException("产品保存失败：必须上传图片");
+        }else if(product.getOrderNum()==null){
+            throw new MyWebException("产品保存失败：必须输入优先级");
+        }else if(product.getRecommendation()==null){
+            throw new MyWebException("产品保存失败：必须输入推荐级别");
         }else if(product.getOriginalPrice()==null){
             throw new MyWebException("产品保存失败：必须输入原价");
         }else if(product.getOriginalPrice().compareTo(BigDecimal.ZERO)==0){

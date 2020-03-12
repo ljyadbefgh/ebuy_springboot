@@ -2,10 +2,7 @@ package com.lcvc.ebuy_springboot.service.impl;
 
 import com.lcvc.ebuy_springboot.dao.CountDao;
 import com.lcvc.ebuy_springboot.dao.ProductTypeDao;
-import com.lcvc.ebuy_springboot.model.form.count.NameAndValueMap;
-import com.lcvc.ebuy_springboot.model.form.count.ProductNameAndSalesVolumeData;
-import com.lcvc.ebuy_springboot.model.form.count.ProductTypeSalesVolumeLineArrayChart;
-import com.lcvc.ebuy_springboot.model.form.count.ProductTypeSalesVolumeLineArrayChartOfSeries;
+import com.lcvc.ebuy_springboot.model.form.count.*;
 import com.lcvc.ebuy_springboot.service.CountService;
 import com.lcvc.ebuy_springboot.util.date.MyDateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +12,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -43,17 +41,46 @@ public class CountServiceImpl implements CountService {
         return productNameAndSalesVolumeData;
     }
 
+    @Override
+    public ProductNameAndSaleData getProductNameAndSaleData(Integer limit) {
+        ProductNameAndSaleData productNameAndSaleData=new ProductNameAndSaleData();
+        List<Map<String, Object>> list=countDao.getMaxSaleOfProduct(limit);//获取销售额最大的产品名称和对应的销售量
+        List<String> productNames=new ArrayList<String>();
+        List<BigDecimal> productSales=new ArrayList<BigDecimal>();
+        for(Map<String, Object> map:list){
+            productNames.add((String)map.get("productName"));
+            productSales.add(((BigDecimal)map.get("productSale")));// 这里用BigDecimal转换，因为在实际操作中，代码认为是bigdeciml类型，不能直接强制转换为Integer
+        }
+        productNameAndSaleData.setProductNames(productNames);
+        productNameAndSaleData.setProductSales(productSales);
+        return productNameAndSaleData;
+    }
+
 
     @Override
     public List<NameAndValueMap> getMaxSaleOfProductType(Integer limit) {
         List<NameAndValueMap> list=new ArrayList<NameAndValueMap>();
-        List<Map<String, Object>> dataList=countDao.getMaxSaleOfProductType(limit);//获取销量最大的产品名称和对应的销售量
+        List<Map<String, Object>> dataList=countDao.getMaxSaleOfProductType(limit);//获取销售额最大的产品名称和对应的销售额
         NameAndValueMap productTypeNameAndSaleData=null;
         for(Map<String, Object> map:dataList){
             productTypeNameAndSaleData=new NameAndValueMap();
             productTypeNameAndSaleData.setName((String)map.get("productTypeName"));
             productTypeNameAndSaleData.setValue((BigDecimal)map.get("productTypeSale"));
             list.add(productTypeNameAndSaleData);
+        }
+        return list;
+    }
+
+    @Override
+    public List<NameAndValueMap> getMaxSaleVolumeOfProductType(@NotNull Integer limit) {
+        List<NameAndValueMap> list = new ArrayList<NameAndValueMap>();
+        List<Map<String, Object>> dataList = countDao.getMaxSalesVolumeOfProductType(limit);//获取销量最大的产品名称和对应的销售量
+        NameAndValueMap productTypeNameAndSaleVolumeData = null;
+        for (Map<String, Object> map : dataList) {
+            productTypeNameAndSaleVolumeData = new NameAndValueMap();
+            productTypeNameAndSaleVolumeData.setName((String) map.get("productTypeName"));
+            productTypeNameAndSaleVolumeData.setValue((BigDecimal) map.get("productTypeSaleVolume"));
+            list.add(productTypeNameAndSaleVolumeData);
         }
         return list;
     }

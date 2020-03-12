@@ -102,4 +102,35 @@ public class ProductOrderController {
 		return map;
 	}
 
+	@ApiOperation(value = "将订单状态修改为作废", notes = "将订单状态修改为作废")
+	@ApiImplicitParam(name = "orderNo", value = "订单编号", paramType = "path", dataType="String",required = true,example="112314123")
+	@PatchMapping("/{orderNo}/voided")
+	public Map<String, Object> updateTagForVoided(@PathVariable("orderNo")String orderNo){
+		Map<String, Object> map=new HashMap<String, Object>();
+		productOrderService.updateTagForVoided(orderNo);//将订单付款作废
+		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
+		return map;
+	}
+
+
+	@ApiOperation(value = "将订单取消", notes = "将订单取消")
+	@ApiImplicitParam(name = "orderNo", value = "订单编号", paramType = "path", dataType="String",required = true,example="112314123")
+	@PatchMapping("/{orderNo}/cancel")
+	public Map<String, Object> updateTagForCancel(@PathVariable("orderNo")String orderNo, @AuthenticationPrincipal Admin admin){
+		Map<String, Object> map=new HashMap<String, Object>();
+		productOrderService.updateTagForCancel(orderNo,admin);//将订单取消
+		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
+		return map;
+	}
+
+	@ApiOperation(value = "拒绝客户订单申请取消的请求", notes = "拒绝客户订单申请取消的请求")
+	@ApiImplicitParam(name = "orderNo", value = "订单编号", paramType = "path", dataType="String",required = true,example="112314123")
+	@PatchMapping("/{orderNo}/rejectCancel")
+	public Map<String, Object> updateTagForRejectCancel(@PathVariable("orderNo")String orderNo, @AuthenticationPrincipal Admin admin){
+		Map<String, Object> map=new HashMap<String, Object>();
+		productOrderService.updateTagForRejectCancel(orderNo,admin);//拒绝客户订单申请取消的请求
+		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
+		return map;
+	}
+
 }

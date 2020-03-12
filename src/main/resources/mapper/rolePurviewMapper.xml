@@ -21,13 +21,19 @@
           values(null,#{role.id},#{purview.id},#{permissionIds},#{createTime})
     </insert>
 
-    <insert id="saves"  useGeneratedKeys="true" keyProperty="id">
-        <if test="list.size()>0">
-            insert into role_purview(id,roleId,purviewId,permissionIds,createTime) values
-            <foreach collection="list" item="item" index="index" separator=",">
-                (null,#{item.role.id},#{item.purview.id},#{item.permissionIds},#{item.createTime})
-            </foreach>
-        </if>
+    <insert id="saves">
+        <choose>
+            <when test="list.size()>0">
+                insert into role_purview(id,roleId,purviewId,permissionIds,createTime) values
+                <foreach collection="list" item="item" index="index" separator=",">
+                    (null,#{item.role.id},#{item.purview.id},#{item.permissionIds},#{item.createTime})
+                </foreach>
+            </when>
+            <otherwise>
+            <!--执行一个空的b语句，否则如果是空的代码会报错-->
+            select 0
+          </otherwise>
+        </choose>
     </insert>
 
     <update id="update" parameterType="Role">
@@ -62,32 +68,32 @@
     </select>
 
     <select id="getRolePurviewByRoleIdAndPurviewId" resultType="RolePurview">
-        select * from role_purview where roleId=#{roleId} and purviewId=#{purviewId}
+        select * from role_purview where roleId=#{roleId} and purviewId=#{purviewId} for update
     </select>
 
     <select id="getRolePurviewNumberByRoleIdAndPurviewId"  resultType="int">
-        select count(id) from role_purview where roleId=#{roleId} and purviewId=#{purviewId}
+        select count(id) from role_purview where roleId=#{roleId} and purviewId=#{purviewId} for update
     </select>
 
     <select id="getRolePurviewsByRoleId"  resultMap="rolePurview">
-        select * from role_purview where roleId=#{roleId}
+        select * from role_purview where roleId=#{roleId} for update
     </select>
 
     <select id="getRolePurviewNumberByRoleId"  resultType="int">
-        select count(id) from role_purview where  roleId=#{roleId}
+        select count(id) from role_purview where  roleId=#{roleId} for update
     </select>
 
     <select id="getRolePurviewNumberByPurviewId"  resultType="int">
-        select count(id) from role_purview where  purviewId=#{purviewId}
+        select count(id) from role_purview where  purviewId=#{purviewId} for update
     </select>
 
 
     <select id="getRolesByPurviewId"  resultType="Role">
-        select role.* from role,role_purview where role.id=role_purview.roleId and purviewId=#{purviewId}
+        select role.* from role,role_purview where role.id=role_purview.roleId and purviewId=#{purviewId} for update
     </select>
 
     <select id="getEnabledRolesByPurviewId"  resultType="Role">
-        select role.* from role,role_purview where role.id=role_purview.roleId and purviewId=#{purviewId} and role.enabled=true
+        select role.* from role,role_purview where role.id=role_purview.roleId and purviewId=#{purviewId} and role.enabled=true for update
     </select>
 
 

@@ -110,6 +110,23 @@ public class ProductOrderServiceImpl implements ProductOrderService {
         }
     }
 
+    /**
+     * 将订单中购买的产品返回到产品库存中
+     * 用于配合要作废、取消、退货的订单使用
+     * @param productOrder 订单
+     */
+    private void updateProductRepositoryFromProductNumberOfProductOrder(ProductOrder productOrder){
+        for(ProductOrderDetail productOrderDetail:productOrder.getProductOrderDetails()){//遍历子订单
+            Product product=productDao.getSimple(productOrderDetail.getProduct().getId());//从数据库获取最新的产品信息
+            if(product!=null) {//如果商品存在
+                product.setRepository(product.getRepository()+productOrderDetail.getProductNumber());//将产品库存+订单购买的商品数量
+                productDao.update(product);
+            }else{
+                throw new MyServiceException("操作错误：商品不存在");
+            }
+        }
+    }
+
     @Override
     public Integer total() {
         return productOrderDao.total();
@@ -198,8 +215,10 @@ public class ProductOrderServiceImpl implements ProductOrderService {
         }
         if(productOrder.getPaymentType()==1){//如果是网上支付
             productOrder.setTag(0);//设置为待付款
+            productOrder.setDeliverStatus(0);//设置物流状态为未开始
         }else{//如果是货到付款
             productOrder.setTag(1);//设置为待发货
+            productOrder.setDeliverStatus(1);//设置物流状态为待发货
         }
         productOrder.setOrderNo(this.getOrderNo(customer.getId()));//获取系统生成的订单编号
         productOrder.setPaymentStatus(0);//设置支付状态为未付款
@@ -289,6 +308,7 @@ public class ProductOrderServiceImpl implements ProductOrderService {
                 productOrderOriginal.setStrikePrice(totalPrice);//成交价=总价
             }
             productOrderOriginal.setPaymentStatus(1);//修改订单状态为已付款
+            productOrderOriginal.setDeliverStatus(1);//设置物流状态为待发货
             productOrderOriginal.setDealTime(Calendar.getInstance().getTime());//付款时间
             productOrderOriginal.setTag(1);//修改订单状态为待发货
             productOrderDao.update(productOrderOriginal);//保存到数据库
@@ -331,14 +351,15 @@ public class ProductOrderServiceImpl implements ProductOrderService {
     }*/
 
     @Override
-    public void updateTagForMerchantShipped(@Valid @NotNull String OrderNo, @NotNull Admin admin) {
+    public void updateTagForMerchantShipped(String OrderNo, Admin admin) {
         ProductOrder productOrderOriginal =productOrderDao.get(OrderNo);//获取原订单信息
         if(productOrderOriginal!=null){
             Integer tagOriginal=productOrderOriginal.getTag();//获取原订单状态
-            if(tagOriginal!=1){//只有是待发货状态才能发送
+            if(tagOriginal!=1&&productOrderOriginal.getDeliverStatus()!=1){//只有是待发货状态才能发送
                 throw new MyServiceException("修改失败:订单必须先处于待发货状态才能发送");
             }
             productOrderOriginal.setTag(2);//修改订单状态为已发货
+            productOrderOriginal.setDeliverStatus(2);//设置物流状态为已发货
             productOrderOriginal.setSendTime(Calendar.getInstance().getTime());//发货时间
             productOrderDao.update(productOrderOriginal);//保存到数据库
         }else{
@@ -347,20 +368,32 @@ public class ProductOrderServiceImpl implements ProductOrderService {
     }
 
     @Override
-    public void updateTagForReception(@Valid @NotNull String OrderNo, @NotNull Customer customer) {
+    public void updateTagForReception(String OrderNo, Customer customer) {
         ProductOrder productOrderOriginal =productOrderDao.get(OrderNo);//获取原订单信息
         if(productOrderOriginal!=null){
             if(productOrderOriginal.getCustomer().getId()!=customer.getId().intValue()){//如果不是客户本人修改的
                 throw new MyWebException("修改失败:该订单必须购买者本人才能修改");
             }
             Integer tagOriginal=productOrderOriginal.getTag();//获取原订单状态
-            if(tagOriginal!=2){//只有是待发货状态才能发送
+            if(tagOriginal!=2&&productOrderOriginal.getDeliverStatus()!=2){//只有是待发货状态才能发送
                 throw new MyServiceException("修改失败:订单必须先处于待收货状态才能确认收货");
             }
             productOrderOriginal.setTag(3);//修改订单状态为已收货
+            productOrderOriginal.setDeliverStatus(3);//设置物流状态为已收货
             if(productOrderOriginal.getPaymentType()==2){//如果是货到付款方式
                 productOrderOriginal.setPaymentStatus(1);//付款状态变为已付款
                 productOrderOriginal.setDealTime(new Date());//设置交易时间
+                if(productOrderOriginal.getStrikePrice()==null){//如果没有成交价，则让成交价=总价
+                    BigDecimal totalPrice=new BigDecimal("0.00");//默认总价
+                    //处理订单信息
+                    for(ProductOrderDetail productOrderDetail:productOrderOriginal.getProductOrderDetails()){//遍历子订单
+                        //计算子订单的价格
+                        BigDecimal priceTotal=productOrderDetail.getPrice().multiply(BigDecimal.valueOf(productOrderDetail.getProductNumber()));
+                        productOrderDetail.setPriceTotal(priceTotal);
+                        totalPrice=totalPrice.add(priceTotal);
+                    }
+                    productOrderOriginal.setStrikePrice(totalPrice);//成交价=总价
+                }
             }
             productOrderOriginal.setReceiveTime(Calendar.getInstance().getTime());//收货时间
             productOrderDao.update(productOrderOriginal);//保存到数据库
@@ -377,11 +410,155 @@ public class ProductOrderServiceImpl implements ProductOrderService {
                 throw new MyServiceException("修改失败:该订单还未完成");
             }
             Integer tagOriginal=productOrderOriginal.getTag();//获取原订单状态
-            if(tagOriginal!=3){//只有是已发货状态才能发送
-                throw new MyServiceException("修改失败:订单必须确认收获了才能完成");
+            if(tagOriginal!=3&&productOrderOriginal.getDeliverStatus()!=3){//只有是已发货状态才能发送
+                throw new MyServiceException("修改失败:订单必须确认收货了才能完成");
             }
             productOrderOriginal.setTag(4);//修改订单状态为已完成
             productOrderDao.update(productOrderOriginal);//保存到数据库
+        }else{
+            throw new MyWebException("修改失败:找不到订单");
+        }
+    }
+
+    @Override
+    public void updateTagForVoided(@Valid @NotNull String OrderNo) {
+        ProductOrder productOrderOriginal =productOrderDao.get(OrderNo);//获取原订单信息
+        if(productOrderOriginal!=null) {
+            if (productOrderOriginal.getPaymentType() == 1) {//如果是网上支付
+                if (productOrderOriginal.getPaymentStatus() != 0 && productOrderOriginal.getTag()!=0) {
+                    throw new MyServiceException("修改失败:只有未付款的网上支付类型订单可以作废");
+                }
+            }
+            if (productOrderOriginal.getPaymentType() == 2) {//如果是货到付款
+                if (productOrderOriginal.getTag() >= 3 ||productOrderOriginal.getDeliverStatus()==3) {
+                    throw new MyServiceException("修改失败:已收货或已完成的订单不可以作废");
+                }else if (productOrderOriginal.getTag() <=0) {
+                    throw new MyServiceException("修改失败:非正常交易（如取消、退货）的订单不可以作废");
+                }
+            }
+        }
+        productOrderOriginal.setTag(-99);//修改为已作废
+        productOrderDao.update(productOrderOriginal);//保存到数据库
+        //将作废订单的产品返回到库存中
+        this.updateProductRepositoryFromProductNumberOfProductOrder(productOrderOriginal);
+    }
+
+    @Override
+    public void updateTagForCancel(String OrderNo, Customer customer) {
+        ProductOrder productOrderOriginal =productOrderDao.get(OrderNo);//获取原订单信息
+        if(productOrderOriginal!=null){
+            if(productOrderOriginal.getCustomer().getId()!=customer.getId().intValue()){//如果不是客户本人修改的
+                throw new MyServiceException("修改失败:该订单必须购买者本人才能修改");
+            }
+            if(productOrderOriginal.getTag()<0||productOrderOriginal.getTag()>=2){//已发货，已收货的订单和非正常状态订单都不允许取消
+                throw new MyServiceException("修改失败:该订单不符合取消条件");
+            }
+            if (productOrderOriginal.getPaymentType() == 1) {//如果是网上支付
+                if (productOrderOriginal.getTag() == 0) {//如果订单未付款状态
+                    productOrderOriginal.setTag(-21);//则直接取消订单
+                }else  if (productOrderOriginal.getTag() == 1) {//如果订单已经付款状态
+                    productOrderOriginal.setTag(-1);//则将订单变为申请取消
+                }
+            }
+            if (productOrderOriginal.getPaymentType() == 2) {//如果是货到付款
+                productOrderOriginal.setTag(-1);//则将订单变为申请取消
+            }
+            if(productOrderOriginal.getTag()==-21){//如果订单已经取消。注意：这里前面必须配合判断，防止已经取消的订单重复取消
+                //将取消订单的产品返回到库存中
+                this.updateProductRepositoryFromProductNumberOfProductOrder(productOrderOriginal);
+            }
+            productOrderDao.update(productOrderOriginal);//保存到数据库
+        }else{
+            throw new MyWebException("修改失败:找不到订单");
+        }
+    }
+
+    @Override
+    public void updateTagForCancel(String OrderNo, Admin admin) {
+        ProductOrder productOrderOriginal =productOrderDao.get(OrderNo);//获取原订单信息
+        if(productOrderOriginal!=null){
+            if(productOrderOriginal.getTag()!=-1){
+                throw new MyServiceException("修改失败:只有申请取消的订单才能取消");
+            }
+            if(productOrderOriginal.getPaymentStatus()==1){//如果是已经付款，这个是指网上支付的，不过无需再分开进行判断
+                productOrderOriginal.setPaymentStatus(2);//设置为已退款状态
+            }
+            productOrderOriginal.setTag(-21);//取消订单
+            //将取消订单的产品返回到库存中
+            this.updateProductRepositoryFromProductNumberOfProductOrder(productOrderOriginal);
+            productOrderDao.update(productOrderOriginal);//保存订单最新状态到数据库
+        }else{
+            throw new MyWebException("修改失败:找不到订单");
+        }
+    }
+
+    @Override
+    public void updateTagForRejectCancel(String OrderNo,Admin admin) {
+        ProductOrder productOrderOriginal =productOrderDao.get(OrderNo);//获取原订单信息
+        if(productOrderOriginal!=null){
+            if(productOrderOriginal.getTag()!=-1){
+                throw new MyServiceException("修改失败:只有申请取消的订单才能操作");
+            }
+            productOrderOriginal.setTag(3);//恢复订单为已经收货状态
+            productOrderDao.update(productOrderOriginal);//保存订单最新状态到数据库
+        }else{
+            throw new MyWebException("修改失败:找不到订单");
+        }
+    }
+
+    @Override
+    public void updateTagForApplyReturn(@NotNull String OrderNo, @NotNull Customer customer) {
+        ProductOrder productOrderOriginal =productOrderDao.get(OrderNo);//获取原订单信息
+        if(productOrderOriginal!=null){
+            if(productOrderOriginal.getTag()!=3){
+                throw new MyServiceException("修改失败:只有已确认收货的订单才能申请退货");
+            }
+            productOrderOriginal.setTag(-2);//申请退货
+            productOrderDao.update(productOrderOriginal);//保存订单最新状态到数据库
+        }else{
+            throw new MyWebException("修改失败:找不到订单");
+        }
+    }
+
+    @Override
+    public void updateTagForAgreeReturn(@NotNull String OrderNo, @NotNull Admin admin) {
+        ProductOrder productOrderOriginal =productOrderDao.get(OrderNo);//获取原订单信息
+        if(productOrderOriginal!=null){
+            if(productOrderOriginal.getTag()!=-2){
+                throw new MyServiceException("修改失败:只有已经申请退货的订单才能操作");
+            }
+            productOrderOriginal.setTag(-3);//退货中
+            productOrderDao.update(productOrderOriginal);//保存订单最新状态到数据库
+        }else{
+            throw new MyWebException("修改失败:找不到订单");
+        }
+    }
+
+    @Override
+    public void updateTagForConfirmReturn(@NotNull String OrderNo, @NotNull Admin admin) {
+        ProductOrder productOrderOriginal =productOrderDao.get(OrderNo);//获取原订单信息
+        if(productOrderOriginal!=null){
+            if(productOrderOriginal.getTag()!=-3){
+                throw new MyServiceException("修改失败:只有处于退货中的订单才能操作");
+            }
+            productOrderOriginal.setTag(-22);//已退货
+            productOrderDao.update(productOrderOriginal);//保存订单最新状态到数据库
+            //将已退货订单的产品返回到库存中
+            this.updateProductRepositoryFromProductNumberOfProductOrder(productOrderOriginal);
+        }else{
+            throw new MyWebException("修改失败:找不到订单");
+        }
+    }
+
+    @Override
+    public void updateTagForRejectReturn(@NotNull String OrderNo, @NotNull Admin admin) {
+        ProductOrder productOrderOriginal =productOrderDao.get(OrderNo);//获取原订单信息
+        if(productOrderOriginal!=null){
+            if(productOrderOriginal.getTag()!=-2||productOrderOriginal.getTag()==-3){
+                throw new MyServiceException("修改失败:只有申请退货的订单才能操作");
+            }
+            productOrderOriginal.setTag(-4);//已拒绝退货
+            productOrderDao.update(productOrderOriginal);//保存订单最新状态到数据库
         }else{
             throw new MyWebException("修改失败:找不到订单");
         }

@@ -31,7 +31,7 @@ public class AdminAuthenticationSuccessHandler implements AuthenticationSuccessH
         Map<String, Object> map=new HashMap<String, Object>();
         map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
         HttpSession session=request.getSession();
-        map.put(Constant.JSON_DATA,session.getId());//将sessionId传给客户端，这里是为了解决ueditor手动传递的问题
+        //map.put(Constant.JSON_DATA,session.getId());//将sessionId传给客户端，这里是为了解决ueditor手动传递的问题
         response.setContentType("application/json;charset=UTF-8");
         response.getWriter().write(objectMapper.writeValueAsString(map));
     }

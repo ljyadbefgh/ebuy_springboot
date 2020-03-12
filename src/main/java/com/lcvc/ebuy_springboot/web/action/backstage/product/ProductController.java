@@ -1,6 +1,7 @@
 package com.lcvc.ebuy_springboot.web.action.backstage.product;
 
 
+import com.google.gson.Gson;
 import com.lcvc.ebuy_springboot.model.Admin;
 import com.lcvc.ebuy_springboot.model.Product;
 import com.lcvc.ebuy_springboot.model.base.Constant;
@@ -137,9 +138,20 @@ public class ProductController {
 	@ApiOperation(value = "产品排序规则列表", notes = "产品排序规则列表，用于选择框")
 	@GetMapping("/orderTypeMap")
 	public Map<String, Object>  getOrderTypeMapOfProduct(){
+		Gson gson = new Gson();
 		Map<String, Object> map=new HashMap<String, Object>();
 		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
-		map.put(Constant.JSON_DATA, Constant.orderTypeMapOfProduct);
+        map.put(Constant.JSON_DATA, Constant.orderTypeMapOfProduct);
+		/*HashMap<Integer,String> orderTypeMapOfProduct = new LinkedHashMap<Integer,String>();//产品优先级别
+		for (Map.Entry<Integer, String> entry : Constant.orderTypeMapOfProduct.entrySet()) {
+			orderTypeMapOfProduct.put(entry.getKey(),entry.getValue());
+		}
+		//map.put(Constant.JSON_DATA, orderTypeMapOfProduct);
+		StringBuilder json=new StringBuilder();//自定义json,自己拼接
+		json.append("{");
+		json.append(Constant.JSON_CODE+":" + JsonCode.SUCCESS.getValue());
+		json.append(","+Constant.JSON_DATA+":" + gson.toJson(orderTypeMapOfProduct,LinkedHashMap.class));
+		json.append("}");*/
 		return map;
 	}
 

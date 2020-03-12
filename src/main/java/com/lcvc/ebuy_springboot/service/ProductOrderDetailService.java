@@ -20,7 +20,7 @@ public interface ProductOrderDetailService {
     /**
      * 编辑子订单
      * 说明：
-     * 1.只能修改待付款或带发货的订单（订单允许修改的前提条件）
+     * 1.只能修改待付款或待发货的订单（订单允许修改的前提条件）
      * 2.如果订单的成交价已经存在，则不再允许更改
      * 3.只能修改子订单的商品现价，购买数量等
      * @param productOrderDetail

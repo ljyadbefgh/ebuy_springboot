@@ -15,10 +15,13 @@
 	</insert>
 
 	<delete id="deleteObjects" >
-		delete from log_customer_login where id in
-		<foreach item="item" collection="collection" open="(" separator="," close=")">
-			#{item.id}
-		</foreach>
+		delete from log_customer_login where 1=0
+		<if test="collection != null and collection.size()> 0">
+			OR id in
+			<foreach item="item" collection="collection" open="(" separator="," close=")">
+				#{item.id}
+			</foreach>
+		</if>
 	</delete>
 
 

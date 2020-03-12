@@ -20,4 +20,5 @@ public class ProductQuery extends Product {
     public void setOrderType(Integer orderType) {
         this.orderType = orderType;
     }
+
 }

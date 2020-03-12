@@ -118,6 +118,10 @@ public class AdminRoleServiceImpl implements AdminRoleService {
         if(roleIds.length==0){
             throw new MyWebException("操作失败：请选择要移除的角色");
         }
+        List<AdminRole> adminRoles=adminRoleDao.getAdminRoleByAdminId(adminId);//获取该角色的所有集合
+        if(roleIds.length>=adminRoles.size()){//如果要删除的角色和该账户拥有的角色一样
+            throw new MyWebException("操作失败：账户至少要保留一个角色");
+        }
         Set<Integer> idsList=new HashSet<>();//要删除的id集合
         AdminRole adminRole=null;
         for(Integer roleId:roleIds){//遍历多个角色
@@ -207,6 +211,10 @@ public class AdminRoleServiceImpl implements AdminRoleService {
         if(adminId==null||roleId==null){
             throw new MyWebException("操作失败：非法参数");
         }
+        List<AdminRole> adminRoles=adminRoleDao.getAdminRoleByAdminId(adminId);//获取该角色的所有集合
+        if(adminRoles.size()==1){//如果要删除的角色和该账户拥有的角色一样
+            throw new MyWebException("操作失败：账户至少要保留一个角色");
+        }
         adminRoleDao.deleteByAdminIdAndRoleId(adminId,roleId);
     }
 
@@ -226,6 +234,11 @@ public class AdminRoleServiceImpl implements AdminRoleService {
         for(Integer adminId:adminIds){
             if(adminId==null){
                 throw new MyWebException("操作失败：非法参数（账户id为空）");
+            }
+            List<AdminRole> adminRoles=adminRoleDao.getAdminRoleByAdminId(adminId);//获取该角色的所有集合
+            if(roleIds.length>=adminRoles.size()){//如果要删除的角色和该账户拥有的角色一样
+                Admin admin=adminDao.get(adminId);
+                throw new MyWebException("操作失败：账户"+admin.getUsername()+"至少要保留一个角色");
             }
             for(Integer roleId:roleIds){//遍历多个角色
                 if(roleId==null){
@@ -259,6 +272,11 @@ public class AdminRoleServiceImpl implements AdminRoleService {
         }
         List<Integer> idsList=new ArrayList<Integer>();
         for(Integer adminId:adminIds){
+            List<AdminRole> adminRoles=adminRoleDao.getAdminRoleByAdminId(adminId);//获取该角色的所有集合
+            if(adminRoles.size()<=1){//如果账户只剩下不到一个角色
+                Admin admin=adminDao.get(adminId);
+                throw new MyWebException("操作失败：账户"+admin.getUsername()+"至少要保留一个角色");
+            }
             Object idObject=adminRoleDao.getId(adminId,roleId);
             if(idObject!=null){//如果能够找到相应记录
                 idsList.add((Integer)idObject);

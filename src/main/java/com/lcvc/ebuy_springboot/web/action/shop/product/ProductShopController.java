@@ -131,6 +131,29 @@ public class ProductShopController {
 		return map;
 	}
 
+	@ApiOperation(value = "按照推荐指数降序排列，分页查询指定栏目（或所有栏目）已经上架的产品信息", notes = "如果page为空则默认是第一页;如果limit为空则采用服务器的默认数值")
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "page", value = "当前页码", required = false, dataType = "int",example="1"),
+			@ApiImplicitParam(name = "limit", value = "每页最多展示的记录数", required = false, dataType = "int",example="10"),
+			@ApiImplicitParam(name = "productTypeId", value = "所属产品栏目，如果不传值则查询所有栏目", required = false, dataType = "int",example="1")
+	})
+	@GetMapping(value = "/recommendationProducts")
+	public Map<String, Object> recommendationProducts(Integer page, Integer limit,Integer productTypeId){
+		Map<String, Object> map=new HashMap<String, Object>();
+		//创建查询条件
+		ProductQuery productQuery=new ProductQuery();
+		if(productTypeId!=null){//如果有产品栏目
+			productQuery.setProductType(new ProductType(productTypeId));
+		}
+		productQuery.setOnSale(true);//前台只能访问上架的产品
+		productQuery.setOrderType(9);//按照时间降序降序排列
+		PageObject pageObject =productService.searchProducts(page,limit,productQuery);
+		map.put(Constant.JSON_TOTAL,pageObject.getTotalRecords());
+		map.put(Constant.JSON_DATA,pageObject.getList());
+		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
+		return map;
+	}
+
 	@ApiOperation(value = "按价格从低到高，分页查询指定栏目（或所有栏目）已经上架的产品信息", notes = "如果page为空则默认是第一页;如果limit为空则采用服务器的默认数值")
 	@ApiImplicitParams({
 			@ApiImplicitParam(name = "page", value = "当前页码", required = false, dataType = "int",example="1"),

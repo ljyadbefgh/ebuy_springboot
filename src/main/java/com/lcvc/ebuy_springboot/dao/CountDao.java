@@ -21,6 +21,14 @@ public interface CountDao {
      */
     List<Map<String, Object>> getMaxSalesVolumeOfProduct(@Param(value = "limit")Integer limit);
 
+    /**
+     * 说明：获取销售额最大的产品，返回名称和对应的销售额
+     * 按销量从大到小的顺序排列出来
+     * @param limit 表示要获取的最大销售额的产品数
+     * @return productName表示产品名字，productSale表示产品销售额
+     */
+    List<Map<String, Object>> getMaxSaleOfProduct(@Param(value = "limit")Integer limit);
+
 
     /**
      * 说明：获取销售额最大的几个产品栏目，并返回产品栏目名称和对应的销售额
@@ -29,6 +37,14 @@ public interface CountDao {
      * @return productTypeName表示产品栏目名字，productTypeSale表示产品销售量
      */
     List<Map<String, Object>> getMaxSaleOfProductType(@Param(value = "limit")Integer limit);
+
+    /**
+     * 说明：获取销售量最大的几个产品栏目，并返回产品栏目名称和对应的销售量
+     * 按销量从大到小的顺序排列出来
+     * @param limit 表示要获取的产品栏目数量
+     * @return productTypeName表示产品栏目名字，productTypeSale表示产品销售量
+     */
+    List<Map<String, Object>> getMaxSalesVolumeOfProductType(@Param(value = "limit")Integer limit);
 
     /**
      * 说明：查询某一天（及其若干天范围内）的销售量最大的产品栏目，并返回名称和对应的销售量的集合

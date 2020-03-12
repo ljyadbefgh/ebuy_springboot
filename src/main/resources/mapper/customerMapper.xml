@@ -33,10 +33,13 @@
 	</update>
 
 	<delete id="deletes" >
-		delete from customer where id in
-		<foreach item="item" collection="array" open="(" separator="," close=")">
-			#{item}
-		</foreach>
+		delete from customer where 1=0
+		<if test="array != null and array.length> 0">
+			OR id in
+			<foreach item="item" collection="array" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
 	</delete>
 
 	<select id="readAll" resultType="Customer">
@@ -104,11 +107,11 @@
 
 
 	<select id="countUsername" resultType="int">
-		select count(id) from customer where username=#{username}
+		select count(id) from customer where username=#{username} for update
 	</select>
 
 	<select id="countOtherUsername" resultType="int">
-		select count(id) from customer where username=#{username} and id!=#{id}
+		select count(id) from customer where username=#{username} and id!=#{id} for update
 	</select>
 
 	<!-- 处理登录操作 -->

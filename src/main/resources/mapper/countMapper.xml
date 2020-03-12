@@ -20,19 +20,39 @@
 
 
         select product.name as productName,sum(product_order_detail.productNumber) as productSalesVolume
-        from product_order_detail,product
-        where product.id=product_order_detail.productId
+         from product_order_detail,product,product_order
+        where product.id=product_order_detail.productId and product_order.orderNo=product_order_detail.orderNo and product_order.tag>=-50
         GROUP BY product_order_detail.productId
         ORDER BY productSalesVolume desc limit 0,#{limit}
+    </select>
+
+    <select id="getMaxSaleOfProduct" resultType="map">
+        select product.name as productName,sum(product_order_detail.price*product_order_detail.productNumber) as productSale
+        from product_order_detail,product,product_order
+        where product.id=product_order_detail.productId and product_order.orderNo=product_order_detail.orderNo and product_order.tag>=-50
+        GROUP BY product_order_detail.productId
+        ORDER BY productSale desc limit 0,#{limit}
     </select>
 
     <select id="getMaxSaleOfProductType" resultType="map">
        select producttype.name as productTypeName,IFNULL(sum(product_order_detail.price*product_order_detail.productNumber),0) as productTypeSale
         from product
         left JOIN  product_order_detail on product.id=product_order_detail.productId
+        left JOIN  product_order on product_order.orderNo=product_order_detail.orderNo and product_order.tag>=-50
         right join producttype  on product.productTypeId=producttype.id
         GROUP BY producttype.id
         ORDER BY productTypeSale DESC
+        limit 0,#{limit}
+    </select>
+
+    <select id="getMaxSalesVolumeOfProductType" resultType="map">
+       select producttype.name as productTypeName,IFNULL(sum(product_order_detail.productNumber),0) as productTypeSaleVolume
+        from product
+        left JOIN  product_order_detail on product.id=product_order_detail.productId
+        left JOIN  product_order on product_order.orderNo=product_order_detail.orderNo and product_order.tag>=-50
+        right join producttype  on product.productTypeId=producttype.id
+        GROUP BY producttype.id
+        ORDER BY productTypeSaleVolume DESC
         limit 0,#{limit}
     </select>
 
@@ -42,7 +62,7 @@
          ( select product.productTypeId as productTypeId,sum(product_order_detail.productNumber) as productTypeSalesVolume
          from product
          LEFT JOIN  product_order_detail on product.id=product_order_detail.productId
-         LEFT JOIN product_order on product_order.orderNo=product_order_detail.orderNo
+         LEFT JOIN product_order on product_order.orderNo=product_order_detail.orderNo and product_order.tag>=-50
          <![CDATA[
                    where to_days(#{currentDay})-to_days(product_order.createTime)>=0 and to_days(#{currentDay})-to_days(product_order.createTime)<#{dayNumber}
           ]]>
@@ -59,7 +79,7 @@
          ( select product.productTypeId as productTypeId,sum(product_order_detail.productNumber) as productTypeSalesVolume
          from product
          LEFT JOIN  product_order_detail on product.id=product_order_detail.productId
-         LEFT JOIN product_order on product_order.orderNo=product_order_detail.orderNo
+         LEFT JOIN product_order on product_order.orderNo=product_order_detail.orderNo and product_order.tag>=-50
          <![CDATA[
                    where to_days(#{currentDay})-to_days(product_order.createTime)>=0 and to_days(#{currentDay})-to_days(product_order.createTime)<#{dayNumber}
           ]]>

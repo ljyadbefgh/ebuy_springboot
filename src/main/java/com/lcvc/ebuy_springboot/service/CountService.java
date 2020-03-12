@@ -1,6 +1,7 @@
 package com.lcvc.ebuy_springboot.service;
 
 import com.lcvc.ebuy_springboot.model.form.count.NameAndValueMap;
+import com.lcvc.ebuy_springboot.model.form.count.ProductNameAndSaleData;
 import com.lcvc.ebuy_springboot.model.form.count.ProductNameAndSalesVolumeData;
 import com.lcvc.ebuy_springboot.model.form.count.ProductTypeSalesVolumeLineArrayChart;
 
@@ -18,12 +19,28 @@ public interface CountService {
     ProductNameAndSalesVolumeData getProductNameAndSalesVolumeData(@NotNull Integer limit);
 
     /**
+     * 说明：获取销量最大的产品名称和对应的销售量
+     * 按销量从大到小的顺序排列出来
+     * @param limit 表示要获取的最大销量的产品数
+     * @return
+     */
+    ProductNameAndSaleData getProductNameAndSaleData(@NotNull Integer limit);
+
+    /**
      * 说明：获取销售额最大的产品栏目名称和对应的销售额
      * 按销量从大到小的顺序排列出来
      * @param limit 表示要获取的产品栏目数量
      * @return
      */
     List<NameAndValueMap> getMaxSaleOfProductType(@NotNull Integer limit);
+
+    /**
+     * 说明：获取销售额最大的产品栏目名称和对应的销售量
+     * 按销量从大到小的顺序排列出来
+     * @param limit 表示要获取的产品栏目数量
+     * @return
+     */
+    List<NameAndValueMap> getMaxSaleVolumeOfProductType(@NotNull Integer limit);
 
     /**
      * 说明：查询从今天开始，往前若干天内（包括今天），每天销售量最大的产品栏目，并返回名称和对应的销售量的集合

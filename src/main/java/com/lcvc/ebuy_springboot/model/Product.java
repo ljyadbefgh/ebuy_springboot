@@ -20,6 +20,8 @@ public class Product implements java.io.Serializable {
 	@Length(min = 1, max = 20, message = "产品的名称长度必须在 {min} - {max} 之间")
 	private String name;//产品名称
 	private Integer orderNum;//优先级
+	@Min(value = 0,message = "推荐指数不能为负数")
+	private Integer recommendation;//产品推荐指数
 	private String description;//产品描述
 	//@JsonIgnore
 	private String content;//产品详细描述
@@ -222,6 +224,14 @@ public class Product implements java.io.Serializable {
 
 	public void setSale(BigDecimal sale) {
 		this.sale = sale;
+	}
+
+	public Integer getRecommendation() {
+		return recommendation;
+	}
+
+	public void setRecommendation(Integer recommendation) {
+		this.recommendation = recommendation;
 	}
 
 	@Override

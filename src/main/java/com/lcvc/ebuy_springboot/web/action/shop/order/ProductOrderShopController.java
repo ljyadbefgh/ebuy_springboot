@@ -127,4 +127,14 @@ public class ProductOrderShopController {
 		return map;
 	}
 
+	@ApiOperation(value = "申请取消订单", notes = "申请取消订单")
+	@ApiImplicitParam(name = "orderNo", value = "订单编号", paramType = "path", dataType="String",required = true,example="112314123")
+	@PatchMapping("/{orderNo}/cancel")
+	public Map<String, Object> updateTagForCancel(@PathVariable("orderNo")String orderNo, HttpSession session){
+		Map<String, Object> map=new HashMap<String, Object>();
+		productOrderService.updateTagForCancel(orderNo,(Customer)session.getAttribute("customer"));//将订单修改为已收货状态
+		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
+		return map;
+	}
+
 }

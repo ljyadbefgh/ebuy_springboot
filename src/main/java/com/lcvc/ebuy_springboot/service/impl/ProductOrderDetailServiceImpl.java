@@ -57,7 +57,7 @@ public class ProductOrderDetailServiceImpl implements ProductOrderDetailService 
         }
         ProductOrderDetail productOrderDetailOriginal =productOrderDetailDao.get(productOrderDetail.getId());//获取原子订单信息
         if(!productOrderDetailOriginal.getProductOrder().allowUpdate()){//只有未付款的订单可以修改
-            throw new MyServiceException("修改失败：只有待付款的订单可以修改");
+            throw new MyServiceException("修改失败：只有待付款的订单（网上支付）和未发货的订单（货到付款）可以修改");
         }
         if(productOrderDetailOriginal.getProductOrder().getStrikePrice()!=null){//如果已经设定了成交价，即管理员给了优惠
             throw new MyServiceException("修改失败：该订单已经有成交价，请取消后再修改");

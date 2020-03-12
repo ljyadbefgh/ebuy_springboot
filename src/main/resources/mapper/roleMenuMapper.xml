@@ -12,16 +12,22 @@
     </select>
 
     <select id="getMenusIdByRoleId" resultType="Integer">
-        SELECT menuId from role_menu WHERE roleId=#{roleId}
+        SELECT menuId from role_menu WHERE roleId=#{roleId} for update
     </select>
 
     <insert id="addMenusIdForRoleId">
-        <if test="menuIds.length>0">
-            INSERT INTO role_menu(roleId,menuId) VALUES
-            <foreach collection="menuIds" item="menuId" separator=",">
-                (#{roleId},#{menuId})
-            </foreach>
-        </if>
+        <choose>
+            <when test="menuIds.length>0">
+                INSERT INTO role_menu(roleId,menuId) VALUES
+                <foreach collection="menuIds" item="menuId" separator=",">
+                    (#{roleId},#{menuId})
+                </foreach>
+            </when>
+            <otherwise>
+                <!--执行一个空的b语句，否则如果是空的代码会报错-->
+                select 0
+            </otherwise>
+        </choose>
     </insert>
 
     <delete id="deleteMenusByRoleId">

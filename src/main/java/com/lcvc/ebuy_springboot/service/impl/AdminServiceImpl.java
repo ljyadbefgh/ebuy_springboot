@@ -169,7 +169,7 @@ public class AdminServiceImpl implements  AdminService,UserDetailsService{
                             .replace("username",adminDelete.getUsername())
                             .replace("number",String.valueOf(updateProductNumber)));
                 }
-                adminRoleDao.deleteAllAdminRoleByAdminId(id);//移除所有该账户的关系
+                adminRoleDao.deleteAllAdminRoleByAdminId(id);//移除所有该账户的角色关系
             }
             adminDao.deletes(ids);
         }

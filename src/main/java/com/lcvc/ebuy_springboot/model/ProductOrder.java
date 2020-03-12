@@ -29,6 +29,7 @@ public class ProductOrder implements java.io.Serializable {
 	private String sendTel;//收货人电话
 	private Integer paymentStatus;//付款状态（0、未付款；1、已付款；2.已退款）
 	private Integer paymentType;//付款方式（1、网上支付；2、货到付款）
+	private Integer deliverStatus;//物流状态（0.未开始，1.待发货，2已发货，3已收货）。20200312设计该字段，用于配合tag取消订单被拒绝时，返回相应状态
 	@Digits(integer=11, fraction=2,message = "订单金额的小数位数不能超过{fraction}位")
 	@Range(min=0,message="订单金额不能为负数")
 	//strikePrice：如果是0则将成交价设置为NULL，如果是大于0则设置为相关价格，如果是NULL则不作修改
@@ -38,7 +39,7 @@ public class ProductOrder implements java.io.Serializable {
 	private java.util.Date dealTime;//付款时间
 	private java.util.Date sendTime;//发货时间
 	private java.util.Date receiveTime;//收货时间
-	private Integer tag;//订单处理状态（-9异常，-4已退货，-3 申请退货，-2已取消，-1申请取消，0待付款、1.待发货，2已发货，3已收货、4已完成）,只有待付款的情况下可以更改订单信息（不包括修改tag）
+	private Integer tag;//订单处理状态（-99作废，-52已退货，-51已取消，-4已拒绝退货 -3 退货中，-2 申请退货，-1申请取消，0待付款、1.待发货，2已发货，3已收货、4已完成）,只有待付款的情况下可以更改订单信息（不包括修改tag）
 	
 	//非数据库字段
 	private List<ProductOrderDetail> productOrderDetails = new ArrayList<ProductOrderDetail>();
@@ -190,6 +191,13 @@ public class ProductOrder implements java.io.Serializable {
 		this.receiveTime = receiveTime;
 	}
 
+	public Integer getDeliverStatus() {
+		return deliverStatus;
+	}
+
+	public void setDeliverStatus(Integer deliverStatus) {
+		this.deliverStatus = deliverStatus;
+	}
 
 	/**
 	 * 判断该订单是否允许更改

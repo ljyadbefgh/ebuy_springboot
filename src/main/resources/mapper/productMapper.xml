@@ -13,12 +13,12 @@
     </resultMap>
 
     <select id="get" resultMap="product">
-        select * from product where id=#{id}
+        select * from product where id=#{id} for update
     </select>
 
     <insert id="save" useGeneratedKeys="true" keyProperty="id">
-        insert into product(id,productTypeId,name,orderNum,description,content,price,originalPrice,picUrl,repository,click,onSale,createTime,creatorId,finalEditorId,updateTime)
-        values(null,#{productType.id},#{name},#{orderNum},#{description},#{content},#{price},#{originalPrice},#{picUrl},#{repository},#{click},#{onSale},#{createTime},#{creator.id},null,null)
+        insert into product(id,productTypeId,name,orderNum,recommendation,description,content,price,originalPrice,picUrl,repository,click,onSale,createTime,creatorId,finalEditorId,updateTime)
+        values(null,#{productType.id},#{name},#{orderNum},#{recommendation},#{description},#{content},#{price},#{originalPrice},#{picUrl},#{repository},#{click},#{onSale},#{createTime},#{creator.id},null,null)
     </insert>
 
     <update id="update" parameterType="product">
@@ -28,6 +28,7 @@
             <if test="productType!=null and productType.id!=null">productTypeId=#{productType.id},</if>
             <if test="name!=null and name.length()>0">name=#{name},</if>
             <if test="orderNum!=null">orderNum=#{orderNum},</if>
+            <if test="recommendation!=null">recommendation=#{recommendation},</if>
             <if test="description!=null">description=#{description},</if>
             <if test="content!=null">content=#{content},</if>
             <if test="price!=null and price>0">price=#{price},</if>
@@ -54,7 +55,9 @@
     </delete>
 
     <select id="readAll" resultMap="product">
-        select * from product order by orderNum asc,createTime desc
+        select * from product
+        <include refid="queryWhere"></include>
+        order by orderNum asc,createTime desc
     </select>
 
     <select id="total" resultType="int">
@@ -98,7 +101,7 @@
 
     <select id="query" resultMap="product">
        /* select * from product*/
-        select product.id,product.productTypeId,product.name,product.orderNum,product.price,product.originalPrice,product.picUrl,product.repository,product.click,product.onSale,product.description,product.createTime,product.creatorId,product.finalEditorId,product.updateTime from product
+        select product.id,product.productTypeId,product.name,product.orderNum,product.recommendation,product.price,product.originalPrice,product.picUrl,product.repository,product.click,product.onSale,product.description,product.createTime,product.creatorId,product.finalEditorId,product.updateTime from product
         <include refid="queryWhere"></include>
         <choose>
             <when test="objectQuery.orderType!=null">
@@ -116,16 +119,34 @@
                         order by product.click asc
                     </when>
                     <when test="objectQuery.orderType==5">
-                        order by product.createTime desc
+                        order by product.price desc
                     </when>
                     <when test="objectQuery.orderType==6">
-                        order by product.createTime asc
-                    </when>
-                    <when test="objectQuery.orderType==7">
                         order by product.price asc
                     </when>
+                    <when test="objectQuery.orderType==7">
+                        order by product.originalPrice desc
+                    </when>
                     <when test="objectQuery.orderType==8">
-                        order by product.price desc
+                        order by product.originalPrice asc
+                    </when>
+                    <when test="objectQuery.orderType==9">
+                        order by product.recommendation desc
+                    </when>
+                    <when test="objectQuery.orderType==10">
+                        order by product.recommendation asc
+                    </when>
+                    <when test="objectQuery.orderType==31">
+                        order by product.createTime desc
+                    </when>
+                    <when test="objectQuery.orderType==32">
+                        order by product.createTime asc
+                    </when>
+                    <when test="objectQuery.orderType==33">
+                        order by product.updateTime desc
+                    </when>
+                    <when test="objectQuery.orderType==34">
+                        order by product.updateTime asc
                     </when>
                     <otherwise>
                         order by product.orderNum asc,createTime desc

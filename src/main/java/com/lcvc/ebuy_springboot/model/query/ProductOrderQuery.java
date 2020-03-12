@@ -9,6 +9,7 @@ import java.util.Date;
  */
 
 public class ProductOrderQuery extends ProductOrder implements java.io.Serializable {
+    private Boolean tagQueryOfEnable;//是否为有效的订单状态（当前认为tag>=-20，即没有作废，没有取消，没有退货，没有退款的都认为是有效订单）
     private Date createTimeQueryOfBegin;//下单时间——开始日期
     private Date createTimeQueryOfEnd;//下单时间——结束日期
     private Date dealTimeQueryOfBegin;//交易时间——开始日期
@@ -90,5 +91,13 @@ public class ProductOrderQuery extends ProductOrder implements java.io.Serializa
 
     public void setReceiveTimeQueryOfEnd(Date receiveTimeQueryOfEnd) {
         this.receiveTimeQueryOfEnd = receiveTimeQueryOfEnd;
+    }
+
+    public Boolean getTagQueryOfEnable() {
+        return tagQueryOfEnable;
+    }
+
+    public void setTagQueryOfEnable(Boolean tagQueryOfEnable) {
+        this.tagQueryOfEnable = tagQueryOfEnable;
     }
 }

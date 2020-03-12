@@ -38,6 +38,16 @@ public class CountController {
 		return map;
 	}
 
+	@ApiOperation(value = "产品销售额排行榜", notes = "产品销售额排行榜")
+	@ApiImplicitParam(name = "limit", value = "展示的产品数",dataType="int", required = true,example="1")
+	@GetMapping("/maxSaleOfProduct")
+	public Map<String, Object>  getProductNameAndSaleData(Integer limit){
+		Map<String, Object> map=new HashMap<String, Object>();
+		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
+		map.put(Constant.JSON_DATA,countService.getProductNameAndSaleData(limit));
+		return map;
+	}
+
 	@ApiOperation(value = "产品栏目销售额排行榜", notes = "产品栏目销售额排行榜")
 	@ApiImplicitParam(name = "limit", value = "展示的产品栏目数",dataType="int", required = true,example="1")
 	@GetMapping("/maxSaleOfProductType")
@@ -45,6 +55,16 @@ public class CountController {
 		Map<String, Object> map=new HashMap<String, Object>();
 		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
 		map.put(Constant.JSON_DATA,countService.getMaxSaleOfProductType(limit));
+		return map;
+	}
+
+	@ApiOperation(value = "产品栏目销售量排行榜", notes = "产品栏目销售量排行榜")
+	@ApiImplicitParam(name = "limit", value = "展示的产品栏目数",dataType="int", required = true,example="1")
+	@GetMapping("/maxSaleVolumeOfProductType")
+	public Map<String, Object>  maxSaleVolumeOfProductType(Integer limit){
+		Map<String, Object> map=new HashMap<String, Object>();
+		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
+		map.put(Constant.JSON_DATA,countService.getMaxSaleVolumeOfProductType(limit));
 		return map;
 	}
 

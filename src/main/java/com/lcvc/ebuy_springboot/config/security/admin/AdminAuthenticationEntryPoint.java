@@ -42,7 +42,7 @@ public class AdminAuthenticationEntryPoint implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
         Map<String, Object> map=new HashMap<String, Object>();
-        map.put(Constant.JSON_CODE, JsonCode.ERROR.getValue());
+        map.put(Constant.JSON_CODE, JsonCode.LOGIN.getValue());
         String message=null;
         if(authException instanceof LockedException){
             message="账户已被锁定，请联系管理员";

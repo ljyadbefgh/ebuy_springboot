@@ -133,6 +133,90 @@ public interface ProductOrderService {
      */
     void updateTagForComplete(@Valid @NotNull String OrderNo);
 
+    /**
+     * 将订单状态修改为作废/无效——建议操作由系统根据设定自动调度，如系统未付款订单超过时长，长时间没有收货等
+     * 说明：
+     * 1.网上支付的订单，未付款超过规定时间，可以作废
+     * 2.货到付款的订单，长时间没有收获的
+     * 3.订单作废后，购买的所有商品库存会得到还原（即该订单购买的商品将全部回到库存中）
+     * @param OrderNo 订单编号，不能为空
+     */
+    void updateTagForVoided(@Valid @NotNull String OrderNo);
+
+    /**
+     * 申请取消订单（客户）
+     * 说明：
+     * 1.如果是网上支付的订单且未付款，客户可以直接取消
+     * 2.如果是网上支付的订单且已经付款，变为申请取消状态
+     * 3.如果是货到付款订单，变为申请取消状态
+     * @param OrderNo
+     * @param customer 操作的客户
+     */
+    void updateTagForCancel(@NotNull String OrderNo, @NotNull Customer customer);
+
+    /**
+     * 申请取消订单（管理员）
+     * 说明：
+     * 1.如果是网上支付的订单且未付款，客户可以直接取消
+     * 2.如果是网上支付的订单且已经付款，变为申请取消状态
+     * 3.如果是货到付款订单，变为申请取消状态
+     * @param OrderNo
+     * @param admin 操作的管理员
+     */
+    void updateTagForCancel(@NotNull String OrderNo,@NotNull Admin admin);
+
+    /**
+     * 拒绝客户申请取消的订单
+     * 说明：
+     * 1.按照订单当前的状态（物流和恢复）恢复原来的tag
+     * @param OrderNo
+     * @param admin 操作的管理员
+     */
+    void updateTagForRejectCancel(@NotNull String OrderNo,@NotNull Admin admin);
+
+    //----------------------------------退货业务（下面）--------------------------------------------------//
+
+    /**
+     * 申请退货（客户）
+     * 说明：
+     * 1.只有已经收到货物，才能够申请退货
+     * @param OrderNo
+     * @param customer 操作的客户
+     */
+    void updateTagForApplyReturn(@NotNull String OrderNo, @NotNull Customer customer);
+
+    /**
+     * 同意退货（管理员）
+     * 说明：
+     * 1.只有申请退货后，才能执行同意退货
+     * 2.同意退货之后，订单将进入退货中
+     * @param OrderNo
+     *@param admin 操作的管理员
+     */
+    void updateTagForAgreeReturn(@NotNull String OrderNo,@NotNull Admin admin);
+
+    /**
+     * 确认退货（管理员）
+     * 说明：
+     * 1.只有处于退货中的商品，管理员在收到退货后，才能确认退货
+     * 2.退货之后，将同时退款
+     * @param OrderNo
+     *@param admin 操作的管理员
+     */
+    void updateTagForConfirmReturn(@NotNull String OrderNo,@NotNull Admin admin);
+
+    /**
+     * 拒绝退货（管理员）
+     * 说明：
+     * 1.申请退货的时候，如果拒绝退货，将变为拒绝退货状态
+     * 2.处于退货中的商品，如果管理员收到货物后，拒绝退货，将变为拒绝退货状态
+     * @param OrderNo
+     *@param admin 操作的管理员
+     */
+    void updateTagForRejectReturn(@NotNull String OrderNo,@NotNull Admin admin);
+
+
+    //----------------------------------退货业务（上面）--------------------------------------------------//
 
     /**
      * 更改订单状态,由管理员直接强行操作，该方法在订单出现异常时使用

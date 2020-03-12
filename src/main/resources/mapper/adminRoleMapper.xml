@@ -22,11 +22,11 @@
 
 
     <select id="get"  resultMap="adminRole">
-        select * from admin_role where id=#{id}
+        select * from admin_role where id=#{id} for update
     </select>
 
     <select id="getAdminNumberByRoleId" resultType="int">
-       select count(admin.id) from admin,admin_role ar where admin.id=ar.adminId and ar.roleId=#{id}
+       select count(admin.id) from admin,admin_role ar where admin.id=ar.adminId and ar.roleId=#{id} for update
     </select>
 
     <insert id="save"  useGeneratedKeys="true" keyProperty="id">
@@ -34,7 +34,7 @@
           values(null,#{admin.id},#{role.id},#{createTime})
     </insert>
 
-    <insert id="saves"  useGeneratedKeys="true" keyProperty="id">
+    <insert id="saves" >
         <choose>
             <when test="collection.size()>0">
                 insert into admin_role(id,adminId,roleId,createTime) values
@@ -43,8 +43,8 @@
                 </foreach>
             </when>
             <otherwise>
-                <!--执行一个空的begin语句，否则如果是空的代码会报错-->
-                begin
+                <!--执行一个空的b语句，否则如果是空的代码会报错-->
+                select 0
             </otherwise>
         </choose>
     </insert>
@@ -55,15 +55,15 @@
     </select>
 
     <select id="getAdminAndRoleRelationNumber"  resultType="int">
-        select count(id) from admin_role where roleId=#{roleId} and adminId=#{adminId}
+        select count(id) from admin_role where roleId=#{roleId} and adminId=#{adminId} for update
     </select>
 
     <select id="getAdminRoleByAdminId"  resultMap="adminRole">
-        select * from admin_role where adminId=#{adminId}
+        select * from admin_role where adminId=#{adminId} for update
     </select>
 
     <select id="getAdminRoleByRoleId"  resultMap="adminRole">
-        select * from admin_role where roleId=#{roleId}
+        select * from admin_role where roleId=#{roleId} for update
     </select>
 
 

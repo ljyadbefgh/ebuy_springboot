@@ -63,6 +63,18 @@
                     <if test="productOrderQuery.tag!=null">
                         and product_order.tag=#{productOrderQuery.tag}
                     </if>
+                    <if test="productOrderQuery.tagQueryOfEnable!=null">
+                        <choose>
+                            <when test="productOrderQuery.tagQueryOfEnable==true">
+                                and tag>=-50
+                            </when>
+                            <otherwise>
+                                <![CDATA[
+                                 and tag<-50
+                                 ]]>
+                            </otherwise>
+                        </choose>
+                    </if>
                     <bind name="createTimeQueryOfBegin" value="productOrderQuery.createTimeQueryOfBegin" />
                     <bind name="createTimeQueryOfEnd" value="productOrderQuery.createTimeQueryOfEnd" />
                     <choose>

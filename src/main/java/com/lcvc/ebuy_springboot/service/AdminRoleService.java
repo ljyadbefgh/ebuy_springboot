@@ -67,6 +67,7 @@ public interface AdminRoleService {
     void removeAdminRoles(Integer[] adminIds,Integer[] roleIds);
 
     /**
+     * 20200303废弃改方法，因为账户必须保留一个角色
      * 为指定账户移除所有角色的关系
      * @param adminId
      */

@@ -19,8 +19,8 @@
     </select>
 
     <insert id="save" useGeneratedKeys="true" keyProperty="orderNo">
-        insert into product_order(orderNo,customerId,sendName,sendAddress,sendZip,sendTel,paymentStatus,paymentType,strikePrice,meno,createTime,dealTime,tag)
-        values(#{orderNo},#{customer.id},#{sendName},#{sendAddress},#{sendZip},#{sendTel},#{paymentStatus},#{paymentType},#{strikePrice},#{meno},now(),null,#{tag})
+        insert into product_order(orderNo,customerId,sendName,sendAddress,sendZip,sendTel,paymentStatus,paymentType,deliverStatus,strikePrice,meno,createTime,dealTime,tag)
+        values(#{orderNo},#{customer.id},#{sendName},#{sendAddress},#{sendZip},#{sendTel},#{paymentStatus},#{paymentType},#{deliverStatus},#{strikePrice},#{meno},now(),null,#{tag})
     </insert>
 
     <update id="update" parameterType="ProductOrder">
@@ -42,6 +42,7 @@
           <!--  <if test="strikePrice!=null">strikePrice=#{strikePrice},</if>-->
             <if test="paymentStatus!=null">paymentStatus=#{paymentStatus},</if>
             <if test="paymentType!=null">paymentType=#{paymentType},</if>
+            <if test="deliverStatus!=null">deliverStatus=#{deliverStatus},</if>
             <if test="tag!=null">tag=#{tag},</if>
             <if test="dealTime!=null">dealTime=#{dealTime},</if>
             <if test="sendTime!=null">sendTime=#{sendTime},</if>
@@ -64,6 +65,18 @@
     <sql id="queryWhere">
         <if test="objectQuery!=null">
             <where>
+                <if test="objectQuery.tagQueryOfEnable!=null">
+                    <choose>
+                        <when test="objectQuery.tagQueryOfEnable==true">
+                            and tag>=-50
+                        </when>
+                        <otherwise>
+                            <![CDATA[
+                                 and tag<-50
+                            ]]>
+                        </otherwise>
+                    </choose>
+                </if>
                 <if test="objectQuery.orderNo!=null and objectQuery.orderNo.length()>0">
                     and orderNo=#{objectQuery.orderNo}
                 </if>
@@ -72,6 +85,9 @@
                 </if>
                 <if test="objectQuery.paymentStatus!=null">
                     and paymentStatus=#{objectQuery.paymentStatus}
+                </if>
+                <if test="objectQuery.deliverStatus!=null">
+                    and deliverStatus=#{objectQuery.deliverStatus}
                 </if>
                 <if test="objectQuery.tag!=null">
                     and tag=#{objectQuery.tag}

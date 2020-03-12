@@ -5,6 +5,7 @@ import com.lcvc.ebuy_springboot.dao.ProductDao;
 import com.lcvc.ebuy_springboot.dao.ProductOrderDao;
 import com.lcvc.ebuy_springboot.model.*;
 import com.lcvc.ebuy_springboot.model.query.ProductOrderQuery;
+import com.lcvc.ebuy_springboot.model.query.ProductQuery;
 import com.lcvc.ebuy_springboot.service.AutomationService;
 import com.lcvc.ebuy_springboot.service.ProductOrderService;
 import com.lcvc.ebuy_springboot.util.date.MyDateUtil;
@@ -70,7 +71,9 @@ public class AutomationSchedule {
      */
     private void autoBuy(Integer number,Long millisecond) {
         List<Customer> customers=customerDao.readAll(null);//获取所有客户信息
-        List<Product> products=productDao.readAll(null);//获取所有产品信息
+        ProductQuery productQuery=new ProductQuery();
+        productQuery.setOnSale(true);//前台只能访问上架的产品
+        List<Product> products=productDao.readAll(productQuery);//获取所有已上架的产品信息
         Customer customer=null;
         while(number-->0){
             if(number<=3){//保证有3次是指定的客户购买，用于测试

@@ -4,8 +4,8 @@ import com.lcvc.ebuy_springboot.model.base.Constant;
 import com.lcvc.ebuy_springboot.model.base.JsonCode;
 import com.lcvc.ebuy_springboot.model.exception.MyServiceException;
 import com.lcvc.ebuy_springboot.model.exception.MyWebException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
@@ -30,10 +30,13 @@ import java.util.*;
 @ControllerAdvice
 @ResponseBody
 public class MyExceptionAdvice {
-    public static final Log log= LogFactory.getLog(MyExceptionAdvice.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MyExceptionAdvice.class);
     private ConstraintViolationException violationException;
     private ObjectError error;
 
+    /**
+     * 处理表单异常
+     */
     @ExceptionHandler
     public Map<String, Object> myFormException(MyWebException e) {
         Map<String, Object> map=new HashMap<String, Object>();
@@ -43,6 +46,9 @@ public class MyExceptionAdvice {
         return map;
     }
 
+    /**
+     * 处理业务异常
+     */
     @ExceptionHandler
     public Map<String, Object> myServiceException(MyServiceException e) {
         Map<String, Object> map=new HashMap<String, Object>();
@@ -166,7 +172,7 @@ public class MyExceptionAdvice {
         map.put(Constant.JSON_MESSAGE, "未知异常："+ e.getMessage());
         map.put(Constant.JSON_CODE, JsonCode.ERROR.getValue());//返回错误信息
         //未知异常一般是计划外的，需要重点处理，比如记录下日志，或是自动发送错误信息邮件给技术部
-        //log.error("前端提交异常", e.getMessage());
+        LOG.error("未知异常", e.getMessage());
         return map;
     }
 }
