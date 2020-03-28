@@ -41,6 +41,7 @@ public class Constant {
     //产品类别图片上传配置
     public static final String PRODUCTTYPE_PICTURE_UPLOAD_URL= "producttype/";//保存产品栏目的目录，用于上传和删除的时候，如果放在static目录下，必须指明static下的绝对路径
     public static final String PRODUCTTYPE_PICTURE_URL= "upload/producttype/";//保存产品栏目的目录,用于展示的时候，不需要加上static
+    public final static int MAX_PREVIEWPICTURE_UPLOAD_NUMBER=8;//表示产品模块中允许一个产品上传的最大预览图数量
 
     //产品优先级
     public final static HashMap<Integer,String> orderNumMapOfProduct = new LinkedHashMap<Integer,String>(){//产品优先级别

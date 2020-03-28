@@ -122,4 +122,33 @@ public class CountServiceImpl implements CountService {
         }
         return lineArrayChart;
     }
+
+    @Override
+    public KeysAndValuesData getMaxClickOfProduct(@NotNull Integer limit) {
+        KeysAndValuesData keysAndValuesData=new KeysAndValuesData();
+        List<Map<String, Object>> list=countDao.getMaxClickOfProduct(limit);//获取销量最大的产品名称和对应的销售量
+        List<String> productNames=new ArrayList<String>();
+        List<BigDecimal> productClicks=new ArrayList<BigDecimal>();
+        for(Map<String, Object> map:list){
+            productNames.add((String)map.get("productName"));
+            productClicks.add(new BigDecimal((Long)map.get("productClick")));// 这里用BigDecimal转换，因为在实际操作中，代码认为是bigdeciml类型，不能直接强制转换为Integer
+        }
+        keysAndValuesData.setKeys(productNames);
+        keysAndValuesData.setValues(productClicks);
+        return keysAndValuesData;
+    }
+
+    @Override
+    public List<NameAndValueMap> getMaxClickOfProductType(@NotNull Integer limit) {
+        List<NameAndValueMap> list=new ArrayList<NameAndValueMap>();
+        List<Map<String, Object>> dataList=countDao.getMaxClickOfProductType(limit);//获取销售额最大的产品名称和对应的销售额
+        NameAndValueMap productTypeNameAndSaleData=null;
+        for(Map<String, Object> map:dataList){
+            productTypeNameAndSaleData=new NameAndValueMap();
+            productTypeNameAndSaleData.setName((String)map.get("productTypeName"));
+            productTypeNameAndSaleData.setValue(new BigDecimal((Long)map.get("productTypeClick")));
+            list.add(productTypeNameAndSaleData);
+        }
+        return list;
+    }
 }

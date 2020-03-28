@@ -77,4 +77,25 @@ public class CountController {
 		map.put(Constant.JSON_DATA,countService.getSalesVolumeOfProductTypeInRecentlyEveryDay(null,dayNumber));
 		return map;
 	}
+
+	@ApiOperation(value = "产品访问量排行榜", notes = "产品访问量排行榜")
+	@ApiImplicitParam(name = "limit", value = "展示的产品数",dataType="int", required = true,example="1")
+	@GetMapping("/maxClickOfProduct")
+	public Map<String, Object>  maxClickOfProduct(Integer limit){
+		Map<String, Object> map=new HashMap<String, Object>();
+		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
+		map.put(Constant.JSON_DATA,countService.getMaxClickOfProduct(limit));
+		return map;
+	}
+
+
+	@ApiOperation(value = "产品栏目关注度排行榜", notes = "产品栏目关注度排行榜")
+	@ApiImplicitParam(name = "limit", value = "展示的产品栏目数",dataType="int", required = true,example="1")
+	@GetMapping("/maxClickOfProductType")
+	public Map<String, Object>  maxClickOfProductType(Integer limit){
+		Map<String, Object> map=new HashMap<String, Object>();
+		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
+		map.put(Constant.JSON_DATA,countService.getMaxClickOfProductType(limit));
+		return map;
+	}
 }

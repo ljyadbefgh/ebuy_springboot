@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lcvc.ebuy_springboot.dao.LogOfProductClickDao">
+	<!--自定义返回的类型-->
+	<resultMap id="logOfProductClick" type="LogOfProductClick">
+		<association property="product" javaType="Product" column="productId" select="com.lcvc.ebuy_springboot.dao.ProductDao.getSimple">
+		</association>
+		<association property="customer" javaType="Customer" column="customerId" select="com.lcvc.ebuy_springboot.dao.CustomerDao.get">
+		</association>
+	</resultMap>
+
+	
+	<insert id="save"  useGeneratedKeys="true" keyProperty="id">
+	    insert into 
+	    log_product_click(id,productId,customerId,ip,clickTime)
+	    values(null,#{product.id},#{customer.id},#{ip},now())
+	</insert>
+
+	<delete id="deleteObjects" >
+		delete from log_product_click where 1=0
+		<if test="collection != null and collection.size()> 0">
+			OR id in
+			<foreach item="item" collection="collection" open="(" separator="," close=")">
+				#{item.id}
+			</foreach>
+		</if>
+	</delete>
+
+
+
+	<select id="total" resultType="int">
+       select count(1) from log_product_click
+    </select>
+
+	<!--统一查询的条件，方便用于分页等查询，这里提供给query和querySize调用-->
+	<sql id="queryWhere">
+		<if test="objectQuery!=null">
+			<if test="objectQuery.customer!=null and (objectQuery.customer.username!=null and objectQuery.customer.username.length()>0)">
+				left join customer on log_product_click.customerId =customer.id
+			</if>
+			<where>
+				<if test="objectQuery.product!=null">
+					<if test="objectQuery.product.id!=null">
+						and log_product_click.productId=#{objectQuery.product.id}
+					</if>
+				</if>
+				<if test="objectQuery.customer!=null">
+					<if test="objectQuery.customer.id!=null">
+						and log_product_click.customerId=#{objectQuery.customer.id}
+					</if>
+					<if test="objectQuery.customer.username!=null and objectQuery.customer.username.length()>0">
+						<!-- bind，重新定义一个变量，可用于模糊查询等，并且可以直接覆盖原变量 -->
+						<bind name="username" value="'%' + _parameter.objectQuery.customer.username + '%'" />
+						and customer.username like #{username}
+					</if>
+				</if>
+				<if test="objectQuery.ip!=null and objectQuery.ip.length()>0">
+					and log_product_click.ip=#{objectQuery.ip}
+				</if>
+				<if test="objectQuery.clickTimeQueryOfCurrentDay!=null">
+					and to_days(clickTime)=to_days(#{objectQuery.clickTimeQueryOfCurrentDay})
+				</if>
+				<bind name="clickTimeQueryOfBegin" value="objectQuery.clickTimeQueryOfBegin" />
+				<bind name="clickTimeQueryOfEnd" value="objectQuery.clickTimeQueryOfEnd" />
+				<choose>
+					<when test="clickTimeQueryOfBegin!= null and clickTimeQueryOfEnd != null">
+						AND clickTime BETWEEN #{clickTimeQueryOfBegin} AND #{clickTimeQueryOfEnd}
+					</when>
+					<when test="clickTimeQueryOfBegin!=null">
+						<![CDATA[
+                              AND clickTime>= #{clickTimeQueryOfBegin}
+                        ]]>
+					</when>
+					<when test="clickTimeQueryOfEnd!=null">
+						<![CDATA[
+                             AND clickTime<= #{clickTimeQueryOfEnd}
+                        ]]>
+					</when>
+				</choose>
+			</where>
+		</if>
+	</sql>
+
+	<select id="querySize" resultType="int">
+		select count(1) from log_product_click
+		<include refid="queryWhere"></include>
+    </select>
+
+	<select id="query" resultMap="logOfProductClick">
+        select log_product_click.* from log_product_click
+		<include refid="queryWhere"></include>
+		order by log_product_click.id desc limit #{offset},#{length}
+    </select>
+
+	<select id="readAll" resultType="LogOfProductClick">
+		select log_product_click.* from log_product_click
+		<include refid="queryWhere"></include>
+	</select>
+</mapper>

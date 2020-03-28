@@ -1,13 +1,12 @@
 package com.lcvc.ebuy_springboot.service.impl;
 
 import com.lcvc.ebuy_springboot.dao.*;
-import com.lcvc.ebuy_springboot.model.Admin;
-import com.lcvc.ebuy_springboot.model.AdminRole;
-import com.lcvc.ebuy_springboot.model.Role;
+import com.lcvc.ebuy_springboot.model.*;
 import com.lcvc.ebuy_springboot.model.base.PageObject;
 import com.lcvc.ebuy_springboot.model.exception.MyServiceException;
 import com.lcvc.ebuy_springboot.model.exception.MyWebException;
 import com.lcvc.ebuy_springboot.model.query.AdminQuery;
+import com.lcvc.ebuy_springboot.model.query.LogOfAdminLoginQuery;
 import com.lcvc.ebuy_springboot.model.query.ProductQuery;
 import com.lcvc.ebuy_springboot.service.AdminService;
 import com.lcvc.ebuy_springboot.util.SHA;
@@ -39,6 +38,8 @@ public class AdminServiceImpl implements  AdminService,UserDetailsService{
     private AdminRoleDao adminRoleDao;
     @Autowired
     private AdminMenuDao adminMenuDao;
+    @Autowired
+    private LogOfAdminLoginDao logOfAdminLoginDao;
 
     /**
      * 是否是系统管理员
@@ -132,6 +133,12 @@ public class AdminServiceImpl implements  AdminService,UserDetailsService{
             throw new MyServiceException("删除失败：该账户编辑（最后编辑者）过number个产品"
                     .replace("number",String.valueOf(updateProductNumber)));
         }
+        //获取管理账户的登陆日志
+        List<LogOfAdminLogin> logOfAdminLogins=new ArrayList<LogOfAdminLogin>();//存储后面要删除的登陆日志
+        LogOfAdminLoginQuery logOfAdminLoginQuery=new LogOfAdminLoginQuery();
+        logOfAdminLoginQuery.setAdmin(admin);
+        logOfAdminLogins.addAll(logOfAdminLoginDao.readAll(logOfAdminLoginQuery));
+        logOfAdminLoginDao.deleteObjects(logOfAdminLogins);//批量删除管理账户登陆日志
         adminRoleDao.deleteAllAdminRoleByAdminId(id);//移除所有该账户的关系
         adminDao.delete(id);
     }
@@ -142,6 +149,7 @@ public class AdminServiceImpl implements  AdminService,UserDetailsService{
     public void deleteAdmins(Admin admin,Integer[] ids) {
         //先进行验证
         if(ids.length>0){//只有集合大于0才执行删除，否则容易执行空SQL语句
+            List<LogOfAdminLogin> logOfAdminLogins=new ArrayList<LogOfAdminLogin>();//存储后面要删除的登陆日志
             for(Integer id:ids){
                 Admin adminDelete=new Admin(id);
                 if(this.isSystemAdmin(adminDelete)){
@@ -169,6 +177,11 @@ public class AdminServiceImpl implements  AdminService,UserDetailsService{
                             .replace("username",adminDelete.getUsername())
                             .replace("number",String.valueOf(updateProductNumber)));
                 }
+                //获取管理账户的登陆日志
+                LogOfAdminLoginQuery logOfAdminLoginQuery=new LogOfAdminLoginQuery();
+                logOfAdminLoginQuery.setAdmin(admin);
+                logOfAdminLogins.addAll(logOfAdminLoginDao.readAll(logOfAdminLoginQuery));
+                logOfAdminLoginDao.deleteObjects(logOfAdminLogins);//批量删除管理账户登陆日志
                 adminRoleDao.deleteAllAdminRoleByAdminId(id);//移除所有该账户的角色关系
             }
             adminDao.deletes(ids);

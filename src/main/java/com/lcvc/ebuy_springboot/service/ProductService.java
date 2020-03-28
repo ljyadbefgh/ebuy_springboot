@@ -46,10 +46,11 @@ public interface ProductService {
      * 批量删除指定产品
      * 说明：
      * 1.如果产品存在订单则不允许删除
+     * 2.删除产品的同时，删除该产品的点击日志
+     * 3.删除产品的同时，删除产品的预览图集合
      * @param ids 多个产品的主键集合
      */
     void deleteProducts(Integer[] ids);
-
 
 
 
@@ -68,6 +69,13 @@ public interface ProductService {
      * @param admin 执行的管理账户
      */
     void updateProduct(@Valid @NotNull Product product, Admin admin) throws MyWebException;
+
+    /**
+     * 说明：点击产品时触发，实现点击数+1
+     * 如果数据库中产品不存在则不会执行任何操作，也不会报错
+     * @param productId 不能为NULL
+     */
+    void updateForClickProduct(@NotNull Integer productId) throws MyWebException;
 
 
     /**

@@ -6,6 +6,7 @@ import com.lcvc.ebuy_springboot.util.MyBeanUtils;
 import org.junit.Test;
 
 import java.lang.reflect.InvocationTargetException;
+import java.time.LocalDateTime;
 
 public class TestMain {
 /*    @Test
@@ -16,7 +17,9 @@ public class TestMain {
 
     @Test
     public void test2(){
-       System.out.println(3-(-2));
+        //获取当前时间
+        LocalDateTime nowTime= LocalDateTime.now();
+        System.out.println(nowTime.minusSeconds(60));
     }
 
     @Test

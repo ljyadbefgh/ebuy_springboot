@@ -1,9 +1,6 @@
 package com.lcvc.ebuy_springboot.service;
 
-import com.lcvc.ebuy_springboot.model.form.count.NameAndValueMap;
-import com.lcvc.ebuy_springboot.model.form.count.ProductNameAndSaleData;
-import com.lcvc.ebuy_springboot.model.form.count.ProductNameAndSalesVolumeData;
-import com.lcvc.ebuy_springboot.model.form.count.ProductTypeSalesVolumeLineArrayChart;
+import com.lcvc.ebuy_springboot.model.form.count.*;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -52,6 +49,21 @@ public interface CountService {
      */
     ProductTypeSalesVolumeLineArrayChart getSalesVolumeOfProductTypeInRecentlyEveryDay(Integer[] productTypeIds, @NotNull Integer dayNumber);
 
+    /**
+     * 说明：获取访问量（从日志读取）最大的产品名称和对应的访问量
+     * 按访问量从大到小的顺序排列出来
+     * @param limit 表示要获取的最大访问量的产品数
+     * @return
+     */
+    KeysAndValuesData getMaxClickOfProduct(@NotNull Integer limit);
+
+    /**
+     * 说明：获取访问量最大的产品栏目名称和对应的访问量
+     * 按访问量从大到小的顺序排列出来
+     * @param limit 表示要获取的产品栏目数量
+     * @return
+     */
+    List<NameAndValueMap> getMaxClickOfProductType(@NotNull Integer limit);
 
 }
 

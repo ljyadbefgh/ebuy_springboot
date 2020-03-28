@@ -130,6 +130,12 @@
 			<artifactId>mybatis-spring-boot-starter</artifactId>
 			<version>1.2.0</version>
 		</dependency>
+		<!-- Spring Boot Mybatis 依赖包，此处是用于解决项目中的JDK8的LocalDateTime，mybatis无法识别的问题 -->
+		<dependency>
+			<groupId>org.mybatis</groupId>
+			<artifactId>mybatis-typehandlers-jsr310</artifactId>
+			<version>1.0.2</version>
+		</dependency>
 
 		<!--修改代码不需要重启springboot服务的依赖包-->
 		<dependency>

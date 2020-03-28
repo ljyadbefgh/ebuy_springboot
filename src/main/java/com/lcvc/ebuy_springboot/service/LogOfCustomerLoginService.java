@@ -29,4 +29,5 @@ public interface LogOfCustomerLoginService {
      * @return 失败的次数
      */
     int getContinuousLoginErrorNumber(@NotNull Integer customerId);
+
 }

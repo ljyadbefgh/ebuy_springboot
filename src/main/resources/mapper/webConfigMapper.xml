@@ -14,6 +14,8 @@
         update webconfig
         <!--set标签可以剔除末尾的,-->
         <set>
+            <if test="maintenance!=null">maintenance=#{maintenance},</if>
+            <if test="maintenanceContent!=null">maintenanceContent=#{maintenanceContent},</if>
             <if test="inviteCodeOfCustomer!=null">inviteCodeOfCustomer=#{inviteCodeOfCustomer},</if>
             <if test="closeRegOfCustomer!=null">closeRegOfCustomer=#{closeRegOfCustomer},</if>
             <if test="closeLoginOfCustomer!=null">closeLoginOfCustomer=#{closeLoginOfCustomer},</if>
@@ -22,6 +24,7 @@
             <if test="maxProductOrderNumberInToday!=null">maxProductOrderNumberInToday=#{maxProductOrderNumberInToday},</if>
             <if test="maxLoginErrorNumberOfCustomer!=null">maxLoginErrorNumberOfCustomer=#{maxLoginErrorNumberOfCustomer},</if>
             <if test="maxLoginErrorNumberOfAdmin!=null">maxLoginErrorNumberOfAdmin=#{maxLoginErrorNumberOfAdmin},</if>
+            <if test="productClickInterval!=null and productClickInterval>=0">productClickInterval=#{productClickInterval},</if>
         </set>
         where id=#{id}
     </update>

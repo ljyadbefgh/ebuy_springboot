@@ -1,15 +1,15 @@
 package com.lcvc.ebuy_springboot.service.impl;
 
+import com.lcvc.ebuy_springboot.dao.LogOfProductClickDao;
 import com.lcvc.ebuy_springboot.dao.ProductDao;
 import com.lcvc.ebuy_springboot.dao.ProductOrderDetailDao;
 import com.lcvc.ebuy_springboot.dao.ProductTypeDao;
-import com.lcvc.ebuy_springboot.model.Admin;
-import com.lcvc.ebuy_springboot.model.Product;
-import com.lcvc.ebuy_springboot.model.ProductOrderDetail;
-import com.lcvc.ebuy_springboot.model.ProductType;
+import com.lcvc.ebuy_springboot.model.*;
+import com.lcvc.ebuy_springboot.model.base.Constant;
 import com.lcvc.ebuy_springboot.model.base.PageObject;
 import com.lcvc.ebuy_springboot.model.exception.MyServiceException;
 import com.lcvc.ebuy_springboot.model.exception.MyWebException;
+import com.lcvc.ebuy_springboot.model.query.LogOfProductClickQuery;
 import com.lcvc.ebuy_springboot.model.query.ProductOrderDetailQuery;
 import com.lcvc.ebuy_springboot.model.query.ProductOrderQuery;
 import com.lcvc.ebuy_springboot.model.query.ProductQuery;
@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import javax.annotation.Resource;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -37,6 +38,8 @@ public class ProductServiceImpl implements ProductService {
     private ProductTypeDao productTypeDao;
     @Autowired
     private ProductOrderDetailDao productOrderDetailDao;
+    @Autowired
+    private LogOfProductClickDao logOfProductClickDao;
 
     /**
      * 专门用于完善产品要统计的销售类数据
@@ -99,6 +102,10 @@ public class ProductServiceImpl implements ProductService {
             throw new MyWebException("产品保存失败：表单必须有产品名字");
         }else if(StringUtils.isEmpty(product.getPicUrl())){
             throw new MyWebException("产品保存失败：必须上传图片");
+        }else if(product.getPreviewPictures()==null||product.getPreviewPictures().size()==0){
+            throw new MyWebException("产品保存失败：必须上传预览图");
+        }else if(product.getPreviewPictures().size()>Constant.MAX_PREVIEWPICTURE_UPLOAD_NUMBER){
+            throw new MyWebException("产品保存失败：预览图数量不能超过"+Constant.MAX_PREVIEWPICTURE_UPLOAD_NUMBER+"个");
         }else if(product.getOrderNum()==null){
             throw new MyWebException("产品保存失败：必须输入优先级");
         }else if(product.getRecommendation()==null){
@@ -126,19 +133,28 @@ public class ProductServiceImpl implements ProductService {
             product.setCreateTime(Calendar.getInstance().getTime());
             //保存数据
             productDao.save(product);
+            //保存产品对应的预览图
+            productDao.savePeviewPictures(product.getPreviewPictures(),product.getId());
         }
     }
 
     @Override
     public void deleteProducts(Integer[] ids){
+        List<LogOfProductClick> logOfProductClicks=new ArrayList<LogOfProductClick>();//存储要删除的产品日志
         for(Integer id:ids){
             //判断是否有订单
             ProductOrderDetailQuery productOrderDetailQuery=new ProductOrderDetailQuery();
             productOrderDetailQuery.setProduct(new Product(id));
-            if(productOrderDetailDao.querySize(productOrderDetailQuery)>0){
-                throw new MyServiceException("删除失败：产品"+productDao.get(id).getName()+"已经有订单，无法删除");
+            if(productOrderDetailDao.querySize(productOrderDetailQuery)>0) {
+                throw new MyServiceException("删除失败：产品" + productDao.get(id).getName() + "已经有订单，无法删除");
             }
+            //查询产品点击日志
+            LogOfProductClickQuery logOfProductClickQuery=new LogOfProductClickQuery();
+            logOfProductClickQuery.setProduct(new Product(id));
+            logOfProductClicks.addAll(logOfProductClickDao.readAll(logOfProductClickQuery));
         }
+        logOfProductClickDao.deleteObjects(logOfProductClicks);//删除所有相关的产品日志
+        productDao.deletePeviewPicturesByProductId(ids);//移除产品的预览图
         //如果商品有订单不允许删除
         productDao.deletes(ids);
     }
@@ -158,23 +174,47 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public void updateProduct(Product product,Admin admin){
         //前面必须经过spring验证框架的验证
-        if(product.getProductType()!=null){//如果有栏目信息（如前端有相应表单）过来，则必须进行验证；
-            if(product.getProductType().getId()==null){
-                throw new MyWebException("产品保存失败：必须选择产品所属栏目");
-            }
-        }if(product.getOriginalPrice()!=null&&product.getOriginalPrice().compareTo(BigDecimal.ZERO)==0){
+        if(product.getProductType()!=null&&product.getProductType().getId()==null){//如果有栏目信息（如前端有相应表单）过来，则必须进行验证；
+            throw new MyWebException("产品保存失败：必须选择产品所属栏目");
+        }else if(product.getPicUrl()!=null&&product.getPicUrl().equals("")){
+            throw new MyWebException("产品保存失败：必须上传图片");
+        }else if(product.getPreviewPictures()!=null&&product.getPreviewPictures().size()==0){
+            throw new MyWebException("产品保存失败：必须上传预览图");
+        }else if(product.getPreviewPictures().size()>Constant.MAX_PREVIEWPICTURE_UPLOAD_NUMBER){
+            throw new MyWebException("产品保存失败：预览图数量不能超过"+Constant.MAX_PREVIEWPICTURE_UPLOAD_NUMBER+"个");
+        }else if(product.getOriginalPrice()!=null&&product.getOriginalPrice().compareTo(BigDecimal.ZERO)==0){
             throw new MyWebException("产品保存失败：原价不能为0");
-        }
-        if(product.getPrice()!=null&&product.getPrice().compareTo(BigDecimal.ZERO)==0){
+        }else if(product.getPrice()!=null&&product.getPrice().compareTo(BigDecimal.ZERO)==0){
             throw new MyWebException("产品保存失败：当前价格不能为0");
-        }
-        if(product.getOriginalPrice()!=null&&product.getPrice()!=null&&product.getPrice().compareTo(product.getOriginalPrice())>0){//如果现价比原价搞
+        }else if(product.getOriginalPrice()!=null&&product.getPrice()!=null&&product.getPrice().compareTo(product.getOriginalPrice())>0){//如果现价比原价搞
             throw new MyWebException("产品保存失败：现价不能高于原价");
         }
         //如果都验证通过
         product.setFinalEditor(admin);
         product.setUpdateTime(Calendar.getInstance().getTime());
         productDao.update(product);
+        if(product.getPreviewPictures()!=null){//如果预览图集合不为0，说明要对预览图进行处理
+            List<String> previewPicturesOfSave=new ArrayList<String>();//定义最保存到数据库的预览图（原数据库有的这里不再保存）
+            List<String> previewPicturesOfDelete=new ArrayList<String>();//定义要从数据库的删除的预览图（原数据库有的，本次没有选择则删除）
+            List<String> previewPictures=productDao.getPreviewPicturePicUrlsOfProduct(product.getId());//获取产品数据库中原有的预览图集合
+            for(String picUrl:product.getPreviewPictures()){//遍历本次要插入的预览图
+                if(!previewPictures.contains(picUrl)){//如果原数据库中有该图片
+                    previewPicturesOfSave.add(picUrl);//添加图片到数据库中
+                }
+            }
+            for(String picUrl:previewPictures){//遍历原有的预览图
+                if(!product.getPreviewPictures().contains(picUrl)){//如果原数据库图片在本次插入的图片集合中不存在
+                    previewPicturesOfDelete.add(picUrl);//则将该图片移除
+                }
+            }
+            productDao.deletePeviewPictures(previewPicturesOfDelete,product.getId());//移除原有的图片（本次插入没有）
+            productDao.savePeviewPictures(previewPicturesOfSave,product.getId());//保存新插入的图片
+        }
+    }
+
+    @Override
+    public void updateForClickProduct(@NotNull Integer productId) throws MyWebException {
+        productDao.updateForClickProduct(productId);
     }
 
     @Override

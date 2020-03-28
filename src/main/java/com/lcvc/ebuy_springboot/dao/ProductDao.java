@@ -4,8 +4,17 @@ import com.lcvc.ebuy_springboot.model.Product;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
+import java.util.List;
+
 @Repository//为了不让idea报错加上
 public interface ProductDao extends IBaseDao<Product>{
+
+    /**
+     * 说明：点击产品时触发，实现点击数+1
+     * @param productId
+     */
+    void updateForClickProduct(Integer productId);
 
     /**
      * 将选中产品都转移到指定产品栏目下
@@ -25,4 +34,37 @@ public interface ProductDao extends IBaseDao<Product>{
      * @param max 最大数量
      */
     void updateProductRepositoryByIncreasement(@Param(value = "min")Integer min,@Param(value = "max")Integer max);
+
+    /**
+     * 读取指定产品的所有预览图（只读取地址）
+     * @param productId
+     * @return
+     */
+    List<String> getPreviewPicturePicUrlsOfProduct(@Param(value = "productId")Integer productId);
+
+    /**
+     * 一次插入多条记录：将产品和对应的预览图集合插入数据库
+     * 说明：集合为空则不插入任何记录
+     * @param previewPictures 不能为Null
+     * @param productId 产品id，不能为NULL
+     * @return 返回插入的记录数
+     */
+    int savePeviewPictures(@Param(value = "previewPictures")Collection<String> previewPictures,@Param(value = "productId")int productId);
+
+    /**
+     * 一次删除多条记录：将产品和对应的预览图集合从数据库中删除
+     * 说明：集合为空则不插入任何记录
+     * @param previewPictures 不能为Null
+     * @param productId 产品id，不能为NULL
+     * @return 返回删除的记录数
+     */
+    int deletePeviewPictures(@Param(value = "previewPictures")Collection<String> previewPictures,@Param(value = "productId")int productId);
+
+    /**
+     * 一次删除多条记录：将产品对应的所有预览图集合从数据库中删除
+     * 说明：集合为空则不插入任何记录
+     * @param productIds 产品id集合，不能为NULL
+     * @return 返回删除的记录数
+     */
+    int deletePeviewPicturesByProductId(@Param(value = "productIds")Integer[] productIds);
 }

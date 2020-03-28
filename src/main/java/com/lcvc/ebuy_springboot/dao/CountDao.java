@@ -14,7 +14,7 @@ import java.util.Map;
 public interface CountDao {
 
     /**
-     * 说明：获取销量最大的产品，返回名称和对应的销售量
+     * 说明：获取销量最大的几个产品，返回名称和对应的销售量
      * 按销量从大到小的顺序排列出来
      * @param limit 表示要获取的最大销量的产品数
      * @return productName表示产品名字，productSalesVolume表示产品销售量
@@ -34,7 +34,7 @@ public interface CountDao {
      * 说明：获取销售额最大的几个产品栏目，并返回产品栏目名称和对应的销售额
      * 按销量从大到小的顺序排列出来
      * @param limit 表示要获取的产品栏目数量
-     * @return productTypeName表示产品栏目名字，productTypeSale表示产品销售量
+     * @return productTypeName表示产品栏目名字，productTypeSale表示产品栏目的销售量
      */
     List<Map<String, Object>> getMaxSaleOfProductType(@Param(value = "limit")Integer limit);
 
@@ -42,7 +42,7 @@ public interface CountDao {
      * 说明：获取销售量最大的几个产品栏目，并返回产品栏目名称和对应的销售量
      * 按销量从大到小的顺序排列出来
      * @param limit 表示要获取的产品栏目数量
-     * @return productTypeName表示产品栏目名字，productTypeSale表示产品销售量
+     * @return productTypeName表示产品栏目名字，productTypeSale表示产品栏目的销售量
      */
     List<Map<String, Object>> getMaxSalesVolumeOfProductType(@Param(value = "limit")Integer limit);
 
@@ -66,4 +66,20 @@ public interface CountDao {
      * @return productTypeId表示产品栏目id，productTypeName表示产品栏目名字，productTypeSalesVolume表示产品栏目的销售量
      */
     List<Map<String, Object>> getMaxSalesVolumeOfProductTypeByProductIdInSomeDay(@Param(value = "productTypeIds")Integer[] productTypeIds,@Param(value = "currentDay")Date currentDay,@Param(value = "dayNumber")Integer dayNumber);
+
+    /**
+     * 说明：获取关注度最大的几个产品，返回名称和对应的点击数
+     * 按点击数从大到小的顺序排列出来
+     * @param limit 表示要获取的数量
+     * @return productName表示产品名字，productClick表示产品关注度
+     */
+    List<Map<String, Object>> getMaxClickOfProduct(@Param(value = "limit")Integer limit);
+
+    /**
+     * 说明：获取关注度最大的几个产品栏目，并返回产品栏目名称和对应的点击数
+     * 按点击数从大到小的顺序排列出来
+     * @param limit 表示要获取的产品栏目数量
+     * @return productTypeName表示产品栏目名字，productTypeClick表示产品栏目的点击数
+     */
+    List<Map<String, Object>> getMaxClickOfProductType(@Param(value = "limit")Integer limit);
 }

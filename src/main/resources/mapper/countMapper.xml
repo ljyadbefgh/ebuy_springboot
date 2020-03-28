@@ -96,6 +96,26 @@
     </select>
 
 
+    <select id="getMaxClickOfProduct" resultType="map">
+        select name as productName,count(log_product_click.id) as productClick
+        from product
+        LEFT JOIN  log_product_click on product.id=log_product_click.productId
+        GROUP BY product.id
+        order by  productClick desc,product.id asc
+         limit 0,#{limit}
+    </select>
+
+    <select id="getMaxClickOfProductType" resultType="map">
+       select producttype.name as productTypeName,count(log_product_click.id) as productTypeClick
+        from product
+        LEFT JOIN  log_product_click on product.id=log_product_click.productId
+        right join producttype  on product.productTypeId=producttype.id
+        GROUP BY producttype.id
+        ORDER BY productTypeClick DESC
+        limit 0,#{limit}
+    </select>
+
+
 
 
 

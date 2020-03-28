@@ -7,8 +7,8 @@ import java.math.BigDecimal;
  * 专门返回键值对，并且键值属性分别为name,value
  */
 public class NameAndValueMap {
-    private String name;//产品栏目名称
-    private BigDecimal value;//对应的销售量
+    private String name;//名称
+    private BigDecimal value;//对应的值
 
     public String getName() {
         return name;

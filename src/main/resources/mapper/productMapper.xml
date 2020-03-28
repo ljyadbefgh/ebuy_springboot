@@ -6,10 +6,14 @@
 <mapper namespace="com.lcvc.ebuy_springboot.dao.ProductDao">
     <!--自定义返回的类型-->
     <resultMap id="product" type="Product">
+        <!--定义主键，否则会和底下的previewPictures中的id冲突，导致无法获取值-->
+        <id  property="id" column="id" javaType="java.lang.Integer"/>
         <association property="productType" javaType="ProductType" column="productTypeId" select="com.lcvc.ebuy_springboot.dao.ProductTypeDao.getForCascade">
         </association>
         <association property="creator" javaType="Admin" column="creatorId" select="com.lcvc.ebuy_springboot.dao.AdminDao.get">
         </association>
+        <!--这里递归查询子菜单-->
+        <collection  property="previewPictures" ofType="String" javaType="java.util.ArrayList" column="id" select="com.lcvc.ebuy_springboot.dao.ProductDao.getPreviewPicturePicUrlsOfProduct"/>
     </resultMap>
 
     <select id="get" resultMap="product">
@@ -172,6 +176,10 @@
         select * from product where id=#{id}
     </select>
 
+    <update id="updateForClickProduct">
+      update product set click=click+1 where id=#{id}
+    </update>
+
     <update id="updateProductToTransferProductTypeBySelect">
         update product set productTypeId=#{productTypeId} where 1=0
         <if test="productIds != null and productIds.length> 0">
@@ -189,6 +197,53 @@
           ]]>
 
     </update>
+
+    <!--==================================关联表查询（不单独写mapper的表）============================-->
+    <!--获取指定产品的预览图片-->
+    <select id="getPreviewPicturePicUrlsOfProduct" resultType="String">
+        select picUrl from product_previewpicture where productId=#{productId} for update
+    </select>
+
+    <!--获取指定产品的预览图片-->
+    <select id="getPreviewPicturesOfProduct" resultType="String">
+        select picUrl from product_previewpicture where productId=#{productId} for update
+    </select>
+
+    <insert id="savePeviewPictures">
+        <choose>
+            <when test="previewPictures!=null and previewPictures.size()>0">
+                insert into product_previewpicture(id,picUrl,productId) values
+                <foreach collection="previewPictures" item="item" index="index" separator=",">
+                    (null,#{item},#{productId})
+                </foreach>
+            </when>
+            <otherwise>
+                <!--执行一个空的b语句，否则如果是空的代码会报错-->
+                select 0
+            </otherwise>
+        </choose>
+    </insert>
+
+    <delete id="deletePeviewPictures">
+        delete from product_previewpicture where 1=0
+        <if test="previewPictures!= null and previewPictures.size()> 0">
+            OR picUrl in
+            <foreach item="item" collection="previewPictures" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            and productId=#{productId}
+        </if>
+    </delete>
+
+    <delete id="deletePeviewPicturesByProductId">
+        delete from product_previewpicture where 1=0
+        <if test="productIds.length> 0">
+            OR productId in
+            <foreach item="item" collection="productIds" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+    </delete>
 
 
 

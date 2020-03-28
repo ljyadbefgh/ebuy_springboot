@@ -7,6 +7,7 @@ import org.hibernate.validator.constraints.Range;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.Min;
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * 产品
@@ -34,6 +35,7 @@ public class Product implements java.io.Serializable {
 	private BigDecimal originalPrice;//产品原价
 	@Length(max = 255, message = "产品的图片地址不能超过{max}个字符")
 	private String picUrl;//产品图片路径
+	private List<String> previewPictures;//产品预览图片
 	@Range(min=0,message="库存不能为负数")
 	private Integer repository;//库存数量
 	@Range(min=0,message="点击数不能为负数")
@@ -232,6 +234,14 @@ public class Product implements java.io.Serializable {
 
 	public void setRecommendation(Integer recommendation) {
 		this.recommendation = recommendation;
+	}
+
+	public List<String> getPreviewPictures() {
+		return previewPictures;
+	}
+
+	public void setPreviewPictures(List<String> previewPictures) {
+		this.previewPictures = previewPictures;
 	}
 
 	@Override
