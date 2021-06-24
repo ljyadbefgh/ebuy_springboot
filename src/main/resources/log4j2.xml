@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--monitorInterval：Log4j能够自动检测修改配置 文件和重新配置本身，设置间隔秒数-->
+<!--Configuration后面的status，这个用于设置log4j2自身内部的信息输出，可以不设置，当设置成trace时，你会看到log4j2内部各种详细输出-->
+<!--日志级别以及优先级排序: OFF > FATAL > ERROR > WARN > INFO > DEBUG > TRACE > ALL -->
+<configuration monitorInterval="5">
+    <!--变量配置-->
+    <Properties>
+        <!-- 格式化输出：%date表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度 %msg：日志消息，%n是换行符-->
+        <!-- %logger{36} 表示 Logger 名字最长36个字符 -->
+        <property name="LOG_PATTERN" value="%date{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n" />
+        <!-- 定义日志存储的路径 -->
+<!--        <property name="FILE_PATH" value="E:/bigdata_ebuy/log/system" />-->
+        <property name="FILE_PATH" value="c:/ebuy_springboot/log/system" />
+        <!-- 定义日志文件名字（一般为项目名） -->
+        <property name="FILE_NAME" value="ebuy_springboot" />
+    </Properties>
+
+    <appenders>
+        <!--Console用于定义输出到控制台的Appender-->
+        <!--name:用来指定Appender的名称;-->
+        <!-- target:可选值 SYSTEM_OUT 或 SYSTEM_ERR。一般只设置默认:SYSTEM_OUT-->
+        <console name="Console" target="SYSTEM_OUT">
+            <!--输出日志的格式,默认输出格式：%m%n;-->
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <!--ThresholdFilter:指定输出级别，日志输出过滤器,决定日志事件能否被输出
+            过滤条件有三个值：ACCEPT(接受), DENY(拒绝) or NEUTRAL(中立)
+            1.如果用接受ACCEPT的话，日志信息就会直接写入日志文件,后续的过滤器不再进行过滤。
+            2.如果使用DENY拒绝，则日志信息不会写入日志文件
+            3.使用NEUTRAL（中立），在在组合过滤器中，被第一个过滤器接受的日志信息，会继续用后面的过滤器进行过滤，只有符合所有过滤器条件的日志信息，才会被最终写入日志文件。
+            -->
+            <!--level：控制台只输出level及其以上级别的信息（onMatch），其他的直接拒绝（onMismatch）-->
+            <!--Filter节点的子节点，决定日志事件能否被输出。过滤条件有三个值：ACCEPT(接受), DENY(拒绝) or NEUTRAL(中立)。-->
+            <!--onMatch：表示匹配信息的处理方式-->
+            <!--onMatch：表示不匹配信息的处理方式-->
+            <ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY"/>
+        </console>
+
+        <!--文件会打印出所有信息，这个log每次运行程序会自动清空，由append属性决定，适合临时测试用-->
+        <File name="Filelog" fileName="${FILE_PATH}/test.log" append="false">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+        </File>
+
+        <!--配合flume使用,在主机部分应有相应的flume脚本抓取这里传递过去的信息-->
+<!--        &lt;!&ndash;<Flume name="flumeLogger" compress="true" type="avro">-->
+<!--            <Agent host="master" port="44444"/>-->
+<!--            &lt;!&ndash;<RFC5424Layout enterpriseNumber="18060" includeMDC="true" appName="MyApp"/>&ndash;&gt;-->
+<!--        </Flume>&ndash;&gt;-->
+
+        <!-- 用来定义超过指定大小自动删除旧的创建新的的Appender。
+        这个会打印出所有的info及以下级别的信息，每次大小超过size，则原来这size大小的日志会自动存入按年份-月份建立的文件夹下面并进行压缩，作为存档
+        例如：info.log文件满了后，会变为ebuy-INFO-2021-05-10_1.log.gz，ebuy-INFO-2021-05-10_2.log.gz-->
+        <!--fileName: 指定输出日志的目的文件带全路径的文件名;-->
+        <!--filePattern: 指定新建日志文件的名称格式;-->
+        <RollingFile name="RollingFileInfo" fileName="${FILE_PATH}/info.log" filePattern="${FILE_PATH}/${FILE_NAME}-INFO-%d{yyyy-MM-dd}_%i.log.gz">
+            <!--控制台只输出level及以上级别的信息（onMatch），其他的直接拒绝（onMismatch）-->
+            <ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <!--interval属性用来指定多久滚动一次，默认是1 hour
+               modulate=true用来调整时间：比如现在是早上3am，interval是4，那么第一次滚动是在4am，接着是8am，12am...而不是7am;-->
+                <TimeBasedTriggeringPolicy interval="1"/>
+                <!--SizeBasedTriggeringPolicy: 基于指定文件大小的滚动策略，size属性用来定义每个日志文件的大小;-->
+                <SizeBasedTriggeringPolicy size="10MB"/>
+            </Policies>
+            <!-- DefaultRolloverStrategy属性用来指定同一个文件夹下最多有几个日志文件时开始删除最旧的，创建新的(通过max属性);
+           如不设置，则默认为最多同一文件夹下7个文件开始覆盖-->
+            <DefaultRolloverStrategy max="15"/>
+        </RollingFile>
+
+        <RollingFile name="RollingFileDebug" fileName="${FILE_PATH}/debug.log" filePattern="${FILE_PATH}/${FILE_NAME}-DEBUG-%d{yyyy-MM-dd}_%i.log.gz">
+            <!--控制台只输出level及以上级别的信息（onMatch），其他的直接拒绝（onMismatch）-->
+            <ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <!--interval属性用来指定多久滚动一次，默认是1 hour
+               modulate=true用来调整时间：比如现在是早上3am，interval是4，那么第一次滚动是在4am，接着是8am，12am...而不是7am;-->
+                <TimeBasedTriggeringPolicy interval="1"/>
+                <!--SizeBasedTriggeringPolicy: 基于指定文件大小的滚动策略，size属性用来定义每个日志文件的大小;-->
+                <SizeBasedTriggeringPolicy size="10MB"/>
+            </Policies>
+            <!-- DefaultRolloverStrategy属性用来指定同一个文件夹下最多有几个日志文件时开始删除最旧的，创建新的(通过max属性);
+           如不设置，则默认为最多同一文件夹下7个文件开始覆盖-->
+            <DefaultRolloverStrategy max="15"/>
+        </RollingFile>
+
+        <!-- 这个会打印出所有的warn及以下级别的信息，每次大小超过size，则这size大小的日志会自动存入按年份-月份建立的文件夹下面并进行压缩，作为存档-->
+        <RollingFile name="RollingFileWarn" fileName="${FILE_PATH}/warn.log" filePattern="${FILE_PATH}/${FILE_NAME}-WARN-%d{yyyy-MM-dd}_%i.log.gz">
+            <ThresholdFilter level="warn" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1"/>
+                <SizeBasedTriggeringPolicy size="10MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="15"/>
+        </RollingFile>
+
+        <!-- 这个会打印出所有的error及以下级别的信息，每次大小超过size，则这size大小的日志会自动存入按年份-月份建立的文件夹下面并进行压缩，作为存档-->
+        <RollingFile name="RollingFileError" fileName="${FILE_PATH}/error.log" filePattern="${FILE_PATH}/${FILE_NAME}-ERROR-%d{yyyy-MM-dd}_%i.log.gz">
+            <!--控制台只输出level及以上级别的信息（onMatch），其他的直接拒绝（onMismatch）-->
+            <ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1"/>
+                <SizeBasedTriggeringPolicy size="10MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="15"/>
+        </RollingFile>
+    </appenders>
+
+    <!--定义logger，只有定义了logger并引入相应的appender，appender才会生效-->
+    <loggers>
+        <root level="DEBUG">
+            <appender-ref ref="Console"/>
+<!--            <appender-ref ref="FileLog"/>-->
+            <appender-ref ref="RollingFileDebug"/>
+            <appender-ref ref="RollingFileInfo"/>
+            <appender-ref ref="RollingFileWarn"/>
+            <appender-ref ref="RollingFileError"/>
+           <!-- <appender-ref ref="flumeLogger"/>-->
+        </root>
+        <!--这里配置 过滤日志 -->
+<!--        <logger name="org.hibernate.validator" level="ERROR"/>-->
+    </loggers>
+
+</configuration>

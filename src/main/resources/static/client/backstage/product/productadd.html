@@ -144,13 +144,13 @@
 				myEditorImage.ready(function(){
 					//myEditorImage.setDisabled();
 					myEditorImage.hide();//隐藏UE框体
-					myEditorImage.addListener('beforeInsertImage',function(t, arg){//监听插入图片动作，如果直接了图片插入
-						//alert(arg[0].src);//arg就是上传图片的返回值，是个数组，如果上传多张图片，请遍历该值。
+					myEditorImage.addListener('beforeInsertImage',function(t, arg){//监听ueditor插入图片动作，当上传结束后在图片上传插件点击“确认”按钮触发。
+						//alert(arg);//arg就是服务器图片地址的返回值，是个数组，如果上传多张图片，请遍历该值。
 						//把图片地址赋值给页面input
 						if(arg.length>1){
 							layer.msg("只能选一张图片上传");
 						}else{
-							$("#pirUrl").attr("value", arg[0].src);
+							$("#pirUrl").attr("value", arg[0].src);//显示服务器图片的地址
 						}
 					});
 				});

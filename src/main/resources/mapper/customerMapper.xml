@@ -105,13 +105,16 @@
         select * from customer where username=#{username}
     </select>
 
+	<select id="countCustomerId" resultType="int">
+		select count(1) from customer where id=#{customerId} for update
+	</select>
 
 	<select id="countUsername" resultType="int">
-		select count(id) from customer where username=#{username} for update
+		select count(1) from customer where username=#{username} for update
 	</select>
 
 	<select id="countOtherUsername" resultType="int">
-		select count(id) from customer where username=#{username} and id!=#{id} for update
+		select count(1) from customer where username=#{username} and id!=#{id} for update
 	</select>
 
 	<!-- 处理登录操作 -->

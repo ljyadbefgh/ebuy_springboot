@@ -40,7 +40,7 @@ public class AutomationSchedule {
      */
     @Scheduled(cron = "0 10 05 ? * *")
     public void updateProductRepositoryByIncreasementTask(){
-        productDao.updateProductRepositoryByIncreasement(40,50);
+        productDao.updateProductRepositoryByIncreasement(50,80);
     }
 
 
@@ -50,9 +50,9 @@ public class AutomationSchedule {
      */
     @Scheduled(cron = "0 30 05 ? * *")
     public void buyTask(){
-        int buyNumber=Math.round(new Random().nextInt(10))+5;//随机购买次数为5-15
+        int buyNumber=Math.round(new Random().nextInt(15))+15;//随机购买次数为15-30
         try {
-            this.autoBuy(buyNumber,60000l);//每60秒购买一次
+            this.autoBuy(buyNumber,10000l);//每10秒购买一次
         } catch (Exception e) {
             //让程序能顺利执行，直接捕获
         }
@@ -69,7 +69,7 @@ public class AutomationSchedule {
      * @param number 下订单的次数
      * @param millisecond 单位：毫秒。表示间隔多少毫秒下一次单
      */
-    private void autoBuy(Integer number,Long millisecond) {
+    public void autoBuy(Integer number,Long millisecond) {
         List<Customer> customers=customerDao.readAll(null);//获取所有客户信息
         ProductQuery productQuery=new ProductQuery();
         productQuery.setOnSale(true);//前台只能访问上架的产品

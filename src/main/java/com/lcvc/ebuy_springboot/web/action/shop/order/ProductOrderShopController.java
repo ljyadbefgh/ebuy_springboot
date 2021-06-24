@@ -10,6 +10,7 @@ import com.lcvc.ebuy_springboot.model.base.PageObject;
 import com.lcvc.ebuy_springboot.model.query.ProductOrderQuery;
 import com.lcvc.ebuy_springboot.service.ProductOrderDetailService;
 import com.lcvc.ebuy_springboot.service.ProductOrderService;
+import com.lcvc.ebuy_springboot.web.action.shop.BaseShopController;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -28,7 +29,7 @@ import java.util.Map;
 @Api(tags = "后台订单管理模块")
 @RestController
 @RequestMapping(value = "/api/shop/order")
-public class ProductOrderShopController {
+public class ProductOrderShopController extends BaseShopController {
 
 	public static final Log log= LogFactory.getLog(ProductOrderShopController.class);
 
@@ -56,7 +57,8 @@ public class ProductOrderShopController {
 	@GetMapping
 	public Map<String, Object> toManageProductOrder(Integer page, Integer limit,  ProductOrderQuery productOrderQuery, HttpSession session){
         Map<String, Object> map=new HashMap<String, Object>();
-		Customer customer=(Customer) session.getAttribute("customer");// 获取登陆账户的信息
+		//Customer customer=(Customer) session.getAttribute("customer");// 获取登陆账户的信息
+		Customer customer=this.getCustomerInRedis();//从redis中读取客户信息
 		if(productOrderQuery==null){//如果没有传递条件过来
 			productOrderQuery=new ProductOrderQuery();
 		}
@@ -75,7 +77,8 @@ public class ProductOrderShopController {
 		Map<String, Object> map=new HashMap<String, Object>();
 		if(!StringUtils.isEmpty(orderNo)){//如果订单编号存在
 			ProductOrderQuery productOrderQuery=new ProductOrderQuery();//直接用查询条件查询
-			Customer customer=(Customer) session.getAttribute("customer");// 获取登陆账户的信息
+			//Customer customer=(Customer) session.getAttribute("customer");// 获取登陆账户的信息
+			Customer customer=this.getCustomerInRedis();//从redis中读取客户信息
 			productOrderQuery.setCustomer(customer);//查询登陆账户的订单信息
 			productOrderQuery.setOrderNo(orderNo);// 查找指定编号
 			List<ProductOrder> list=productOrderService.search(productOrderQuery);
@@ -99,7 +102,8 @@ public class ProductOrderShopController {
 	public Map<String, Object> save(@RequestBody ProductOrder productOrder, HttpSession session){
 		Map<String, Object> map=new HashMap<String, Object>();
 		ShoppingCart cart=(ShoppingCart)session.getAttribute("shoppingCart");//获取购物车信息
-		Customer customer=(Customer) session.getAttribute("customer");// 获取登陆账户的信息
+		//Customer customer=(Customer) session.getAttribute("customer");// 获取登陆账户的信息
+		Customer customer=this.getCustomerInRedis();//从redis中读取客户信息
 		String orderNo=productOrderService.save(cart,productOrder,customer);//下订单
 		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
 		map.put(Constant.JSON_DATA,orderNo);
@@ -112,7 +116,8 @@ public class ProductOrderShopController {
 	@PatchMapping("/{orderNo}/payment")
 	public Map<String, Object> updatePaymentStatusForPay(@PathVariable("orderNo")String orderNo,HttpSession session){
 		Map<String, Object> map=new HashMap<String, Object>();
-		productOrderService.updatePaymentStatusForPay(orderNo,(Customer)session.getAttribute("customer"));//将订单付款方式修改为已付款。适用于线上支付
+		Customer customer=this.getCustomerInRedis();//从redis中读取客户信息
+		productOrderService.updatePaymentStatusForPay(orderNo,customer);//将订单付款方式修改为已付款。适用于线上支付
 		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
 		return map;
 	}
@@ -122,7 +127,8 @@ public class ProductOrderShopController {
 	@PatchMapping("/{orderNo}/reception")
 	public Map<String, Object> updateTagForReception(@PathVariable("orderNo")String orderNo, HttpSession session){
 		Map<String, Object> map=new HashMap<String, Object>();
-		productOrderService.updateTagForReception(orderNo,(Customer)session.getAttribute("customer"));//将订单修改为已收货状态
+		Customer customer=this.getCustomerInRedis();//从redis中读取客户信息
+		productOrderService.updateTagForReception(orderNo,customer);//将订单修改为已收货状态
 		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
 		return map;
 	}
@@ -132,7 +138,8 @@ public class ProductOrderShopController {
 	@PatchMapping("/{orderNo}/cancel")
 	public Map<String, Object> updateTagForCancel(@PathVariable("orderNo")String orderNo, HttpSession session){
 		Map<String, Object> map=new HashMap<String, Object>();
-		productOrderService.updateTagForCancel(orderNo,(Customer)session.getAttribute("customer"));//将订单修改为已收货状态
+		Customer customer=this.getCustomerInRedis();//从redis中读取客户信息
+		productOrderService.updateTagForCancel(orderNo,customer);//将订单修改为已收货状态
 		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
 		return map;
 	}

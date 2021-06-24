@@ -10,6 +10,14 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 public interface CustomerService {
+
+    /**
+     * 根据id判断客户是否存在
+     * @param userId
+     * @return
+     */
+    boolean existsCustomer(Integer userId);
+
     /**
      * 登录方法
      * 说明：如果系统当前禁止登陆，则无法登陆
@@ -24,6 +32,13 @@ public interface CustomerService {
      * @return
      */
     Integer total();
+
+    /**
+     * 根据id读取指定标识符
+     * @param customerId
+     * @return
+     */
+    Customer getCustomer(Integer customerId);
 
     /**
      * 根据账户名读取指定标识符

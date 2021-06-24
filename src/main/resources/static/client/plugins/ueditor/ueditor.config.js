@@ -35,8 +35,8 @@
 
         // 服务器统一请求接口路径
         //, serverUrl: URL + "jsp/controller.jsp"
-        , serverUrl: server+"api/backstage/ueditor"//注意：如果服务器更换务必更改。读取ueditor原controller.jsp的替代控制器
-		//, serverUrl: server+"api/backstage/ueditor;jsessionid="+JSESSIONID+"?"//注意：如果服务器更换务必更改。读取ueditor原controller.jsp的替代控制器
+        //, serverUrl: server+"api/backstage/ueditor"//注意：如果服务器更换务必更改。读取ueditor原controller.jsp的替代控制器
+		, serverUrl: server+"api/backstage/ueditor;jsessionid="+JSESSIONID+"?"//注意：如果服务器更换务必更改。读取ueditor原controller.jsp的替代控制器
 
         //工具栏上的所有的功能按钮和下拉框，可以在new编辑器的实例时选择自己需要的重新定义
         , toolbars: [[

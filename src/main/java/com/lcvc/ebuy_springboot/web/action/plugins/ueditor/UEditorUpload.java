@@ -2,7 +2,7 @@ package com.lcvc.ebuy_springboot.web.action.plugins.ueditor;
 
 import com.lcvc.ebuy_springboot.model.base.Constant;
 import com.lcvc.ebuy_springboot.model.base.JsonCode;
-import com.lcvc.ebuy_springboot.util.file.MyFileOperator;
+import com.lcvc.ebuy_springboot.junit.util.file.MyFileOperator;
 import org.springframework.util.ClassUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.multipart.MultipartFile;

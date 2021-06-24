@@ -10,7 +10,7 @@ import com.lcvc.ebuy_springboot.model.exception.MyWebException;
 import com.lcvc.ebuy_springboot.model.query.ProductQuery;
 import com.lcvc.ebuy_springboot.model.query.ProductTypeQuery;
 import com.lcvc.ebuy_springboot.service.ProductTypeService;
-import com.lcvc.ebuy_springboot.util.file.MyFileOperator;
+import com.lcvc.ebuy_springboot.junit.util.file.MyFileOperator;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;

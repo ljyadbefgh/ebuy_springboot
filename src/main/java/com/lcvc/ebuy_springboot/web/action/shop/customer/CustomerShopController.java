@@ -6,8 +6,11 @@ import com.lcvc.ebuy_springboot.model.base.Constant;
 import com.lcvc.ebuy_springboot.model.base.JsonCode;
 import com.lcvc.ebuy_springboot.model.form.PasswordEditForm;
 import com.lcvc.ebuy_springboot.service.CustomerService;
-import com.lcvc.ebuy_springboot.util.file.MyFileOperator;
-import com.lcvc.ebuy_springboot.util.file.MyFileUpload;
+import com.lcvc.ebuy_springboot.junit.util.file.MyFileOperator;
+import com.lcvc.ebuy_springboot.junit.util.file.MyFileUpload;
+import com.lcvc.ebuy_springboot.util.jwt.JwtUtilsForCustomer;
+import com.lcvc.ebuy_springboot.util.redis.RedisUtilsForCustomer;
+import com.lcvc.ebuy_springboot.web.action.shop.BaseShopController;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -16,6 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -30,12 +35,12 @@ import java.util.Map;
 @Api(tags = "前台客户登陆注销模块")
 @RestController
 @RequestMapping(value = "/api/shop/customer")
-public class CustomerShopController {
-
+public class CustomerShopController extends BaseShopController {
 	@Autowired
 	private CustomerService customerService;
 	@Value("${myFile.uploadFolder}")
 	private String uploadFolder;//上传路径
+
 
 	@ApiOperation(value = "前台客户注册", notes = "id、createTime不传值，由服务端赋值")
 	@ApiImplicitParam(name = "customer", value = "客户信息，id、createTime不传值，由服务端赋值", paramType = "body", dataType="Customer",required = true)
@@ -43,8 +48,8 @@ public class CustomerShopController {
 	public Map<String, Object> regCustomer(@RequestBody Customer customer,String inviteCode,HttpSession session){
 		Map<String, Object> map=new HashMap<String, Object>();
 		customerService.regCustomer(customer,inviteCode);
-		customer=customerService.getCustomer(customer.getUsername());//获取注册的账户信息
-		session.setAttribute("customer",customer);
+		//customer=customerService.getCustomer(customer.getUsername());//获取注册的账户信息
+		//session.setAttribute("customer",customer);
 		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
 		return map;
 	}
@@ -61,9 +66,11 @@ public class CustomerShopController {
 		session.removeAttribute("customer");//登陆前先清空原有的客户信息（如）
 		if(customerService.login(username, password)){//如果登录成功
 			Customer customer=customerService.getCustomer(username);
-			session.setAttribute("customer",customer);
+			//session.setAttribute("customer",customer);
+			redisUtilsForCustomer.saveCustomerInRedis(customer);
 			map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
-			//map.put(Constant.JSON_DATA,admin.getUsername());//将账户名值传递到前端先存储，供后端交互
+			map.put(Constant.CUSTOMER_ACCRESS_TOKEN, jwtUtilsForCustomer.createAccressCustomerToken(customer));
+			map.put(Constant.CUSTOMER_REFRESH_TOKEN, jwtUtilsForCustomer.createRefreshCustomerToken(customer));
 		}else{
 			map.put(Constant.JSON_CODE, JsonCode.ERROR.getValue());
 			map.put(Constant.JSON_MESSAGE, "登录失败：用户名和密码错误");
@@ -85,17 +92,20 @@ public class CustomerShopController {
 
 	@ApiOperation(value = "获取登陆账户的信息")
 	@GetMapping
-	public Map<String, Object> getCustomer(HttpSession session){
+	public Map<String, Object> getCustomer(HttpServletRequest request,HttpSession session){
 		Map<String, Object> map=new HashMap<String, Object>();
 		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
-		map.put(Constant.JSON_DATA,session.getAttribute("customer"));
+		Customer customer=this.getCustomerInRedis();//从redis中读取客户信息
+		map.put(Constant.JSON_DATA,customer);
 		return map;
 	}
 
 	@ApiOperation(value = "修改密码", notes = "修改密码")
 	@PatchMapping("/password")
 	public Map<String, Object> updatePassword(@RequestBody @Validated PasswordEditForm passwordEditForm, HttpSession session) {
-		String username = ((Customer) session.getAttribute("customer")).getUsername();
+		//String username = ((Customer) session.getAttribute("customer")).getUsername();
+		Customer customer=this.getCustomerInRedis();//从redis中读取客户信息
+		String username=customer.getUsername();
 		Map<String, Object> map = new HashMap<String, Object>();
 		customerService.updatePassword(username, passwordEditForm.getPassword(), passwordEditForm.getNewPass(), passwordEditForm.getRePass());
 		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
@@ -108,7 +118,8 @@ public class CustomerShopController {
 	@PutMapping
 	public Map<String, Object> updateCustomer(@RequestBody Customer customer, HttpSession session){
 		Map<String, Object> map=new HashMap<String, Object>();
-		Customer customerSession=(Customer) session.getAttribute("customer");// 获取登陆账户的信息
+		//Customer customerSession=(Customer) session.getAttribute("customer");// 获取登陆账户的信息
+		Customer customerSession=this.getCustomerInRedis();//从redis中读取客户信息
 		customer.setId(customerSession.getId());//获取当前登陆账户的id
 		customer.setUsername(null);//不修改账户名
 		customer.setPassword(null);//将密码字段去除，不修改密码，也不加入验证
@@ -130,7 +141,8 @@ public class CustomerShopController {
 		map.put(Constant.JSON_CODE, JsonCode.ERROR.getValue());//默认失败
 		if(!file.isEmpty()){
 			String baseWebPath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+request.getContextPath()+"/";//获取项目根目录网址
-			Customer customerSession=(Customer) session.getAttribute("customer");// 获取登陆账户的信息
+			//Customer customerSession=(Customer) session.getAttribute("customer");// 获取登陆账户的信息
+			Customer customerSession=this.getCustomerInRedis();//从redis中读取客户信息
 			Integer id=customerSession.getId();
 			Customer customer=customerService.getCustomer(id,baseWebPath);//获取账户对象
 			if(customer!=null){//如果该账户存在，则执行上传

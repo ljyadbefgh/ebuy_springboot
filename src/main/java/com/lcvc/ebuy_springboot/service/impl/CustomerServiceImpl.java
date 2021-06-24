@@ -17,7 +17,7 @@ import com.lcvc.ebuy_springboot.model.query.LogOfCustomerLoginQuery;
 import com.lcvc.ebuy_springboot.model.query.ProductOrderQuery;
 import com.lcvc.ebuy_springboot.service.CustomerService;
 import com.lcvc.ebuy_springboot.util.SHA;
-import com.lcvc.ebuy_springboot.util.file.MyFileOperator;
+import com.lcvc.ebuy_springboot.junit.util.file.MyFileOperator;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -88,6 +88,17 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    public boolean existsCustomer(Integer userId) {
+        boolean judge=false;//默认失败
+        if(userId!=null){
+            if(customerDao.countCustomerId(userId)>0){
+                judge=true;
+            }
+        }
+        return judge;
+    }
+
+    @Override
     public boolean login(String username, String password) {
         //前面已经经过spring验证框架的验证
         return this.loginOfSimple(username,password);
@@ -96,6 +107,15 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public Integer total() {
         return customerDao.total();
+    }
+
+    @Override
+    public Customer getCustomer(Integer customerId) {
+        Customer customer=null;
+        if(customerId!=null){
+            customer=customerDao.get(customerId);
+        }
+        return customer;
     }
 
     @Override

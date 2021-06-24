@@ -1,7 +1,7 @@
 package com.baidu.ueditor;
 
 import com.baidu.ueditor.define.ActionMap;
-import com.lcvc.ebuy_springboot.util.file.MyFileOperator;
+import com.lcvc.ebuy_springboot.junit.util.file.MyFileOperator;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.boot.system.ApplicationHome;

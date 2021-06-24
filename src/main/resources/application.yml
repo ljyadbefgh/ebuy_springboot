@@ -6,9 +6,6 @@ server:
     session:
       timeout: 120m #设置过期时间为120分钟
 
-
-
-
 mybatis:
   mapper-locations: classpath*:mapper/*.xml #扫描mybatis的mapper.xml文件
   type-aliases-package: com.lcvc.ebuy_springboot.model #起别名，指向实体类的位置，可省略写mybatis的xml中的resultType的全路径，取代<typeAlias alias="Admin" type="com.ljy.maven_github_ssm.model.Admin"/>
@@ -37,9 +34,11 @@ spring:
       password: #redis密码，一般不进行设置
       database: 0  #代表使用的是redis默认提供的db0这个数据库。
       redis-maxIdle: 500  #redis server的最大空闲数。
-      redis-maxWait: 4000  #是连接redis时的最大等待毫秒数。
-  session:
-    store-type: redis #指定Session 的存储方式为redis
+      redis-maxWait: 4000  #连接池最大阻塞等待时间（使用负值表示没有限制）,单位为毫秒。
+      max-active: 8 #连接池最大连接数（使用负值表示没有限制）
+      timeout: 3000  # 连接超时时间（毫秒）
+#  session:
+#    store-type: redis #指定Session 的存储方式为redis
   jackson:    #设置全局json格式
     date-format: yyyy-MM-dd HH:mm:ss   #将日期类型设置为字符串表示
     time-zone: GMT+8
@@ -55,13 +54,20 @@ spring:
 #  level:
 #    com.lcvc.ebuy_springboot.dao: DEBUG
 logging:
-  file: target/log/ebuy.log
-  level:
-    com.lcvc.ebuy_springboot: error
-    org.springframework: error
+  config: classpath:log4j2.xml #log4j2的配置文件路径
+#logging:
+#  file: target/log/ebuy.log
+#  level:
+#    com.lcvc.ebuy_springboot: error
+#    org.springframework: error
 myFile: #自定义变量
   #文件上传目录（注意Linux和Windows上的目录结构不同）
   uploadFolder: c:/ebuy_springboot/upload/
   #file.uploadFolder=/home/upload/#linux
   #静态资源对外暴露的访问路径
   staticAccessPath: /upload/**
+myJwt: #自定义jwt的变量
+  accessTokenExpiresOfCustomer: 20 #客户登录token的有效时间，单位为分钟
+  refreshTokenExpiresOfCustomer: 60 #客户登录刷新token（根据刷新token重新获取token）的有效时间，单位为分钟.一般应比accessTokenExpiresOfCustomer时间长2倍以上
+myRedis:
+  minutes: 30

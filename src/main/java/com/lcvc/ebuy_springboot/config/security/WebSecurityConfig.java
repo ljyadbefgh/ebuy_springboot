@@ -91,8 +91,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 //因为ueditor每次调用上传组件前会先访问服务端配置，如果访问不了服务端配置无法调用相关组件，所以这里只要拦截了服务端配置就可以（暂行办法）
                 //.antMatchers(HttpMethod.POST, "/api/backstage/ueditor")//表示不拦截ueditor的图片上传请求，因为ueditor在测试中发现在上传的时候无法传递cookie
                 //.antMatchers(HttpMethod.POST, "/api/backstage/login")
+                .antMatchers("/vueclient/**")///不拦截vue版本的后台管理界面（当在本项目内运行时，用于测试）
+                .antMatchers("/client/**")///不拦截jquery版本的后台管理界面（当在本项目内运行时，用于测试）
                 .antMatchers("/upload/**")//不拦截上传文件展示的信息
-                .antMatchers("/api/backstage/sessionId")//不拦截上传文件展示的信息
+                .antMatchers("/api/backstage/sessionId")//不拦截登录信息的cookied
                 .antMatchers( "/api/shop/**")//不拦截前端请求
                 .antMatchers("/v2/api-docs", "/configuration/ui", "/swagger-resources", "/configuration/security", "/swagger-ui.html", "/webjars/**","/swagger-resources/configuration/ui","/swagge‌​r-ui.html")//swagger文档不拦截
                 .antMatchers( "/oauth/**")

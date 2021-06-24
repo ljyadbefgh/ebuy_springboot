@@ -14,6 +14,9 @@ public class Constant {
     public static final String JSON_MESSAGE="msg";//用于网站的JSON交互的错误信息名称
     public static final String JSON_DATA="data";//用于网站的JSON交互的数据信息名称
     public static final String JSON_TOTAL="count";//用于分页，记录总数
+    public static final String CUSTOMER_ACCRESS_TOKEN="customerAccressToken";//用于生成客户登录的token
+    public static final String CUSTOMER_REFRESH_TOKEN="customerRefreshToken";//用于生成客户登录的刷新token
+
 
 
     /**

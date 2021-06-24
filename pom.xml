@@ -24,7 +24,10 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
-
+		<!--spring boot版本-->
+		<springboot.version>2.1.8.RELEASE</springboot.version>
+		<!--因为Idea2020.3版本自带的Lombok的BUG导致项目无法运行，因此这里使用1.18.16版本可以解决-->
+		<lombok.version>1.18.16</lombok.version>
 		<swagger2.version>2.9.2</swagger2.version>
 		<!--mysal驱动包-->
 		<mysql.version>8.0.16</mysql.version>
@@ -39,6 +42,10 @@
 		<oauth2.version>2.3.7.RELEASE</oauth2.version>
 		<!--poi版本-->
 		<poi.version>4.1.1</poi.version>
+		<!--jwt版本-->
+		<jwt.version>3.8.3</jwt.version>
+		<!--fastjson转换，阿里工具-->
+		<fastjson.version>1.2.47</fastjson.version>
 
 
 
@@ -61,8 +68,26 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
+			<exclusions><!-- 去掉springboot默认配置 -->
+				<!-- 去掉自带的logback-->
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-logging</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
-
+		<!-- 引入log4j2依赖 -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-log4j2</artifactId>
+			<version>${springboot.version}</version>
+		</dependency>
+		<!-- 引入log4j2依赖时会出现和网上不一样的问题，提示org.slf4j不存在，这时候加上lombok可以解决，也可以解决使用@Slf4j注解的问题-->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>${lombok.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-tomcat</artifactId>
@@ -192,6 +217,13 @@
 			<version>2.8.6</version>
 		</dependency>
 
+		<!--阿里的json转换插件-->
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>fastjson</artifactId>
+			<version>${fastjson.version}</version>
+		</dependency>
+
 
 		<!--ueditor所需的架包，开始-->
 		<!--<dependency>-->
@@ -246,6 +278,12 @@
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-ooxml-schemas</artifactId>
 			<version>${poi.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.auth0</groupId>
+			<artifactId>java-jwt</artifactId>
+			<version>${jwt.version}</version>
 		</dependency>
 
 

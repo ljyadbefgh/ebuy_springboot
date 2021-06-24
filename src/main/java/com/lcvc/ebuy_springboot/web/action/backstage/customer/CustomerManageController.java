@@ -7,8 +7,8 @@ import com.lcvc.ebuy_springboot.model.base.JsonCode;
 import com.lcvc.ebuy_springboot.model.base.PageObject;
 import com.lcvc.ebuy_springboot.model.query.CustomerQuery;
 import com.lcvc.ebuy_springboot.service.CustomerService;
-import com.lcvc.ebuy_springboot.util.file.MyFileOperator;
-import com.lcvc.ebuy_springboot.util.file.MyFileUpload;
+import com.lcvc.ebuy_springboot.junit.util.file.MyFileOperator;
+import com.lcvc.ebuy_springboot.junit.util.file.MyFileUpload;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -133,6 +133,7 @@ public class CustomerManageController {
 		return map;
 	}
 
+	//20210402由post修改为post请求
 	@ApiOperation(value = "上传指定客户的头像", notes = "根据id的值上传指定客户的头像")
 	@ApiImplicitParams({
 			@ApiImplicitParam(name = "id", value = "指定账户id", paramType = "path", required = true),

@@ -23,6 +23,15 @@ public interface CustomerDao extends IBaseDao<Customer>{
 	 * @return 账户对象，如果是null表示读取失败
 	 */
 	Customer getCustomerByUsername(String username);
+
+	/**
+	 * 获取与指customerId的数量
+	 * 说明：用于判断该账户是否存在
+	 * @param customerId 客户表的id
+	 * @return
+	 */
+	int countCustomerId(int customerId);
+
 	/**
 	 * 获取与指定的账户名相同名称的客户数量
 	 * 说明：一般用在账户创建的时候，判断输入的账户名是否与其他账户重名
