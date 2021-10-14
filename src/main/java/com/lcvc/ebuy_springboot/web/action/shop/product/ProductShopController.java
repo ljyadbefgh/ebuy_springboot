@@ -1,7 +1,11 @@
 package com.lcvc.ebuy_springboot.web.action.shop.product;
 
 
+import com.github.xiaoymin.knife4j.annotations.DynamicParameter;
+import com.github.xiaoymin.knife4j.annotations.DynamicResponseParameters;
+import com.lcvc.ebuy_springboot.model.Product;
 import com.lcvc.ebuy_springboot.model.ProductType;
+import com.lcvc.ebuy_springboot.model.Products;
 import com.lcvc.ebuy_springboot.model.base.Constant;
 import com.lcvc.ebuy_springboot.model.base.JsonCode;
 import com.lcvc.ebuy_springboot.model.base.PageObject;
@@ -35,6 +39,11 @@ public class ProductShopController {
 	@ApiOperation(value = "读取指定产品信息", notes = "根据id的值读取指定产品信息")
 	@ApiImplicitParam(name = "id", value = "要读取的产品信息id", paramType = "path", required = true,example="1")
 	@GetMapping("/{id}")
+	@DynamicResponseParameters(properties = {
+			@DynamicParameter(name = "body", value = "返回内容", dataTypeClass = Products.class),
+			@DynamicParameter(name = "code", value = "状态码,0表示成功，-1表示失败，-9表示未登录"),
+			@DynamicParameter(name = "msg", value = "返回信息")
+	})
 	public Map<String, Object>  getProduct(@PathVariable Integer id){
 		Map<String, Object> map=new HashMap<String, Object>();
 		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());

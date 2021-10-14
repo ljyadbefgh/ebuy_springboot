@@ -60,6 +60,17 @@ logging:
 #  level:
 #    com.lcvc.ebuy_springboot: error
 #    org.springframework: error
+#knife4j配置可以不手动添加
+knife4j:
+  # 开启增强配置
+  enable: true
+  #  　# 开启Swagger的Basic认证功能,默认是false。开启之后需要账户名和密码才能登录
+  basic:
+    enable: true
+    # Basic认证用户名
+    username: ljy
+    # Basic认证密码
+    password: 123456
 myFile: #自定义变量
   #文件上传目录（注意Linux和Windows上的目录结构不同）
   uploadFolder: c:/ebuy_springboot/upload/
@@ -69,5 +80,3 @@ myFile: #自定义变量
 myJwt: #自定义jwt的变量
   accessTokenExpiresOfCustomer: 20 #客户登录token的有效时间，单位为分钟
   refreshTokenExpiresOfCustomer: 60 #客户登录刷新token（根据刷新token重新获取token）的有效时间，单位为分钟.一般应比accessTokenExpiresOfCustomer时间长2倍以上
-myRedis:
-  minutes: 30

@@ -97,6 +97,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/backstage/sessionId")//不拦截登录信息的cookied
                 .antMatchers( "/api/shop/**")//不拦截前端请求
                 .antMatchers("/v2/api-docs", "/configuration/ui", "/swagger-resources", "/configuration/security", "/swagger-ui.html", "/webjars/**","/swagger-resources/configuration/ui","/swagge‌​r-ui.html")//swagger文档不拦截
+                .antMatchers( "/doc.html")//knife4j文档不拦截
                 .antMatchers( "/oauth/**")
         ;
     }

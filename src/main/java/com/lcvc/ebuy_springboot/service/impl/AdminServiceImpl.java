@@ -204,9 +204,9 @@ public class AdminServiceImpl implements  AdminService,UserDetailsService{
             if(admin.getSex()==null){
                 throw new MyWebException("账户添加失败：请选择性别");
             }
-            if(adminDao.countUsername(admin.getUsername())==0){
+            if(adminDao.countUsername(admin.getUsername())==0){//如果该账户不存在
                 admin.setId(null);//主键自增
-                admin.setPassword(SHA.getResult("123456"));
+                admin.setPassword(SHA.getResult("123456"));//密码默认是123456
                 admin.setUnLocked(true);//默认是不锁定的
                 admin.setCreateTime(Calendar.getInstance().getTime());//获取当前时间为创建时间
                 adminDao.save(admin);
