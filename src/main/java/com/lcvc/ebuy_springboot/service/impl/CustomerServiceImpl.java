@@ -85,6 +85,10 @@ public class CustomerServiceImpl implements CustomerService {
         //获取该客户拥有的待收货订单数
         productOrderQuery.setTag(2);
         customer.setReceiveTagOrderNumber(productOrderDao.querySize(productOrderQuery));
+        //获取该客户拥有的待评价订单数
+        productOrderQuery.setTag(3);
+        customer.setCommentTagNumber(productOrderDao.querySize(productOrderQuery));
+
     }
 
     @Override

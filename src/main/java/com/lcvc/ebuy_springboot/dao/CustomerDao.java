@@ -49,4 +49,6 @@ public interface CustomerDao extends IBaseDao<Customer>{
 	 */
 	int countOtherUsername(@Param(value = "username")String username, @Param(value = "id")Integer id);
 
+
+
 }

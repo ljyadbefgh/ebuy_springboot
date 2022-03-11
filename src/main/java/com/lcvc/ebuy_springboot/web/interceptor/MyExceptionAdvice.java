@@ -79,6 +79,19 @@ public class MyExceptionAdvice {
     }
 
 
+    /**
+     * @author ljy
+     * 20220115
+     * 处理spring 校验框架validation抛出的异常(二种异常之一)
+     * 说明：本异常一般是针对@NotBlank或@NotNull等直接捕获的异常，不包括@valid单独修饰对象时的属性验证异常
+     * 或者说使用了spring boot验证框架的异常如果不是BindException，基本都会触发该异常
+     * 例如：
+     * 在业务层接口编写了验证方法
+     *  boolean login(@Valid User user, @NotBlank(message = "账户名不能为空3") String username, String password);
+     *  那么当username验证不通过时，会出现ConstraintViolationException异常
+     *  反之，如果是user出现异常，则不会出现ConstraintViolationException异常，而是BindException异常
+     * @return
+     */
     //处理spring 校验框架validation抛出的异常(二种异常之一)：ConstraintViolationException（官方定义），在配置了业务层验证后（或者说使用了@Validated后），基本在此处捕获spring验证异常
     @ExceptionHandler(ConstraintViolationException.class)
     public Map<String, Object> constraintViolationException(ConstraintViolationException e) {

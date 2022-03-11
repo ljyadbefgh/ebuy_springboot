@@ -8,7 +8,9 @@ import com.lcvc.ebuy_springboot.model.exception.MyWebException;
 import com.lcvc.ebuy_springboot.model.query.ProductQuery;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 public interface ProductService {
 
@@ -93,5 +95,39 @@ public interface ProductService {
      * @param minNumber 最小数值
      * @param maxNumber 最大数值
      */
-    void updateProductRepositoryByIncreasement(Integer minNumber,Integer maxNumber);
+    void updateProductRepositoryByIncreasement(Integer minNumber, Integer maxNumber);
+
+    /**
+     * 为客户收藏产品
+     * @param customerId
+     * @param productId
+     */
+    void saveProductCollect(@NotNull(message = "客户id不能为空")Integer customerId,@NotNull(message = "产品id不能为空")Integer productId);
+
+    /**
+     * 移除收藏的产品
+     * @param customerId
+     * @param productId
+     */
+    void removeProductCollect(@NotNull(message = "客户id不能为空")Integer customerId,@NotNull(message = "产品id不能为空")Integer productId);
+
+    /**
+     * 判断该商品是否已经收藏
+     * @param customerId
+     * @param productId
+     */
+    boolean existsProductCollect(@NotNull(message = "客户id不能为空")Integer customerId,@NotNull(message = "产品id不能为空")Integer productId);
+
+    /**
+     * 获取指定用户的收藏商品
+     * @param customerId
+     */
+    List<Product> getProductCollectByCustomer(@NotNull(message = "客户id不能为空")Integer customerId);
+
+    /**
+     * 将选中的收藏商品从客户下移除
+     * @param productIds 该参数为Product类的标识属性结合
+     * @param customerId
+     */
+    void removeProductCollectByCustomerAndProductIds(@NotNull(message = "客户id不能为空")Integer customerId,@NotEmpty(message = "必须选择产品") Integer[] productIds);
 }

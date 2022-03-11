@@ -78,5 +78,5 @@ myFile: #自定义变量
   #静态资源对外暴露的访问路径
   staticAccessPath: /upload/**
 myJwt: #自定义jwt的变量
-  accessTokenExpiresOfCustomer: 20 #客户登录token的有效时间，单位为分钟
-  refreshTokenExpiresOfCustomer: 60 #客户登录刷新token（根据刷新token重新获取token）的有效时间，单位为分钟.一般应比accessTokenExpiresOfCustomer时间长2倍以上
+  accessTokenExpiresOfCustomer: 120 #客户登录token的有效时间，单位为分钟
+  refreshTokenExpiresOfCustomer: 240 #客户登录刷新token（根据刷新token重新获取token）的有效时间，单位为分钟.一般应比accessTokenExpiresOfCustomer时间长2倍以上

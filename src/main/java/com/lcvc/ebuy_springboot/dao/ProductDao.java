@@ -67,4 +67,52 @@ public interface ProductDao extends IBaseDao<Product>{
      * @return 返回删除的记录数
      */
     int deletePeviewPicturesByProductId(@Param(value = "productIds")Integer[] productIds);
+
+
+//    =========================产品收藏=========================
+
+
+    /**
+     * 获取该客户收藏的商品集合
+     * @param customerId
+     */
+    List<Product> findProdcutCollectsByCustomerId(int customerId);
+
+    /**
+     * 获取该客户收藏的商品数量
+     * @param customerId
+     */
+    int countProdcutCollectByCustomerId(int customerId);
+
+    /**
+     * 为用户收藏商品
+     * @param customerId
+     * @param productId
+     */
+    int saveProductCollectByCustomerIdAndProductId(int customerId,int productId);
+
+    /**
+     * 将商品从指定用户移除
+     * @param customerId
+     * @param productId
+     */
+    int deleteProductCollectByCustomerIdAndProductId(int customerId,int productId);
+
+    /**
+     * 提供给业务层判断用户是否收藏了该商品
+     * @param customerId
+     * @param productId
+     */
+    int findProdcutCollectByCustomerIdAndProductId(int customerId,int productId);
+
+
+
+    /**
+     * 根据标志符集合删除对应的记录信息集合，长度如果为0则不进行任何处理
+     * @param productIds 产品id集合
+     * @param customerId
+     * @return  删除的记录数，>=1表示删除成功，0表示删除失败
+     */
+    int deleteProductCollectByCustomerIdAndProductIds(int customerId,java.io.Serializable[] productIds);
+
 }

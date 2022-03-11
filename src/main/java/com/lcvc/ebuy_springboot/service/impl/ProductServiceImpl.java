@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import javax.annotation.Resource;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.*;
@@ -235,5 +236,42 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public void updateProductRepositoryByIncreasement(Integer minNumber, Integer maxNumber) {
         productDao.updateProductRepositoryByIncreasement(minNumber,maxNumber);//为所有产品随机增加相应的数量
+    }
+
+    @Override
+    public void saveProductCollect(Integer customerId, Integer productId) {
+        if(productDao.findProdcutCollectByCustomerIdAndProductId(customerId,productId)==0){
+            Product product=productDao.getSimple(productId);
+            if(product==null){
+                throw new MyServiceException("操作失败：该商品不存在");
+            }else if(!product.getOnSale()){
+                throw new MyServiceException("操作失败：该商品已下架，无法收藏");
+            }else{
+                productDao.saveProductCollectByCustomerIdAndProductId(customerId,productId);
+            }
+        }
+    }
+
+    @Override
+    public void removeProductCollect(Integer customerId, Integer productId) {
+        productDao.deleteProductCollectByCustomerIdAndProductId(customerId,productId);
+    }
+
+    @Override
+    public boolean existsProductCollect(Integer customerId, Integer productId) {
+        if(productDao.findProdcutCollectByCustomerIdAndProductId(customerId,productId)>0){
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public List<Product> getProductCollectByCustomer(Integer customerId) {
+        return productDao.findProdcutCollectsByCustomerId(customerId);
+    }
+
+    @Override
+    public void removeProductCollectByCustomerAndProductIds(Integer customerId, Integer[] productIds) {
+        productDao.deleteProductCollectByCustomerIdAndProductIds(customerId,productIds);
     }
 }

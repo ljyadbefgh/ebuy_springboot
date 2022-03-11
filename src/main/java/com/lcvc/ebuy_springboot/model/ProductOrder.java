@@ -39,7 +39,7 @@ public class ProductOrder implements java.io.Serializable {
 	private java.util.Date dealTime;//付款时间
 	private java.util.Date sendTime;//发货时间
 	private java.util.Date receiveTime;//收货时间
-	private Integer tag;//订单处理状态（-99作废，-52已退货，-51已取消，-4已拒绝退货 -3 退货中，-2 申请退货，-1申请取消，0待付款、1.待发货，2已发货，3已收货、4已完成）,只有待付款的情况下可以更改订单信息（不包括修改tag）
+	private Integer tag;//订单处理状态（-99作废，-52已退货，-51已取消，-4已拒绝退货 -3 退货中，-2 申请退货，-1申请取消，0待付款、1.待发货，2.待收货，3.待评价、4.已完成）,只有待付款的情况下可以更改订单信息（不包括修改tag）
 	
 	//非数据库字段
 	private List<ProductOrderDetail> productOrderDetails = new ArrayList<ProductOrderDetail>();

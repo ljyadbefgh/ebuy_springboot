@@ -43,10 +43,10 @@ public class ProductController {
 	})
 	@GetMapping
 	public Map<String, Object> toManageProduct(Integer page, Integer limit, ProductQuery productQuery){
-        Map<String, Object> map=new HashMap<String, Object>();
+		Map<String, Object> map=new HashMap<String, Object>();
 		PageObject pageObject =productService.searchProducts(page,limit,productQuery);
 		map.put(Constant.JSON_TOTAL,pageObject.getTotalRecords());
-        map.put(Constant.JSON_DATA,pageObject.getList());
+		map.put(Constant.JSON_DATA,pageObject.getList());
 		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
 		return map;
 	}

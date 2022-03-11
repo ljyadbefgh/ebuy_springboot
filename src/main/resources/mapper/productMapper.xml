@@ -245,6 +245,38 @@
         </if>
     </delete>
 
+    <select id="findProdcutCollectsByCustomerId" resultType="Product">
+        select product.* from product,product_customer_collect pcc
+        where pcc.customerId=#{customerId}  and product.id=pcc.productId
+    </select>
+
+    <select id="countProdcutCollectByCustomerId" resultType="int">
+        select count(1) from product_customer_collect  where customerId=#{customerId}
+    </select>
+
+    <insert id="saveProductCollectByCustomerIdAndProductId">
+        insert into product_customer_collect(customerId,productId,createTime)
+        values(#{customerId},#{productId},now())
+    </insert>
+
+    <delete id="deleteProductCollectByCustomerIdAndProductId">
+        delete from product_customer_collect where customerId=#{customerId} and productId=#{productId}
+    </delete>
+
+    <select id="findProdcutCollectByCustomerIdAndProductId" resultType="int">
+        select count(1) from product_customer_collect  where customerId=#{customerId} and productId=#{productId}
+    </select>
+
+    <delete id="deleteProductCollectByCustomerIdAndProductIds">
+        delete from product_customer_collect where 1=0
+        <if test="productIds!= null and productIds.length> 0">
+            OR productId in
+            <foreach item="item" collection="productIds" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            and customerId=#{customerId}
+        </if>
+    </delete>
 
 
 

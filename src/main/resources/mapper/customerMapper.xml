@@ -121,4 +121,8 @@
 	<select id="login" resultType="int">
         select count(id) from customer where username=#{username} and password=#{password}
     </select>
+
+
+
+
 </mapper>

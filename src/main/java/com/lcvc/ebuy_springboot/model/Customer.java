@@ -5,6 +5,7 @@ import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.Range;
 
 import javax.validation.constraints.Pattern;
+import java.math.BigDecimal;
 
 /**
  * 客户
@@ -33,8 +34,14 @@ public class Customer implements java.io.Serializable {
 	//@Email(message ="电子邮箱格式错误")
 	private String email;//客户电子邮箱
 	@Length(max = 255, message = "个人简介不能超过{max}个字符")
+	private BigDecimal balance;//账户余额
 	private String intro;//客户简介，备注等
 	private java.util.Date createTime;//创建时间、注册时间
+	//下面字段，在大数据专业实际教学中应使用大数据流式处理进行实时统计；在软件专业则在业务层进行计算
+	private BigDecimal assets; //总资产，主要是购买的商品的原价总和，从个人订单中的原价进行计算
+	private BigDecimal totalTopUp;//总充值，累计充值的金额（包含赠送）
+	private BigDecimal totalConsume;//总消费，累计消费的金额，从个人订单中的当前购买价格进行计算
+
 
 	//非数据库字段
 	private Boolean initialPasswordStatus;//是否为初始密码，true表示是初始密码。一般默认123456为初始密码，具体由业务层根据加密规则判断
@@ -42,6 +49,9 @@ public class Customer implements java.io.Serializable {
 	private Integer payTagOrderNumber;//待付款的订单数
 	private Integer sendTagOrderNumber;//待发款的订单数
 	private Integer receiveTagOrderNumber;//待收货的订单数
+	private Integer commentTagNumber;//待评价的订单数
+
+
 
 
 
@@ -193,5 +203,45 @@ public class Customer implements java.io.Serializable {
 
 	public void setReceiveTagOrderNumber(Integer receiveTagOrderNumber) {
 		this.receiveTagOrderNumber = receiveTagOrderNumber;
+	}
+
+	public BigDecimal getAssets() {
+		return assets;
+	}
+
+	public void setAssets(BigDecimal assets) {
+		this.assets = assets;
+	}
+
+	public BigDecimal getTotalTopUp() {
+		return totalTopUp;
+	}
+
+	public void setTotalTopUp(BigDecimal totalTopUp) {
+		this.totalTopUp = totalTopUp;
+	}
+
+	public BigDecimal getTotalConsume() {
+		return totalConsume;
+	}
+
+	public void setTotalConsume(BigDecimal totalConsume) {
+		this.totalConsume = totalConsume;
+	}
+
+	public BigDecimal getBalance() {
+		return balance;
+	}
+
+	public void setBalance(BigDecimal balance) {
+		this.balance = balance;
+	}
+
+	public Integer getCommentTagNumber() {
+		return commentTagNumber;
+	}
+
+	public void setCommentTagNumber(Integer commentTagNumber) {
+		this.commentTagNumber = commentTagNumber;
 	}
 }

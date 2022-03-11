@@ -57,7 +57,6 @@ public class ShopInterceptor extends HandlerInterceptorAdapter {
             } catch (Exception e) {
                 //不抛出异常
             }
-
         }
         return true;//本拦截器不做拦截，只是刷新数据
     }
