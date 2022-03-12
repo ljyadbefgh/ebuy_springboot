@@ -92,7 +92,7 @@ public interface ProductDao extends IBaseDao<Product>{
     int saveProductCollectByCustomerIdAndProductId(int customerId,int productId);
 
     /**
-     * 将商品从指定用户移除
+     * 将收藏商品从指定用户移除
      * @param customerId
      * @param productId
      */
@@ -114,5 +114,44 @@ public interface ProductDao extends IBaseDao<Product>{
      * @return  删除的记录数，>=1表示删除成功，0表示删除失败
      */
     int deleteProductCollectByCustomerIdAndProductIds(int customerId,java.io.Serializable[] productIds);
+
+    //    =========================产品足迹=========================
+
+
+    /**
+     * 查找用户和商品的足迹
+     * @param customerId
+     * @param productId
+     */
+    int findProductFootprintByCustomerIdAndProductId(int customerId,int productId);
+
+
+    /**
+     * 保存用户足迹
+     * @param customerId
+     * @param productId
+     */
+    int saveProductFootprintByCustomerIdAndProductId(int customerId,int productId);
+
+    /**
+     * 更新用户足迹
+     * @param customerId
+     * @param productId
+     */
+    int updateProductFootprintByCustomerIdAndProductId(int customerId,int productId);
+
+    /**
+     * 删除用户足迹
+     * @param customerId
+     * @param productIds
+     */
+    int deleteProductFootprintByCustomerIdAndProductIds(int customerId,java.io.Serializable[] productIds);
+
+
+    /**
+     * 获取该客户的足迹集合
+     * @param customerId
+     */
+    List<Product> findProductFootprintByCustomerId(int customerId);
 
 }

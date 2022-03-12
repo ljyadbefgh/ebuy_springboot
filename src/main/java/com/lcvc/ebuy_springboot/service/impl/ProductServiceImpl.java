@@ -274,4 +274,26 @@ public class ProductServiceImpl implements ProductService {
     public void removeProductCollectByCustomerAndProductIds(Integer customerId, Integer[] productIds) {
         productDao.deleteProductCollectByCustomerIdAndProductIds(customerId,productIds);
     }
+
+    @Override
+    public void saveProductFootprintByCustomerIdAndProductId(Integer customerId, Integer productId) {
+        Product product=productDao.getSimple(productId);
+        if(product!=null){
+            if(productDao.findProductFootprintByCustomerIdAndProductId(customerId,productId)>0){
+                productDao.updateProductFootprintByCustomerIdAndProductId(customerId,productId);
+            }else{
+                productDao.saveProductFootprintByCustomerIdAndProductId(customerId,productId);
+            }
+        }
+    }
+
+    @Override
+    public void deleteProductFootprintByCustomerIdAndProductIds(Integer customerId, Integer[] productIds) {
+        productDao.deleteProductFootprintByCustomerIdAndProductIds(customerId,productIds);
+    }
+
+    @Override
+    public List<Product> findProductFootprintByCustomerId(Integer customerId) {
+        return productDao.findProductFootprintByCustomerId(customerId);
+    }
 }

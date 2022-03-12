@@ -278,7 +278,37 @@
         </if>
     </delete>
 
+    <select id="findProductFootprintByCustomerIdAndProductId" resultType="int">
+        select count(1) from product_customer_footprint  where customerId=#{customerId} and productId=#{productId}
+    </select>
 
 
+    <insert id="saveProductFootprintByCustomerIdAndProductId">
+        insert into product_customer_footprint(customerId,productId,createTime)
+        values(#{customerId},#{productId},now())
+    </insert>
+
+    <update id="updateProductFootprintByCustomerIdAndProductId">
+        update product_customer_footprint set createTime=now()
+        where customerId=#{customerId} and productId=#{productId}
+    </update>
+
+
+    <delete id="deleteProductFootprintByCustomerIdAndProductIds">
+        delete from product_customer_footprint where 1=0
+        <if test="productIds!= null and productIds.length> 0">
+            OR productId in
+            <foreach item="item" collection="productIds" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            and customerId=#{customerId}
+        </if>
+    </delete>
+
+    <select id="findProductFootprintByCustomerId" resultType="Product">
+        select product.* from product,product_customer_footprint pcf
+        where pcf.customerId=#{customerId}  and product.id=pcf.productId
+        order by pcf.createTime desc
+    </select>
 
 </mapper>

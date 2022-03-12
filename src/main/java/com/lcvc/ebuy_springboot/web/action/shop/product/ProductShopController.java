@@ -3,6 +3,7 @@ package com.lcvc.ebuy_springboot.web.action.shop.product;
 
 import com.github.xiaoymin.knife4j.annotations.DynamicParameter;
 import com.github.xiaoymin.knife4j.annotations.DynamicResponseParameters;
+import com.lcvc.ebuy_springboot.model.Customer;
 import com.lcvc.ebuy_springboot.model.Product;
 import com.lcvc.ebuy_springboot.model.ProductType;
 import com.lcvc.ebuy_springboot.model.Products;
@@ -11,6 +12,7 @@ import com.lcvc.ebuy_springboot.model.base.JsonCode;
 import com.lcvc.ebuy_springboot.model.base.PageObject;
 import com.lcvc.ebuy_springboot.model.query.ProductQuery;
 import com.lcvc.ebuy_springboot.service.ProductService;
+import com.lcvc.ebuy_springboot.web.action.shop.BaseShopController;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -29,7 +31,7 @@ import java.util.Map;
 @Api(tags = "前台产品模块")
 @RestController
 @RequestMapping(value = "/api/shop/product")
-public class ProductShopController {
+public class ProductShopController extends BaseShopController {
 
 	public static final Log log= LogFactory.getLog(ProductShopController.class);
 
@@ -48,6 +50,12 @@ public class ProductShopController {
 		Map<String, Object> map=new HashMap<String, Object>();
 		map.put(Constant.JSON_CODE, JsonCode.SUCCESS.getValue());
 		map.put(Constant.JSON_DATA,productService.getProduct(id));
+		//为当前登录账户添加商品足迹
+		Customer customer=this.getCustomerInRedis();//从redis中读取客户信息
+		if(customer!=null){//如果客户已经登录
+			//添加商品足迹
+			productService.saveProductFootprintByCustomerIdAndProductId(customer.getId(), id);
+		}
 		return map;
 	}
 

@@ -130,4 +130,28 @@ public interface ProductService {
      * @param customerId
      */
     void removeProductCollectByCustomerAndProductIds(@NotNull(message = "客户id不能为空")Integer customerId,@NotEmpty(message = "必须选择产品") Integer[] productIds);
+
+
+    /**
+     * 保存用户浏览商品的足迹
+     * 说明：如果商品足迹已经存在，则更新商品足迹的时间
+     * @param customerId
+     * @param productId
+     */
+    void saveProductFootprintByCustomerIdAndProductId(@NotNull(message = "客户id不能为空")Integer customerId,@NotNull(message = "产品id不能为空")Integer productId);
+
+    /**
+     * 将选中的收藏商品从客户下移除
+     * @param productIds 该参数为Product类的标识属性结合
+     * @param customerId
+     */
+    void deleteProductFootprintByCustomerIdAndProductIds(@NotNull(message = "客户id不能为空")Integer customerId,@NotEmpty(message = "必须选择产品") Integer[] productIds);
+
+
+    /**
+     * 获取该客户的足迹集合
+     * @param customerId
+     */
+    List<Product> findProductFootprintByCustomerId(@NotNull(message = "客户id不能为空")Integer customerId);
+
 }

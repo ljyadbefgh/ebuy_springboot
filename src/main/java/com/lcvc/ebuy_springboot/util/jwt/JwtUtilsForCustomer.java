@@ -68,7 +68,7 @@ public class JwtUtilsForCustomer extends JwtUtils{
             customerIdString = this.getAudience(customerAccressToken);
             customerId=Integer.valueOf(customerIdString);
         } catch (MyTokenException e) {
-            throw new MyCustomerLoginException(e.getMessage());
+//            throw new MyCustomerLoginException(e.getMessage());
         }
         return customerId;
     }

@@ -24,13 +24,17 @@ public class BaseShopController {
      * @return
      */
     protected Customer getCustomerInRedis(){
+        Customer customer=null;
         RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = (HttpServletRequest) requestAttributes.resolveReference(RequestAttributes.REFERENCE_REQUEST);
         //获取token
         String customerAccressToken = request.getHeader(Constant.CUSTOMER_ACCRESS_TOKEN);
         Integer customerId=jwtUtilsForCustomer.getCustomerIdByAccressToken(customerAccressToken);
-        //获取redis中对应的客户信息，等于与获取session中的customer。该信息应在拦截中中做过更新
-        return redisUtilsForCustomer.getCustomerInRedis(customerId);
+        if(customerId!=null){
+            //获取redis中对应的客户信息，等于与获取session中的customer。该信息应在拦截中中做过更新
+            customer=redisUtilsForCustomer.getCustomerInRedis(customerId);
+        }
+        return customer;
     }
 
     /**
