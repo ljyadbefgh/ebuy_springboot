@@ -219,7 +219,9 @@ public class CustomerServiceImpl implements CustomerService {
             throw new MyServiceException("注册失败：系统当前禁止注册客户");
         }
         if(!StringUtils.isEmpty(webConfig.getInviteCodeOfCustomer())){//如果邀请码不为空
-            if(!inviteCode.equals(webConfig.getInviteCodeOfCustomer())){
+            if(StringUtils.isEmpty(inviteCode)){
+                throw new MyWebException("注册失败：请输入邀请码");
+            }else if(!inviteCode.equals(webConfig.getInviteCodeOfCustomer())){
                 throw new MyWebException("注册失败：邀请码不正确，请咨询管理员要正确的邀请码");
             }
         }

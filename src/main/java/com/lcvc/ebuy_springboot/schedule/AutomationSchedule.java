@@ -40,7 +40,7 @@ public class AutomationSchedule {
      */
     @Scheduled(cron = "0 10 05 ? * *")
     public void updateProductRepositoryByIncreasementTask(){
-        productDao.updateProductRepositoryByIncreasement(50,80);
+        productDao.updateProductRepositoryByIncreasement(300,400);
     }
 
 
@@ -50,7 +50,7 @@ public class AutomationSchedule {
      */
     @Scheduled(cron = "0 30 05 ? * *")
     public void buyTask(){
-        int buyNumber=Math.round(new Random().nextInt(15))+15;//随机购买次数为15-30
+        int buyNumber=Math.round(new Random().nextInt(15))+30;//随机购买次数为30-45
         try {
             this.autoBuy(buyNumber,10000l);//每10秒购买一次
         } catch (Exception e) {
@@ -69,20 +69,20 @@ public class AutomationSchedule {
      * @param number 下订单的次数
      * @param millisecond 单位：毫秒。表示间隔多少毫秒下一次单
      */
-    public void autoBuy(Integer number,Long millisecond) {
+    private void autoBuy(Integer number,Long millisecond) {
         List<Customer> customers=customerDao.readAll(null);//获取所有客户信息
         ProductQuery productQuery=new ProductQuery();
         productQuery.setOnSale(true);//前台只能访问上架的产品
         List<Product> products=productDao.readAll(productQuery);//获取所有已上架的产品信息
         Customer customer=null;
         while(number-->0){
-            if(number<=3){//保证有3次是指定的客户购买，用于测试
+            if(number<=10){//保证有10次是指定的客户购买，用于测试
                 customer=customerDao.get(1);
                 if(customer==null){
                     continue;//如果已经没有这个账户，则取消本次循环。这里是为了防止未来程序出错
                 }
             }else{
-                customer=customer=customers.get(new Random().nextInt(customers.size()));//在客户里面随机选一个
+                customer=customers.get(new Random().nextInt(customers.size()));//在客户里面随机选一个
             }
             try {
                 automationService.buy(customer,products);//执行购买程序
@@ -182,7 +182,7 @@ public class AutomationSchedule {
 
     /**
      * 将订单变为已完成状态
-     * 设计为每天晚上11点53分执行自动购买
+     * 设计为每天晚上11点50分执行自动购买
      * 1.必须是已经收货满7天后，并且满足完成条件
      */
     @Scheduled(cron = "0 50 23 ? * *")

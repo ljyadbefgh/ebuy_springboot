@@ -103,7 +103,7 @@ public class JwtUtilsForCustomer extends JwtUtils{
                 try {
                     this.verifyCustomerToken(customerRefreshToken,customerId);
                 } catch (MyCustomerLoginException ee) {//如果刷新令牌也过期了
-                    throw new MyCustomerLoginException("请重新登录");
+                    throw new MyCustomerLoginException("登录状态已过期");
                 }
             }
         }

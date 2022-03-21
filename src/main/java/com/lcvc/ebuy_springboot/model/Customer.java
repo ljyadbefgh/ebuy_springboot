@@ -33,12 +33,12 @@ public class Customer implements java.io.Serializable {
 	private String zip;//客户邮编
 	//@Email(message ="电子邮箱格式错误")
 	private String email;//客户电子邮箱
-	@Length(max = 255, message = "个人简介不能超过{max}个字符")
 	private BigDecimal balance;//账户余额
+	@Length(max = 255, message = "个人简介不能超过{max}个字符")
 	private String intro;//客户简介，备注等
 	private java.util.Date createTime;//创建时间、注册时间
 	//下面字段，在大数据专业实际教学中应使用大数据流式处理进行实时统计；在软件专业则在业务层进行计算
-	private BigDecimal assets; //总资产，主要是购买的商品的原价总和，从个人订单中的原价进行计算
+	private BigDecimal assets; //总资产/钱包
 	private BigDecimal totalTopUp;//总充值，累计充值的金额（包含赠送）
 	private BigDecimal totalConsume;//总消费，累计消费的金额，从个人订单中的当前购买价格进行计算
 
@@ -180,6 +180,8 @@ public class Customer implements java.io.Serializable {
 	public void setInitialPasswordStatus(Boolean initialPasswordStatus) {
 		this.initialPasswordStatus = initialPasswordStatus;
 	}
+
+
 
 	public Integer getPayTagOrderNumber() {
 		return payTagOrderNumber;

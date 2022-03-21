@@ -52,7 +52,7 @@ public class AutomationServiceImpl implements AutomationService {
      */
     public void buy(Customer customer,List<Product> products){
         ShoppingCart shoppingCart=new ShoppingCart();
-        int buyNumber=Math.round(new Random().nextInt(3))+1;//随机购买次数为1-4
+        int buyNumber=Math.round(new Random().nextInt(4))+1;//随机购买次数为1-5
         while(buyNumber-->0){
             Product product=this.getProductByRandom(products);//获取随机产品数
             int productNumber=Math.round(new Random().nextInt(2))+1;//随机购买数量为1-3

@@ -195,9 +195,6 @@ public class AdminServiceImpl implements  AdminService,UserDetailsService{
             if(admin.getUsername()==null){
                 throw new MyWebException("账户添加失败：账户名不能为空");
             }
-            if(admin.getPassword()==null){
-                throw new MyWebException("账户添加失败：密码不能为空");
-            }
             if(admin.getName()==null){
                 throw new MyWebException("账户添加失败：网名不能为空");
             }
