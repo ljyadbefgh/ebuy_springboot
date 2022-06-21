@@ -33,7 +33,7 @@
 		<swagger2.version>2.9.2</swagger2.version>
 		<knife4j.version>2.0.8</knife4j.version>
 		<!--mysal驱动包-->
-		<mysql.version>8.0.16</mysql.version>
+		<mysql.version>8.0.28</mysql.version>
 		<mybatis.version>3.4.2</mybatis.version>
 		<!--junit本来会由spring-boot-starter-test自动导入4.12版本以上，但是有时候这个版本会出错，可以将本地maven的Junit删除重新下载即可-->
 		<junit.version>4.12</junit.version>
